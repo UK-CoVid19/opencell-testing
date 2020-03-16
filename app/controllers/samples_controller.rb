@@ -54,7 +54,6 @@ class SamplesController < ApplicationController
   # POST /samples
   # POST /samples.json
   def create
-    binding.pry
     @sample = Sample.new(user_id: sample_params, state: sample_params[:state].to_i)
 
     respond_to do |format|
