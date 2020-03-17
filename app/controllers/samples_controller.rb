@@ -1,10 +1,11 @@
 class SamplesController < ApplicationController
-  before_action :set_sample, only: [:show, :edit, :update, :destroy]
-
+  before_action :authenticate_user!
+  before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare]
+  after_action :verify_policy_scoped, only: [:index]
   # GET /samples
   # GET /samples.json
   def index
-    @samples = Sample.all
+    @samples = policy_scope(Sample.all)
   end
 
   def pendingdispatch
@@ -20,6 +21,9 @@ class SamplesController < ApplicationController
   end
 
 
+  def pendingtest
+    @samples = Sample.all.where(state: Sample.states[:processed])
+  end
 
   # GET /samples/1
   # GET /samples/1.json
@@ -38,11 +42,31 @@ class SamplesController < ApplicationController
   # def dispatch
   # end
   #
-  # def receive
-  # end
+  def receive
+    @sample.state = Sample.states[:received]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
   #
-  # def prepare
-  # end
+  def prepare
+    @sample.state = Sample.states[:preparing]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
   #
   # def process
   # end
@@ -54,7 +78,7 @@ class SamplesController < ApplicationController
   # POST /samples
   # POST /samples.json
   def create
-    @sample = Sample.new(user_id: sample_params, state: sample_params[:state].to_i)
+    @sample = Sample.new(user: current_user, state: Sample.states[:requested])
 
     respond_to do |format|
       if @sample.save

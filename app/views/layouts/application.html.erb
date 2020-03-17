@@ -11,7 +11,7 @@
 
   <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">OpenCell Testing</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -20,6 +20,7 @@
         <li class="nav-item active">
           <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
         </li>
+        <% if current_user && user_signed_in? && current_user.staff?  %>
         <li class="nav-item">
           <%= link_to "Pending Dispatch", samples_pendingdispatch_path, class: 'nav-link' %>
         </li>
@@ -27,17 +28,28 @@
           <%= link_to "Pending Receive", samples_pendingreceive_path, class: 'nav-link' %>
         </li>
         <li class="nav-item">
-          <%= link_to "Pending Prepare", samples_pendingdispatch_path, class: 'nav-link' %>
+          <%= link_to "Pending Prepare", samples_pendingprepare_path, class: 'nav-link' %>
         </li>
         <li class="nav-item">
-          <%= link_to "Pending Test", samples_pendingdispatch_path, class: 'nav-link' %>
+          <%= link_to "Pending Test", samples_pendingtest_path, class: 'nav-link' %>
         </li>
+        <% else %>
+        <li class="nav-item">
+          <%= link_to "My Tests", samples_path, class: 'nav-link' %>
+        </li>
+        <% end %>
         <li class="nav-item">
           <a class="nav-link" href="#">Results</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Users</a>
         </li>
+        <% if current_user %>
+          <%= "Hello #{current_user.name}" %>
+        <% end  %>
+        <% if user_signed_in? %>
+        <%= link_to 'Sign out 🔒', destroy_user_session_path, method: :delete  %>
+        <% end %>
       </ul>
     </div>
   </nav>

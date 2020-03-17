@@ -1,0 +1,23 @@
+<h1 class="text-center">Samples Pending Receive</h1>
+<div class="container">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">User</th>
+      <th scope="col">State</th>
+      <th scope="col" colspan="3"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @samples.each do |sample| %>
+      <tr>
+        <td><%= sample.user.name %></td>
+        <td><%= sample.state %></td>
+        <td><%= link_to 'Mark As Received', sample_receive_path(sample), method: :post %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
