@@ -1,6 +1,6 @@
 class SamplesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare]
+  before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
   after_action :verify_policy_scoped, only: [:index]
   # GET /samples
   # GET /samples.json
@@ -20,11 +20,17 @@ class SamplesController < ApplicationController
     @samples = Sample.all.where(state: Sample.states[:received])
   end
 
-
-  def pendingtest
-    @samples = Sample.all.where(state: Sample.states[:processed])
+  def pendingreadytest
+    @samples = Sample.all.where(state: Sample.states[:preparing])
   end
 
+  def pendingtest
+    @samples = Sample.all.where(state: Sample.states[:prepared])
+  end
+
+  def pendinganalyze
+    @samples = Sample.all.where(state: Sample.states[:tested])
+  end
   # GET /samples/1
   # GET /samples/1.json
   def show
@@ -39,44 +45,7 @@ class SamplesController < ApplicationController
   def edit
   end
 
-  # def dispatch
-  # end
-  #
-  def receive
-    @sample.state = Sample.states[:received]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-  #
-  def prepare
-    @sample.state = Sample.states[:preparing]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-  #
-  # def process
-  # end
-  #
-  # def analyse
-  # end
 
-
-  # POST /samples
-  # POST /samples.json
   def create
     @sample = Sample.new(user: current_user, state: Sample.states[:requested])
 
@@ -90,6 +59,85 @@ class SamplesController < ApplicationController
       end
     end
   end
+
+  def ship
+    @sample.state = Sample.states[:dispatched]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully dispatched.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def receive
+    @sample.state = Sample.states[:received]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def prepare
+    @sample.state = Sample.states[:preparing]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def prepared
+    @sample.state = Sample.states[:prepared]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully Prepared.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def tested
+    @sample.state = Sample.states[:tested]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully Tested.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def analyze
+    @sample.state = Sample.states[:analysed]
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully Analysed.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
 
   # PATCH/PUT /samples/1
   # PATCH/PUT /samples/1.json

@@ -1,4 +1,4 @@
-<h1 class="text-center">Samples Pending Prepare</h1>
+<h1 class="text-center">Samples Pending Analysis</h1>
 <div class="container">
   <table class="table table-striped">
     <thead>
@@ -14,7 +14,7 @@
       <tr>
         <td><%= sample.user.name %></td>
         <td><%= sample.state %></td>
-        <td><%= link_to 'Mark As Preparing', sample_prepare_path(sample), method: :post %></td>
+        <td><%= link_to 'Mark As Analysed', sample_analyze_path(sample), method: :post %></td>
       </tr>
     <% end %>
     </tbody>
