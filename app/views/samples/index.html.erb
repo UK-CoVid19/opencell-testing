@@ -1,9 +1,11 @@
-<p id="notice"><%= notice %></p>
-
-<h1 class="text-center">Samples</h1>
 <div class="container">
-  <table>
-    <thead>
+  <br>
+    
+  <p id="notice"><%= notice %></p>
+
+  <h1>Samples</h1>
+  <table class="table table-striped">
+    <thead class="thead-dark">
     <tr>
       <th>Id</th>
       <th>State</th>
@@ -24,6 +26,7 @@
     </tbody>
   </table>
   <br>
-  <%= link_to 'New Sample', new_sample_path %>
+  
+  <%= link_to '+ New Sample', new_sample_path %>
 </div>
 

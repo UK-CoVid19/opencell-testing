@@ -1,23 +1,21 @@
-<h1 class="text-center">Samples Pending Prepare</h1>
 <div class="container">
+  <h1>Awaiting Prepare</h1>
   <table class="table table-striped">
-    <thead>
-    <tr>
-      <th scope="col">User</th>
-      <th scope="col">State</th>
-      <th scope="col" colspan="3"></th>
-    </tr>
+    <thead class="thead-dark">
+      <tr>
+        <th>Sample</th>
+        <th>User</th>
+        <th><!-- Mark As Prepared --></th>
+      </tr>
     </thead>
-
     <tbody>
     <% @samples.each do |sample| %>
       <tr>
-        <td><%= sample.user.name %></td>
-        <td><%= sample.state %></td>
-        <td><%= link_to 'Mark As Preparing', sample_prepare_path(sample), method: :post %></td>
+        <td><%= sample %></td>
+        <td><%= sample.user %></td>
+        <td><%= link_to 'Mark As Prepared ✅', sample_prepare_path(sample), method: :post %></td>
       </tr>
     <% end %>
     </tbody>
   </table>
 </div>
-

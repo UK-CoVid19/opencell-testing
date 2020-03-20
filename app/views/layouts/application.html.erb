@@ -10,56 +10,81 @@
   </head>
 
   <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">OpenCell Testing</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <% if current_user && user_signed_in? && current_user.staff?  %>
-        <li class="nav-item">
-          <%= link_to "Pending Dispatch", samples_pendingdispatch_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Pending Receive", samples_pendingreceive_path, class: 'nav-link' %>
-        </li>
-
-        <li class="nav-item">
-          <%= link_to "Pending Prepare", samples_pendingprepare_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Pending Prepared", samples_pendingreadytest_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Pending Tested", samples_pendingtest_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Pending Analysed", samples_pendinganalyze_path, class: 'nav-link' %>
-        </li>
-        <% else %>
-        <li class="nav-item">
-          <%= link_to "My Tests", samples_path, class: 'nav-link' %>
-        </li>
-        <% end %>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Results</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Users</a>
-        </li>
-        <% if current_user %>
-          <%= "Hello #{current_user.name}" %>
-        <% end  %>
-        <% if user_signed_in? %>
-        <%= link_to 'Sign out 🔒', destroy_user_session_path, method: :delete  %>
-        <% end %>
-      </ul>
+    <div class="container">
+      <br />
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand dark" href="\">
+          <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" height="40" />
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav text-center">
+            <% if current_user && user_signed_in? && current_user.staff?  %>            
+              <li class="nav-item">              
+                <a href="<%= samples_pendingdispatch_path %>">                
+                  <span class="badge badge-secondary">515</span>
+                  <p>Awaiting Dispatch</p>
+                </a>
+              </li>
+              <li class="nav-item">              
+                <a href="<%= samples_pendingreceive_path %>">                
+                    <span class="badge badge-secondary">515</span>
+                    <p>Awaiting Return</p>
+                </a>
+              </li>
+              <li class="nav-item">              
+                <a href="<%= samples_pendingprepare_path %>">                
+                    <span class="badge badge-secondary">515</span>
+                    <p>Awaiting Prepare</p>
+                </a>
+              </li>
+              <li class="nav-item">              
+                <a href="<%= samples_pendingreadytest_path %>">                
+                    <span class="badge badge-secondary">515</span>
+                    <p>Awaiting Ready</p>
+                </a>
+              </li>
+              <li class="nav-item">              
+                <a href="<%= samples_pendingtest_path %>">                
+                    <span class="badge badge-secondary">515</span>
+                    <p>Awaiting Test</p>
+                </a>
+              </li>
+              <li class="nav-item">              
+                <a href="<%= samples_pendinganalyze_path %>">                
+                    <span class="badge badge-secondary">515</span>
+                    <p>Awaiting Analysis</p>
+                </a>
+              </li>
+            <% else %>
+              <li class="nav-item">              
+                <a href="<%= samples_path %>">                
+                    <p>My Tests</p>
+                </a>
+              </li>
+            <% end %>
+            <!--
+            <li class="nav-item">
+              <a class="nav-link" href="#">Results</a>
+            </li>            
+            <li class="nav-item">
+              <a class="nav-link" href="#">Users</a>
+            </li>
+            <% if current_user %>
+              <%= "Hello #{current_user.name}" %>
+            <% end  %>
+            -->
+            <% if user_signed_in? %>
+              <li class="nav-item justify-content-end">
+                <%= link_to 'Sign out', destroy_user_session_path, method: :delete, class: 'nav-link'  %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </nav>
     </div>
-  </nav>
     <%= yield %>
   </body>
 </html>
