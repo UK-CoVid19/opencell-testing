@@ -24,37 +24,37 @@
             <% if current_user && user_signed_in? && current_user.staff?  %>            
               <li class="nav-item">              
                 <a href="<%= samples_pendingdispatch_path %>">                
-                  <span class="badge badge-secondary">515</span>
+                  <span class="badge badge-secondary"><%= @pendingdispatch_count %></span>
                   <p>Awaiting Dispatch</p>
                 </a>
               </li>
               <li class="nav-item">              
                 <a href="<%= samples_pendingreceive_path %>">                
-                    <span class="badge badge-secondary">515</span>
+                    <span class="badge badge-secondary"><%= @pendingreceive_count %></span>
                     <p>Awaiting Return</p>
                 </a>
               </li>
               <li class="nav-item">              
                 <a href="<%= samples_pendingprepare_path %>">                
-                    <span class="badge badge-secondary">515</span>
+                    <span class="badge badge-secondary"><%= @pendingprepare_count %></span>
                     <p>Awaiting Prepare</p>
                 </a>
               </li>
               <li class="nav-item">              
                 <a href="<%= samples_pendingreadytest_path %>">                
-                    <span class="badge badge-secondary">515</span>
+                    <span class="badge badge-secondary"><%= @pendingreadytest_count %></span>
                     <p>Awaiting Ready</p>
                 </a>
               </li>
               <li class="nav-item">              
                 <a href="<%= samples_pendingtest_path %>">                
-                    <span class="badge badge-secondary">515</span>
+                    <span class="badge badge-secondary"><%= @pendingtest_count %></span>
                     <p>Awaiting Test</p>
                 </a>
               </li>
               <li class="nav-item">              
                 <a href="<%= samples_pendinganalyze_path %>">                
-                    <span class="badge badge-secondary">515</span>
+                    <span class="badge badge-secondary"><%= @pendinganalyze_count %></span>
                     <p>Awaiting Analysis</p>
                 </a>
               </li>
@@ -65,13 +65,6 @@
                 </a>
               </li>
             <% end %>
-            <!--
-            <li class="nav-item">
-              <a class="nav-link" href="#">Results</a>
-            </li>            
-            <li class="nav-item">
-              <a class="nav-link" href="#">Users</a>
-            </li>
             <% if current_user %>
               <%= "Hello #{current_user.name}" %>
             <% end  %>

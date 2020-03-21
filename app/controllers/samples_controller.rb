@@ -9,27 +9,27 @@ class SamplesController < ApplicationController
   end
 
   def pendingdispatch
-    @samples = Sample.all.where(state: Sample.states[:requested])
+    @samples = Sample.requested
   end
 
   def pendingreceive
-    @samples = Sample.all.where(state: Sample.states[:dispatched])
+    @samples = Sample.dispatched
   end
 
   def pendingprepare
-    @samples = Sample.all.where(state: Sample.states[:received])
+    @samples = Sample.received
   end
 
   def pendingreadytest
-    @samples = Sample.all.where(state: Sample.states[:preparing])
+    @samples = Sample.preparing
   end
 
   def pendingtest
-    @samples = Sample.all.where(state: Sample.states[:prepared])
+    @samples = Sample.prepared
   end
 
   def pendinganalyze
-    @samples = Sample.all.where(state: Sample.states[:tested])
+    @samples = Sample.tested
   end
   # GET /samples/1
   # GET /samples/1.json

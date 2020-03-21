@@ -11,9 +11,9 @@
     <tbody>
     <% @samples.each do |sample| %>
       <tr>
-        <td><%= sample %></td>
-        <td><%= sample.user %></td>
-        <td><%= link_to 'Mark As Ready ✅', sample_ready_path(sample), method: :post %></td>
+        <td><%= link_to 'Sample', sample %></td>
+        <td><%= sample.user.id %></td>
+        <td><%= link_to 'Mark As Ready ✅', sample_prepared_path(sample), method: :post %></td>
       </tr>
     <% end %>
     </tbody>
