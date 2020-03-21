@@ -4,6 +4,13 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable
 
+  validates :name, presence: true
+  validates :dob, presence: true
+  validates :telno, presence: true
+  validates :email, presence: true
+
+  has_many :samples
+
   enum role: [:patient, :staff]
 
   after_create :send_welcome_mail

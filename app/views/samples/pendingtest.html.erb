@@ -6,15 +6,22 @@
         <th>Sample</th>
         <th>User</th>
         <th><!-- Mark As Tested --></th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
-    <% @samples.each do |sample| %>
-      <tr>
-        <td><%= link_to 'Sample', sample %></td>
-        <td><%= sample.user.id %></td>
-        <td><%= link_to 'Mark As Tested ✅', sample_tested_path(sample), method: :post %></td>
-      </tr>
+    <%= form_for :samples , url: sample_bulk_tested_path do |f| %>
+      <% @samples.each do |sample| %>
+        <tr>
+          <td><%= link_to 'Sample', sample %></td>
+          <td><%= sample.user.id %></td>
+          <td><%= link_to 'Mark As Tested ✅', sample_tested_path(sample), method: :post %></td>
+          <td><%= check_box_tag  'samples[ids][]', sample.id %></td>
+        </tr>
+      <% end %>
+      <div class="actions">
+        <%= f.submit %>
+      </div>
     <% end %>
     </tbody>
   </table>

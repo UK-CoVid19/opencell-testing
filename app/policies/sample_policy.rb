@@ -9,4 +9,8 @@ class SamplePolicy < ApplicationPolicy
       end
     end
   end
+
+  def dashboard?
+    user.present? && user.staff?
+  end
 end

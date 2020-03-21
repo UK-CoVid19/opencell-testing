@@ -1,0 +1,23 @@
+<div class="container">
+  <h2>Dashboard for Samples</h2>
+  <br/>
+  <table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Sample</th>
+      <th>User</th>
+      <th>State</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @samples.each do |sample| %>
+      <tr>
+        <td><%= link_to 'Sample', sample %></td>
+        <td><%= sample.user.id %></td>
+        <td><%= sample.state %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+</div>

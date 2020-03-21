@@ -6,19 +6,19 @@
 
     <div class="field">
       <%= f.label :email %><br />
-      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", required: true %>
     </div>
     <div class="field">
       <%= f.label :name %><br />
-      <%= f.text_field :name, autofocus: true%>
+      <%= f.text_field :name, autofocus: true, required: true%>
     </div>
     <div class="field">
       <%= f.label :telno %><br />
-      <%= f.text_field :telno, autofocus: true %>
+      <%= f.text_field :telno, autofocus: true, required: true %>
     </div>
     <div class="field">
       <%= f.label :dob %><br />
-      <%= f.date_field :dob, autofocus: true %>
+      <%= f.date_field :dob, autofocus: true, required: true %>
     </div>
 
     <div class="field">

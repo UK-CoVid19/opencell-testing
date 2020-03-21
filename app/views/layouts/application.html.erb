@@ -46,29 +46,31 @@
                     <p>Awaiting Ready</p>
                 </a>
               </li>
-              <li class="nav-item">              
-                <a href="<%= samples_pendingtest_path %>">                
+              <li class="nav-item">
+                <%= link_to samples_pendingtest_path do %>
                     <span class="badge badge-secondary"><%= @pendingtest_count %></span>
                     <p>Awaiting Test</p>
-                </a>
+                <% end %>
               </li>
-              <li class="nav-item">              
-                <a href="<%= samples_pendinganalyze_path %>">                
-                    <span class="badge badge-secondary"><%= @pendinganalyze_count %></span>
-                    <p>Awaiting Analysis</p>
-                </a>
+              <li class="nav-item">
+                <%= link_to samples_pendinganalyze_path do %>
+                  <span class="badge badge-secondary"><%= @pendinganalyze_count %></span>
+                  <p>Awaiting Analysis</p>
+                <% end %>
               </li>
-            <% else %>
-              <li class="nav-item">              
-                <a href="<%= samples_path %>">                
+            <% elsif current_user && current_user.patient? %>
+              <li class="nav-item">
+                  <%= link_to samples_path do  %>
                     <p>My Tests</p>
+                  <% end  %>
                 </a>
               </li>
             <% end %>
+            <li class="nav-item">
             <% if current_user %>
-              <%= "Hello #{current_user.name}" %>
+              <%= tag.p "Hello #{current_user.name}" %>
             <% end  %>
-            -->
+            </li>
             <% if user_signed_in? %>
               <li class="nav-item justify-content-end">
                 <%= link_to 'Sign out', destroy_user_session_path, method: :delete, class: 'nav-link'  %>

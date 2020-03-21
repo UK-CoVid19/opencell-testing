@@ -9,27 +9,27 @@ class SamplesController < ApplicationController
   end
 
   def pendingdispatch
-    @samples = Sample.requested
+    @samples = Sample.is_requested
   end
 
   def pendingreceive
-    @samples = Sample.dispatched
+    @samples = Sample.is_dispatched
   end
 
   def pendingprepare
-    @samples = Sample.received
+    @samples = Sample.is_received
   end
 
   def pendingreadytest
-    @samples = Sample.preparing
+    @samples = Sample.is_preparing
   end
 
   def pendingtest
-    @samples = Sample.prepared
+    @samples = Sample.is_prepared
   end
 
   def pendinganalyze
-    @samples = Sample.tested
+    @samples = Sample.is_tested
   end
   # GET /samples/1
   # GET /samples/1.json
@@ -43,6 +43,11 @@ class SamplesController < ApplicationController
 
   # GET /samples/1/edit
   def edit
+  end
+
+  def dashboard
+    authorize nil, policy_class: SamplePolicy
+    @samples = Sample.all
   end
 
 
@@ -125,6 +130,19 @@ class SamplesController < ApplicationController
     end
   end
 
+  def bulktested
+    @samples = get_samples
+    Sample.transaction do
+      @samples.each do | sample|
+        sample.state = Sample.states[:tested]
+        sample.save!
+      end
+    end
+    respond_to do |format|
+        format.html { redirect_to samples_pendinganalyze_path, notice: 'Samples have been successfully Tested.' }
+    end
+  end
+
   def analyze
     @sample.state = Sample.states[:analysed]
     respond_to do |format|
@@ -172,5 +190,14 @@ class SamplesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def sample_params
       params.require(:sample).permit(:user_id, :state)
+    end
+
+    def get_samples
+      ids = params.dig(:samples, :ids)
+      if ids
+        @samples = Sample.find(ids)
+      else
+        []
+      end
     end
 end
