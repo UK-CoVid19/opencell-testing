@@ -23,37 +23,37 @@
           <ul class="navbar-nav text-center">
             <% if current_user && user_signed_in? && current_user.staff?  %>            
               <li class="nav-item">              
-                <a href="<%= samples_pendingdispatch_path %>">                
+                <a href="<%= step1_pendingdispatch_path %>">
                   <span class="badge badge-secondary"><%= @pendingdispatch_count %></span>
                   <p>Awaiting Dispatch</p>
                 </a>
               </li>
               <li class="nav-item">              
-                <a href="<%= samples_pendingreceive_path %>">                
+                <a href="<%= step2_pendingreceive_path %>">
                     <span class="badge badge-secondary"><%= @pendingreceive_count %></span>
                     <p>Awaiting Return</p>
                 </a>
               </li>
               <li class="nav-item">              
-                <a href="<%= samples_pendingprepare_path %>">                
+                <a href="<%= step3_pendingprepare_path %>">
                     <span class="badge badge-secondary"><%= @pendingprepare_count %></span>
                     <p>Awaiting Prepare</p>
                 </a>
               </li>
               <li class="nav-item">              
-                <a href="<%= samples_pendingreadytest_path %>">                
+                <a href="<%= step4_pendingreadytest_path %>">
                     <span class="badge badge-secondary"><%= @pendingreadytest_count %></span>
                     <p>Awaiting Ready</p>
                 </a>
               </li>
               <li class="nav-item">
-                <%= link_to samples_pendingtest_path do %>
+                <%= link_to step5_pendingtest_path do %>
                     <span class="badge badge-secondary"><%= @pendingtest_count %></span>
                     <p>Awaiting Test</p>
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to samples_pendinganalyze_path do %>
+                <%= link_to step6_pendinganalyze_path do %>
                   <span class="badge badge-secondary"><%= @pendinganalyze_count %></span>
                   <p>Awaiting Analysis</p>
                 <% end %>
@@ -79,6 +79,18 @@
           </ul>
         </div>
       </nav>
+      <% if notice %>
+        <div class="alert alert-success alert-dismissible" role="alert">
+          <button type="button" class="close" aria-label="Close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-warning alert-dismissible" role="alert">
+          <button type="button" class="close" aria-label="Close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+          <%= alert %>
+        </div>
+      <% end %>
     </div>
     <%= yield %>
   </body>

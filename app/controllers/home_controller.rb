@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
   def index
     if current_user && current_user.patient?
-      redirect_to patient_dashboard_path(current_user)
+      redirect_to user_path(current_user)
       return
     elsif current_user && current_user.staff?
       redirect_to staff_dashboard_path

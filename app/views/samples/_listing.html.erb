@@ -1,0 +1,26 @@
+<div class="container">
+  <h1><%= title %></h1>
+  <table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Sample</th>
+      <th>User</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <%= form_for :samples , url: path do |f| %>
+      <% samples.each do |sample| %>
+        <tr>
+          <td><%= link_to 'Sample', sample %></td>
+          <td><%= sample.user.id %></td>
+          <td> <%= message %><%= check_box_tag  'samples[ids][]', sample.id %></td>
+        </tr>
+      <% end %>
+      <div class="actions">
+        <%= f.submit %>
+      </div>
+    <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,3 +1,5 @@
+
+
 <div class="container text-center">
   <br>
     
@@ -22,6 +24,15 @@
     <strong>Email:</strong>
     <%= @user.email %>
   </p>
+  <h2> this should be my tests!!!</h2>
+  <div class="container">
+    <% @user.samples.each do | sample| %>
+    <div class="row">
+      <%= link_to sample.id, @sample %>
+      <%= sample.state %>
+    </div>
+    <% end %>
+  </div>
 
   <%= link_to 'Edit', edit_user_path(@user) %> |
   <%= link_to 'Back', users_path %>

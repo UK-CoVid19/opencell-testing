@@ -8,27 +8,27 @@ class SamplesController < ApplicationController
     @samples = policy_scope(Sample.all)
   end
 
-  def pendingdispatch
+  def step1_pendingdispatch
     @samples = Sample.is_requested
   end
 
-  def pendingreceive
+  def step2_pendingreceive
     @samples = Sample.is_dispatched
   end
 
-  def pendingprepare
+  def step3_pendingprepare
     @samples = Sample.is_received
   end
 
-  def pendingreadytest
+  def step4_pendingreadytest
     @samples = Sample.is_preparing
   end
 
-  def pendingtest
+  def step5_pendingtest
     @samples = Sample.is_prepared
   end
 
-  def pendinganalyze
+  def step6_pendinganalyze
     @samples = Sample.is_tested
   end
   # GET /samples/1
@@ -65,97 +65,29 @@ class SamplesController < ApplicationController
     end
   end
 
-  def ship
-    @sample.state = Sample.states[:dispatched]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully dispatched.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
+  def step1_bulkdispatched
+    bulk_action(Sample.states[:dispatched], step2_pendingreceive_path)
   end
 
-  def receive
-    @sample.state = Sample.states[:received]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
+  def step2_bulkreceived
+    bulk_action(Sample.states[:received], step3_pendingprepare_path)
   end
 
-  def prepare
-    @sample.state = Sample.states[:preparing]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully received.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
+  def step3_bulkprepared
+    bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
   end
 
-  def prepared
-    @sample.state = Sample.states[:prepared]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully Prepared.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
+  def step4_bulkreadytest
+    bulk_action(Sample.states[:prepared], step5_pendingtest_path)
   end
 
-  def tested
-    @sample.state = Sample.states[:tested]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully Tested.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
+  def step5_bulktested
+    bulk_action(Sample.states[:tested], step6_pendinganalyze_path)
   end
 
-  def bulktested
-    @samples = get_samples
-    Sample.transaction do
-      @samples.each do | sample|
-        sample.state = Sample.states[:tested]
-        sample.save!
-      end
-    end
-    respond_to do |format|
-        format.html { redirect_to samples_pendinganalyze_path, notice: 'Samples have been successfully Tested.' }
-    end
+  def step6_bulkanalysed
+    bulk_action(Sample.states[:analysed], home_index_path)
   end
-
-  def analyze
-    @sample.state = Sample.states[:analysed]
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully Analysed.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
 
   # PATCH/PUT /samples/1
   # PATCH/PUT /samples/1.json
@@ -182,22 +114,36 @@ class SamplesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_sample
-      @sample = Sample.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def sample_params
-      params.require(:sample).permit(:user_id, :state)
-    end
-
-    def get_samples
-      ids = params.dig(:samples, :ids)
-      if ids
-        @samples = Sample.find(ids)
-      else
-        []
+  def bulk_action(desired_state, redirect_path)
+    @samples = get_samples
+    Sample.transaction do
+      @samples.each do | sample|
+        sample.state = desired_state
+        sample.save!
       end
     end
+    respond_to do |format|
+      format.html { redirect_to redirect_path, notice: "Samples have been successfully #{Sample.states.to_hash.key(desired_state).capitalize}." }
+    end
+  end
+
+
+  def set_sample
+    @sample = Sample.find(params[:id])
+  end
+
+    # Only allow a list of trusted parameters through.
+  def sample_params
+    params.require(:sample).permit(:user_id, :state)
+  end
+
+  def get_samples
+    ids = params.dig(:samples, :ids)
+    if ids
+      @samples = Sample.find(ids)
+    else
+      []
+    end
+  end
 end
