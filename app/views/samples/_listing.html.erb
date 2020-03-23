@@ -1,26 +1,48 @@
 <div class="container">
+
+  <br>
   <h1><%= title %></h1>
-  <table class="table table-striped">
-    <thead class="thead-dark">
-    <tr>
-      <th>Sample</th>
-      <th>User</th>
-      <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <%= form_for :samples , url: path do |f| %>
-      <% samples.each do |sample| %>
+  <br>
+
+  <%= form_for :samples , url: path do |f| %>
+    <table id="datatable" class="table table-striped table-bordered">
+      <thead class="thead-dark">
         <tr>
-          <td><%= link_to 'Sample', sample %></td>
-          <td><%= sample.user.id %></td>
-          <td> <%= message %><%= check_box_tag  'samples[ids][]', sample.id %></td>
+          <th class="no-sort"><!-- check_box_tag--></th>
+          <th>Sample</th>
+          <th>User</th>
         </tr>
-      <% end %>
-      <div class="actions">
-        <%= f.submit %>
-      </div>
+        </thead>
+        <tbody>      
+        <% samples.each do |sample| %>
+          <tr>
+            <td><%= check_box_tag  'samples[ids][]', sample.id %></td>
+            <td><%= link_to 'Sample', sample %></td>
+            <td><%= sample.user.id %></td>
+          </tr>
+        <% end %>        
+      </tbody>
+    </table>
+    <div class="actions">
+      <%= f.submit :class => 'btn btn-dark' %>
+    </div>
     <% end %>
-    </tbody>
-  </table>
+
 </div>
+
+<script>
+  $(document).ready( function () {
+      $('#datatable').DataTable({
+        "bInfo" : false,
+        "columnDefs": [{
+          "targets": 'no-sort',
+          "orderable": false,
+         }],
+         "aaSorting": [],
+         "language": {
+            "lengthMenu": "Showing _MENU_ samples",
+            "emptyTable": "No samples to show"
+         }
+      });
+  } );
+</script>
