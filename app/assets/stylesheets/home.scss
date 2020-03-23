@@ -23,6 +23,9 @@ h1{
 }
 
 // jumbotron
+.teal{
+    background-color: #53bac4 !important;
+}
 .list-group-item-info{
     background-color: #53bac4 !important;
     color: white !important;
@@ -57,4 +60,10 @@ h1{
 
 .field{
     max-width: 500px;
+}
+
+.progress{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 30px;
 }

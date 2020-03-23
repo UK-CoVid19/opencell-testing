@@ -1,40 +1,40 @@
-
-
-<div class="container text-center">
+<div class="container">
   <br>
     
   <p id="notice"><%= notice %></p>
 
-  <p>
-    <strong>Name:</strong>
-    <%= @user.name %>
-  </p>
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      
+      <h2 class="text-center">My Sample Status</h2>
 
-  <p>
-    <strong>Dob:</strong>
-    <%= @user.dob %>
-  </p>
+      <div class="progress">
+        <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar(@user.samples.last.state) %>%" aria-valuenow="<%= create_progress_bar(@user.samples.last.state) %>" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      
+      <div class="alert alert-info" role="alert">Your sample has been recieved by our lab and is being processed. We will contact you once this is complete.</div>
+      
+      <div class="card">
+        <div class="card-header">My Profile</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Name: <%= @user.name %></li>
+          <li class="list-group-item">DOB: <%= @user.dob %></li>
+          <li class="list-group-item">Number: <%= @user.telno %></li>
+          <li class="list-group-item">Email: <%= @user.email %></li>
+        </ul>
+      </div>
 
-  <p>
-    <strong>Telno:</strong>
-    <%= @user.telno %>
-  </p>
+      <br>
 
-  <p>
-    <strong>Email:</strong>
-    <%= @user.email %>
-  </p>
-  <h2> this should be my tests!!!</h2>
-  <div class="container">
-    <% @user.samples.each do | sample| %>
-    <div class="row">
-      <%= link_to sample.id, @sample %>
-      <%= sample.state %>
+      <div class="card">
+          <div class="card-header">My Sample</div>
+          <ul class="list-group list-group-flush">
+            <% @user.samples.each do | sample| %>
+              <li class="list-group-item"><%= sample %></li>
+            <% end %>
+          </ul>
+        </div>
     </div>
-    <% end %>
+
   </div>
-
-  <%= link_to 'Edit', edit_user_path(@user) %> |
-  <%= link_to 'Back', users_path %>
-
 </div>

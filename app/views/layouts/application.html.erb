@@ -66,11 +66,6 @@
                 </a>
               </li>
             <% end %>
-            <li class="nav-item">
-            <% if current_user %>
-              <%= tag.p "Hello #{current_user.name}" %>
-            <% end  %>
-            </li>
             <% if user_signed_in? %>
               <li class="nav-item justify-content-end">
                 <%= link_to 'Sign out', destroy_user_session_path, method: :delete, class: 'nav-link'  %>
@@ -80,12 +75,14 @@
         </div>
       </nav>
       <% if notice %>
+        <br>
         <div class="alert alert-success alert-dismissible" role="alert">
           <button type="button" class="close" aria-label="Close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
           <%= notice %>
         </div>
       <% end %>
       <% if alert %>
+        <br>
         <div class="alert alert-warning alert-dismissible" role="alert">
           <button type="button" class="close" aria-label="Close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
           <%= alert %>

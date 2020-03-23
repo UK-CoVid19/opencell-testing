@@ -33,7 +33,7 @@ class SamplesController < ApplicationController
   end
   # GET /samples/1
   # GET /samples/1.json
-  def show
+  def show    
   end
 
   # GET /samples/new
