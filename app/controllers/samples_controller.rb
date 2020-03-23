@@ -118,9 +118,10 @@ class SamplesController < ApplicationController
   def bulk_action(desired_state, redirect_path)
     @samples = get_samples
     Sample.transaction do
-      @samples.each do | sample|
-        sample.state = desired_state
-        sample.save!
+      @samples.each do |sample_hash|
+        sample_hash[:sample].state = desired_state
+        sample_hash[:sample].records << Record.new({user: current_user, note: sample_hash[:note], state: desired_state})
+        sample_hash[:sample].save!
       end
     end
     respond_to do |format|
@@ -135,13 +136,13 @@ class SamplesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
   def sample_params
-    params.require(:sample).permit(:user_id, :state)
+    params.require(:sample).permit(:user_id, :state, :note)
   end
 
   def get_samples
-    ids = params.dig(:samples, :ids)
+    ids = params.dig(:samples)
     if ids
-      @samples = Sample.find(ids)
+      @samples = ids.map {|id| {sample: Sample.find(id[:id]), note: id[:note]}}
     else
       []
     end

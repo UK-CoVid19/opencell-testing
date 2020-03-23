@@ -10,6 +10,7 @@ class User < ApplicationRecord
   validates :email, presence: true
 
   has_many :samples
+  has_many :records
 
   enum role: [:patient, :staff]
 

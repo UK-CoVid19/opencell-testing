@@ -9,7 +9,7 @@
       <h2 class="text-center">My Sample Status</h2>
 
       <div class="progress">
-        <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar("dispatched") %>%" aria-valuenow="<%= create_progress_bar("dispatched") %>" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar(@user) %>%" aria-valuenow="<%= create_progress_bar(@user) %>" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
       
       <div class="alert alert-info" role="alert">Your sample has been recieved by our lab and is being processed. We will contact you once this is complete.</div>
@@ -27,10 +27,10 @@
       <br>
 
       <div class="card">
-          <div class="card-header">My Sample</div>
+          <div class="card-header">My Samples</div>
           <ul class="list-group list-group-flush">
             <% @user.samples.each do | sample| %>
-              <li class="list-group-item"><%= sample %></li>
+              <li class="list-group-item"><%= sample.state %></li>
             <% end %>
           </ul>
         </div>

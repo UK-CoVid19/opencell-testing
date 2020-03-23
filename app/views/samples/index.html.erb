@@ -17,7 +17,7 @@
     <tbody>
     <% @samples.each do |sample| %>
       <tr>
-        <td><%= sample.id %></td>
+        <td><%= link_to sample.id, sample %></td>
         <td><%= sample.state %></td>
         <td><%= sample.created_at %></td>
         <td><%= sample.updated_at %></td>

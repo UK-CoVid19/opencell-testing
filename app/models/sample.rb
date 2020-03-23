@@ -1,5 +1,6 @@
 class Sample < ApplicationRecord
   belongs_to :user
+  has_many :records
 
   enum state: %i[requested dispatched received preparing prepared tested analysed communicated]
 
@@ -11,4 +12,11 @@ class Sample < ApplicationRecord
   scope :is_tested, -> {where(:state => Sample.states[:tested])}
   scope :is_analysed, -> {where(:state => Sample.states[:analysed])}
   scope :is_communicated, -> {where(:state => Sample.states[:communicated])}
+
+  after_update :send_notification_after_analysis
+
+
+  def send_notification_after_analysis
+      ResultNotifyJob.perform_later(self) if(self.state_changed? && self.state == Sample.states[:analysed])
+  end
 end
