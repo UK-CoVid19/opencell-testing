@@ -8,7 +8,7 @@
     <table id="datatable" class="table table-striped table-bordered">
       <thead class="thead-dark">
         <tr>
-          <th class="no-sort"><!-- check_box_tag--></th>
+          <th class="no-sort" width="25"><!-- check_box_tag--></th>
           <th class="no-sort">Notes</th>
           <th>Sample</th>
           <th>User</th>
@@ -17,7 +17,7 @@
         <tbody>      
         <% samples.each do |sample| %>
           <tr>
-            <td><%= check_box_tag  'samples[][id]', sample.id %></td>
+            <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
             <td><%= text_field_tag  'samples[][note]' %></td>
             <td><%= link_to 'Sample', sample %></td>
             <td><%= sample.user.id %></td>

@@ -8,7 +8,7 @@
     <table id="datatable" class="table table-striped table-bordered">
       <thead class="thead-dark">
       <tr>
-        <th class="no-sort"><!-- check_box_tag--></th>
+        <th class="no-sort" width="25"><!-- check_box_tag--></th>
         <th class="no-sort">Notes</th>
         <th>Plate</th>
       </tr>
@@ -16,7 +16,7 @@
       <tbody>
       <% @plates.each do |plate| %>
         <tr>
-          <td><%= check_box_tag  'plates[][id]', plate.id %></td>
+          <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'plates[][id]', plate.id %></td>
           <td><%= plate.state %></td>
           <td><%= link_to 'Plate', plate %></td>
         </tr>
