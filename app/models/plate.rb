@@ -5,7 +5,6 @@ class Plate < ApplicationRecord
 
 end
 
-
 module PlateHelper
   @@rows = ('A'..'H')
   @@columns = (1..12)

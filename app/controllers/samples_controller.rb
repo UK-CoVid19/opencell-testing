@@ -137,7 +137,7 @@ class SamplesController < ApplicationController
         plate.wells.each do | well|
           well.samples.each do | sample|
             sample.prepared!
-            sample.records << Record.new({user: current_user, note: sample_hash[:note], state: Sample.states[:prepared]})
+            sample.records << Record.new({user: current_user, note: nil, state: Sample.states[:prepared]})
             sample.save!
           end
         end
@@ -153,7 +153,7 @@ class SamplesController < ApplicationController
         plate.wells.each do | well|
           well.samples.each do | sample|
             sample.tested!
-            sample.records << Record.new({user: current_user, note: sample_hash[:note], state: Sample.states[:tested]})
+            sample.records << Record.new({user: current_user, note: nil, state: Sample.states[:tested]})
             sample.save!
           end
         end
