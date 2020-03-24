@@ -1,6 +1,8 @@
 class Sample < ApplicationRecord
   belongs_to :user
   has_many :records
+  belongs_to :well, optional: true
+  validates :well, uniqueness: true, allow_nil: true
 
   enum state: %i[requested dispatched received preparing prepared tested analysed communicated]
 

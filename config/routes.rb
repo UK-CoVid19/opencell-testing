@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
 
-
+  resources :plates
   resources :samples
   devise_for :users
   resources :users

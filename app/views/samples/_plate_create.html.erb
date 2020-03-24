@@ -1,0 +1,27 @@
+<div class="container">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+    <tr>
+      <% (1..12).each do |col| %>
+        <th><%= col %></th>
+      <% end %>
+    </tr>
+    </thead>
+    <tbody>
+    <%= form_for(:samples, url: step3_sample_bulkprepared_path) do |form| %>
+      <% ('A'..'H').each do | row| %>
+        <tr>
+          <% (1..12).each do |col| %>
+            <%= hidden_field_tag 'wells[][row]', row  %>
+            <%= hidden_field_tag 'wells[][col]', col  %>
+            <td><i><%= "#{row + col.to_s}" %> </i><%= select_tag("wells[][id]", options_from_collection_for_select(@samples, "id", "id"), { include_blank: true , class: 'form-control'}) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      <div class="actions">
+        <%= form.submit "Create Plate" %>
+      </div>
+    <% end %>
+    </tbody>
+  </table>
+</div>

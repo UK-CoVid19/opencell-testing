@@ -74,7 +74,8 @@ class SamplesController < ApplicationController
   end
 
   def step3_bulkprepared
-    bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
+    get_plated_samples
+    # bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
   end
 
   def step4_bulkreadytest
@@ -129,6 +130,11 @@ class SamplesController < ApplicationController
     end
   end
 
+
+  def plate_samples
+    @plated_samples = get_plated_samples
+  end
+
   def set_sample
     @sample = Sample.find(params[:id])
   end
@@ -136,6 +142,37 @@ class SamplesController < ApplicationController
     # Only allow a list of trusted parameters through.
   def sample_params
     params.require(:sample).permit(:user_id, :state, :note)
+  end
+
+
+  def get_plated_samples
+    params.permit(:wells).each do |s|
+      s.permit(:id, :row, :col)
+    end
+
+    entries = params.dig(:wells)
+
+    if entries
+      valid_samples = entries.select {|e| !(e[:id].blank? || e[:row].blank? || e[:col].blank?)}
+      wells = valid_samples.map {|et| {sample: Sample.find(et[:id]), row: et[:row], col: et[:col]}}
+      Plate.transaction do
+        plate = Plate.create
+        Well.transaction do
+          wells.each do |well|
+            new_well = Well.create(row: well[:row], column: well[:col], plate: plate)
+            well[:sample].state = Sample.states[:preparing]
+            well[:sample].well = new_well
+            well[:sample].records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
+            well[:sample].save!
+          end
+        end
+      end
+
+
+    else
+      raise
+    end
+
   end
 
   def get_samples

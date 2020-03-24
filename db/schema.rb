@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_23_104313) do
+ActiveRecord::Schema.define(version: 2020_03_24_104612) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,11 @@ ActiveRecord::Schema.define(version: 2020_03_23_104313) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "plates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "records", force: :cascade do |t|
     t.bigint "sample_id"
     t.string "note"
@@ -57,7 +62,9 @@ ActiveRecord::Schema.define(version: 2020_03_23_104313) do
     t.integer "state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "well_id"
     t.index ["user_id"], name: "index_samples_on_user_id"
+    t.index ["well_id"], name: "index_samples_on_well_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -80,7 +87,18 @@ ActiveRecord::Schema.define(version: 2020_03_23_104313) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "wells", force: :cascade do |t|
+    t.string "row"
+    t.integer "column"
+    t.bigint "plate_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["plate_id"], name: "index_wells_on_plate_id"
+  end
+
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
   add_foreign_key "samples", "users"
+  add_foreign_key "samples", "wells"
+  add_foreign_key "wells", "plates"
 end

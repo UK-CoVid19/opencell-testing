@@ -1,0 +1,27 @@
+<div class="container">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+    <tr>
+      <% (1..12).each do |col| %>
+        <th><%= col %></th>
+      <% end %>
+    </tr>
+    </thead>
+    <tbody>
+    <%= form_with(model: plate) do |form| %>
+      <% ('A'..'H').each do | row| %>
+        <tr>
+          <% (1..12).each do |col| %>
+            <%= hidden_field_tag 'wells[][row]', row  %>
+            <%= hidden_field_tag 'wells[][col]', col  %>
+            <td><i><%= "#{row + col.to_s}" %> </i><%= well_check(plate, row, col) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      <div class="actions">
+        <%= form.submit "Reject Samples",  data: { confirm: "Are you sure?" }  %>
+      </div>
+    <% end %>
+    </tbody>
+  </table>
+</div>
