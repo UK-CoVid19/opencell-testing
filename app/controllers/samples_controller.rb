@@ -129,7 +129,6 @@ class SamplesController < ApplicationController
     end
   end
 
-
   def set_sample
     @sample = Sample.find(params[:id])
   end
@@ -140,9 +139,12 @@ class SamplesController < ApplicationController
   end
 
   def get_samples
-    ids = params.dig(:samples)
-    if ids
-      @samples = ids.map {|id| {sample: Sample.find(id[:id]), note: id[:note]}}
+    params.permit(:samples).each do |s|
+      s.permit(:id, :note)
+    end
+    entries = params.dig(:samples)
+    if entries
+      @samples = entries.select {|e| !(e[:id].nil? || e[:note].nil?)}.map {|id| {sample: Sample.find(id[:id]), note: id[:note]}}
     else
       []
     end

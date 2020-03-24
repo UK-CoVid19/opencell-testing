@@ -17,6 +17,6 @@ class Sample < ApplicationRecord
 
 
   def send_notification_after_analysis
-      ResultNotifyJob.perform_later(self) if(self.state_changed? && self.state == Sample.states[:analysed])
+      ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.analysed?)
   end
 end
