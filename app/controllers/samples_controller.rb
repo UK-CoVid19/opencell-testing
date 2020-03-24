@@ -26,7 +26,7 @@ class SamplesController < ApplicationController
   end
 
   def step5_pendingtest
-    @samples = Sample.is_prepared
+    @plates = Plate.all.where(state: Plate.states[:prepared])
   end
 
   def step6_pendinganalyze
@@ -86,11 +86,17 @@ class SamplesController < ApplicationController
   def step4_bulkreadytest
     plates = get_plates
     update_plate(plates)
-    bulk_action(Sample.states[:prepared], step5_pendingtest_path)
+    respond_to do |format|
+      format.html { redirect_to step5_pendingtest_path, notice: "Plate to qPCR" }
+    end
   end
 
   def step5_bulktested
-    bulk_action(Sample.states[:tested], step6_pendinganalyze_path)
+    plates = get_plates
+    run_plates_test(plates)
+    respond_to do |format|
+      format.html { redirect_to step6_pendinganalyze_path, notice: "Plate tested" }
+    end
   end
 
   def step6_bulkanalysed
@@ -138,6 +144,22 @@ class SamplesController < ApplicationController
       end
     end
   end
+
+  def run_plates_test(plates)
+    Plate.transaction do
+      plates.each do |plate|
+        plate.testing!
+        plate.wells.each do | well|
+          well.samples.each do | sample|
+            sample.tested!
+            sample.save!
+          end
+        end
+        plate.save!
+      end
+    end
+  end
+
   def bulk_action(desired_state, redirect_path)
     @samples = get_samples
     Sample.transaction do
