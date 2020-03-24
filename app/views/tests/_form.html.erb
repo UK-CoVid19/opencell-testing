@@ -1,0 +1,22 @@
+<%= form_with(model: [:plate, test], local: true) do |form| %>
+  <% if test.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(test.errors.count, "error") %> prohibited this test from being saved:</h2>
+
+      <ul>
+      <% test.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="container">
+    <%= form.label :result_file %>
+    <%= form.file_field :result_file %>
+    <%= form.label :user %>
+    <%= form.select :user_id, User.all.collect{|p| [p.name, p.id]} %>
+  </div>
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

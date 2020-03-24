@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  test: one
+  well: one
+  value: 1.5
+
+two:
+  test: two
+  well: two
+  value: 1.5

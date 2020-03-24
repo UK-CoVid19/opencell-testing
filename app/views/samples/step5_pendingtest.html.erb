@@ -1,1 +1,48 @@
-<%= render partial: 'listing', locals: {samples: @samples, path: step5_sample_bulk_tested_path, message: 'Mark As Tested', title: 'Awaiting Test', update_text: 'Mark as Tested' } %>
+<div class="container">
+
+  <br>
+  <h1>Start qPCR</h1>
+  <br>
+
+  <%= form_for :plates , url: step5_sample_bulk_tested_path do |f| %>
+    <table id="datatable" class="table table-striped table-bordered">
+      <thead class="thead-dark">
+      <tr>
+        <th class="no-sort"><!-- check_box_tag--></th>
+        <th class="no-sort">Note</th>
+        <th>Plate</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @plates.each do |plate| %>
+        <tr>
+          <td><%= check_box_tag  'plates[][id]', plate.id %></td>
+          <td><%= plate.state %></td>
+          <td><%= link_to 'Plate', plate %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <div class="actions">
+      <%= f.submit "Run Test", :class => 'btn btn-dark' %>
+    </div>
+  <% end %>
+
+</div>
+
+<script>
+    $(document).ready( function () {
+        $('#datatable').DataTable({
+            "bInfo" : false,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false,
+            }],
+            "aaSorting": [],
+            "language": {
+                "lengthMenu": "Showing _MENU_ samples",
+                "emptyTable": "No samples to show"
+            }
+        });
+    } );
+</script>
