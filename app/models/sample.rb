@@ -1,10 +1,10 @@
 class Sample < ApplicationRecord
   belongs_to :user
-  has_many :records
+  has_many :records, dependent: :destroy
   belongs_to :well, optional: true
   validates :well, uniqueness: true, allow_nil: true
 
-  enum state: %i[requested dispatched received preparing prepared tested analysed communicated]
+  enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected]
 
   scope :is_requested, -> {where(:state => Sample.states[:requested])}
   scope :is_dispatched, -> {where(:state => Sample.states[:dispatched])}

@@ -1,4 +1,4 @@
-ActiveAdmin.register Sample do
+ActiveAdmin.register Well do
 
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
@@ -12,6 +12,6 @@ ActiveAdmin.register Sample do
   #   permitted << :other if params[:action] == 'create' && current_user.admin?
   #   permitted
   # end
-   permit_params :state, :user_id, :well_id
+  permit_params :row, :column, :plate_id
 
 end

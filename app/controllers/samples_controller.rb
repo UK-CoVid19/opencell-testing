@@ -1,3 +1,4 @@
+
 class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
@@ -74,7 +75,11 @@ class SamplesController < ApplicationController
   end
 
   def step3_bulkprepared
+    # binding.pry
     get_plated_samples
+    respond_to do |format|
+      format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+    end
     # bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
   end
 
@@ -149,26 +154,31 @@ class SamplesController < ApplicationController
     params.permit(:wells).each do |s|
       s.permit(:id, :row, :col)
     end
-
     entries = params.dig(:wells)
 
     if entries
       valid_samples = entries.select {|e| !(e[:id].blank? || e[:row].blank? || e[:col].blank?)}
       wells = valid_samples.map {|et| {sample: Sample.find(et[:id]), row: et[:row], col: et[:col]}}
       Plate.transaction do
-        plate = Plate.create
-        Well.transaction do
-          wells.each do |well|
-            new_well = Well.create(row: well[:row], column: well[:col], plate: plate)
-            well[:sample].state = Sample.states[:preparing]
-            well[:sample].well = new_well
-            well[:sample].records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
-            well[:sample].save!
+        plate = Plate.create!
+        PlateHelper.rows.each do |row|
+          PlateHelper.columns.each do |column|
+            puts row
+            puts column
+            new_well = Well.create!(row: row, column: column, plate: plate)
+            # if( wells.find {|well| well[:col] == column and well[:row] == row})
+            matching_well = wells.find { |w| w[:col] == column.to_s && w[:row] == row}
+            puts matching_well
+            if(matching_well)
+              puts 'matched!!'
+              matching_well[:sample].well = new_well
+              matching_well[:sample].records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
+              matching_well[:sample].state = Sample.states[:preparing]
+              matching_well[:sample].save!
+            end
           end
         end
       end
-
-
     else
       raise
     end

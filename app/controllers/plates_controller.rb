@@ -69,6 +69,6 @@ class PlatesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def plate_params
-      params.fetch(:plate, {})
+      params.require(:plate).permit!
     end
 end

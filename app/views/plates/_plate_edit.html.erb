@@ -9,15 +9,22 @@
     </thead>
     <tbody>
     <%= form_with(model: plate) do |form| %>
-      <% ('A'..'H').each do | row| %>
+      <% plate.wells.group_by {|w| w.row }.each do |row, row_wells| %>
         <tr>
-          <% (1..12).each do |col| %>
-            <%= hidden_field_tag 'wells[][row]', row  %>
-            <%= hidden_field_tag 'wells[][col]', col  %>
-            <td><i><%= "#{row + col.to_s}" %> </i><%= well_check(plate, row, col) %></td>
-          <% end %>
+        <%= form.fields_for :wells, row_wells do |builder| %>
+            <% if builder.object.samples.any? %>
+              <%= builder.fields_for :samples do |sample_builder| %>
+                <td>
+                  <%= "#{row} #{builder.object.column}" %>
+                  <%= sample_builder.select(:state, options_for_select([['Reject', 'rejected']]), {include_blank: true }) %>
+                </td>
+              <% end %>
+            <% else %>
+              <td>No Sample</td>
+            <% end %>
+        <% end %>
         </tr>
-      <% end %>
+    <% end  %>
       <div class="actions">
         <%= form.submit "Reject Samples",  data: { confirm: "Are you sure?" }  %>
       </div>
