@@ -30,7 +30,7 @@ class SamplesController < ApplicationController
   end
 
   def step6_pendinganalyze
-    @samples = Sample.is_tested
+    @plates = Plate.all.where(state: Plate.states[:testing])
   end
   # GET /samples/1
   # GET /samples/1.json
@@ -137,6 +137,7 @@ class SamplesController < ApplicationController
         plate.wells.each do | well|
           well.samples.each do | sample|
             sample.prepared!
+            sample.records << Record.new({user: current_user, note: sample_hash[:note], state: Sample.states[:prepared]})
             sample.save!
           end
         end
@@ -152,6 +153,7 @@ class SamplesController < ApplicationController
         plate.wells.each do | well|
           well.samples.each do | sample|
             sample.tested!
+            sample.records << Record.new({user: current_user, note: sample_hash[:note], state: Sample.states[:tested]})
             sample.save!
           end
         end
@@ -208,7 +210,6 @@ class SamplesController < ApplicationController
             matching_well = wells.find { |w| w[:col] == column.to_s && w[:row] == row}
             puts matching_well
             if(matching_well)
-              puts 'matched!!'
               matching_well[:sample].well = new_well
               matching_well[:sample].records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
               matching_well[:sample].state = Sample.states[:preparing]
