@@ -22,7 +22,7 @@ class SamplesController < ApplicationController
   end
 
   def step4_pendingreadytest
-    @samples = Sample.is_preparing
+    @plates = Plate.all.where(state: Plate.states[:preparing])
   end
 
   def step5_pendingtest
@@ -84,6 +84,8 @@ class SamplesController < ApplicationController
   end
 
   def step4_bulkreadytest
+    plates = get_plates
+    update_plate(plates)
     bulk_action(Sample.states[:prepared], step5_pendingtest_path)
   end
 
@@ -121,6 +123,21 @@ class SamplesController < ApplicationController
 
   private
 
+
+  def update_plate(plates)
+    Plate.transaction do
+      plates.each do |plate|
+        plate.prepared!
+        plate.wells.each do | well|
+          well.samples.each do | sample|
+            sample.prepared!
+            sample.save!
+          end
+        end
+        plate.save!
+      end
+    end
+  end
   def bulk_action(desired_state, redirect_path)
     @samples = get_samples
     Sample.transaction do
@@ -166,7 +183,6 @@ class SamplesController < ApplicationController
             puts row
             puts column
             new_well = Well.create!(row: row, column: column, plate: plate)
-            # if( wells.find {|well| well[:col] == column and well[:row] == row})
             matching_well = wells.find { |w| w[:col] == column.to_s && w[:row] == row}
             puts matching_well
             if(matching_well)
@@ -196,4 +212,14 @@ class SamplesController < ApplicationController
       []
     end
   end
+
+   def get_plates
+     params.permit(:plates).each do |s|
+       s.permit(:id)
+     end
+
+     plates = params.dig(:plates)
+     return  plates.map {|plate| Plate.find(plate[:id])}
+
+   end
 end

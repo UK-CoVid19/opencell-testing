@@ -1,1 +1,48 @@
-<%= render partial: 'listing', locals: {samples: @samples, path: step4_sample_bulk_ready_test_path, message: 'Mark As Ready to Test', title: 'Awaiting Ready', update_text: 'Mark as Ready' } %>
+<div class="container">
+
+  <br>
+  <h1>Plates Ready to go to qPCR</h1>
+  <br>
+
+  <%= form_for :plates , url: step4_sample_bulk_ready_test_path do |f| %>
+    <table id="datatable" class="table table-striped table-bordered">
+      <thead class="thead-dark">
+      <tr>
+        <th class="no-sort"><!-- check_box_tag--></th>
+        <th class="no-sort">Note</th>
+        <th>Sample</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @plates.each do |plate| %>
+        <tr>
+          <td><%= check_box_tag  'plates[][id]', plate.id %></td>
+          <td><%= plate.state %></td>
+          <td><%= link_to 'Plate', plate %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <div class="actions">
+      <%= f.submit "Begin Testing", :class => 'btn btn-dark' %>
+    </div>
+  <% end %>
+
+</div>
+
+<script>
+    $(document).ready( function () {
+        $('#datatable').DataTable({
+            "bInfo" : false,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false,
+            }],
+            "aaSorting": [],
+            "language": {
+                "lengthMenu": "Showing _MENU_ samples",
+                "emptyTable": "No samples to show"
+            }
+        });
+    } );
+</script>

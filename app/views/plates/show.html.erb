@@ -1,4 +1,28 @@
 <p id="notice"><%= notice %></p>
+<div class="container">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+    <tr>
+      <% (1..12).each do |col| %>
+        <th><%= col %></th>
+      <% end %>
+    </tr>
+    </thead>
+    <tbody>
+    <% @plate.wells.group_by {|well| well[:row]}.each do |row, wells| %>
+      <tr>
+        <% wells.each do |well| %>
+          <% if sample_exists?(well) %>
+            <td><%= "Sample here!!!"%></td>
+          <% else  %>
+            <td><%= "#{well[:row]} #{well[:column]}"%></td>
+          <% end %>
 
-<%= link_to 'Edit', edit_plate_path(@plate) %> |
-<%= link_to 'Back', plates_path %>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <%= link_to 'Edit', edit_plate_path(@plate) %> |
+  <%= link_to 'Back', plates_path %>
+</div>
