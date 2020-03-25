@@ -5,6 +5,11 @@
   <p>
     <strong>User:</strong>
     <%= @sample.user.email %>
+    <br/>
+    <strong>UID:</strong>
+    <%= @sample.uid %>
+    <br/>
+    <%= image_tag @sample.qr_code.to_data_url %>
   </p>
   <div class="records-list">
 

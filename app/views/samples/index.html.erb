@@ -8,16 +8,17 @@
     <thead class="thead-dark">
     <tr>
       <th>Id</th>
+      <th>UID</th>
       <th>State</th>
       <th>Created At</th>
       <th>Updated At</th>
     </tr>
     </thead>
-
     <tbody>
     <% @samples.each do |sample| %>
       <tr>
         <td><%= link_to sample.id, sample %></td>
+        <td><%= sample.uid %></td>
         <td><%= sample.state %></td>
         <td><%= sample.created_at %></td>
         <td><%= sample.updated_at %></td>
