@@ -201,22 +201,31 @@ class SamplesController < ApplicationController
       valid_samples = entries.select {|e| !(e[:id].blank? || e[:row].blank? || e[:col].blank?)}
       wells = valid_samples.map {|et| {sample: Sample.find(et[:id]), row: et[:row], col: et[:col]}}
       Plate.transaction do
-        plate = Plate.create!
+        plate = Plate.new
+        well_instances = []
+        updating_samples = []
         PlateHelper.rows.each do |row|
           PlateHelper.columns.each do |column|
-            puts row
-            puts column
-            new_well = Well.create!(row: row, column: column, plate: plate)
-            matching_well = wells.find { |w| w[:col] == column.to_s && w[:row] == row}
-            puts matching_well
+            new_well = Well.new(row: row, column: column)
+            well_instances << new_well
+            matching_well = wells.find { |w| w[:col] == column.to_s && w[:row] == row }
             if(matching_well)
-              matching_well[:sample].well = new_well
-              matching_well[:sample].records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
-              matching_well[:sample].state = Sample.states[:preparing]
-              matching_well[:sample].save!
+              sample = matching_well[:sample]
+              sample.tap do |s|
+                s.records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
+                s.state = Sample.states[:preparing]
+                s.plate = plate
+                s.well = new_well
+              end
+              plate.samples << sample
+              new_well.samples << sample
+              updating_samples << sample
             end
           end
         end
+        plate.wells = well_instances
+        plate.save!
+        updating_samples.each {|s| s.save!}
       end
     else
       raise

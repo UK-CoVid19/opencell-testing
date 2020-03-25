@@ -2,7 +2,9 @@ class Sample < ApplicationRecord
   belongs_to :user
   has_many :records, dependent: :destroy
   belongs_to :well, optional: true
-  validates :well, uniqueness: true, allow_nil: true
+  belongs_to :plate, optional: true
+  validate :unique_well_in_plate?, on: :update
+
 
   enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected]
 
@@ -17,6 +19,14 @@ class Sample < ApplicationRecord
 
   after_update :send_notification_after_analysis
 
+  private
+  def unique_well_in_plate?
+    return if plate.nil?
+    matched = plate.samples.find_by(id: id)
+    if(matched)
+      errors.add(:well, 'Sample exists in another well on this plate')
+    end
+  end
 
   def send_notification_after_analysis
       ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.analysed?)
