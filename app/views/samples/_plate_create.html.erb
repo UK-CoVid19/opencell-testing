@@ -41,7 +41,7 @@
                 <td>
                   <%= hidden_field_tag 'wells[][row]', row  %>
                   <%= hidden_field_tag 'wells[][col]', col  %>
-                  <input type="text" class="form-control">
+                  <input  type="text" class="form-control" id="wells[][uid]">
                 </td>
               <% end %>
             </tr>
@@ -55,7 +55,6 @@
 </div>
 <br><br>
 
-<script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
 <script>
   var video = document.createElement("video");
   var canvasElement = document.getElementById("canvas");
