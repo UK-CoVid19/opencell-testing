@@ -135,10 +135,10 @@ class SamplesController < ApplicationController
       plates.each do |plate|
         plate.prepared!
         plate.wells.each do | well|
-          well.samples.each do | sample|
-            sample.prepared!
-            sample.records << Record.new({user: current_user, note: nil, state: Sample.states[:prepared]})
-            sample.save!
+          well.sample.tap do |s|
+            s.prepared!
+            s.records << Record.new({user: current_user, note: nil, state: Sample.states[:prepared]})
+            s.save!
           end
         end
         plate.save!
@@ -151,10 +151,10 @@ class SamplesController < ApplicationController
       plates.each do |plate|
         plate.testing!
         plate.wells.each do | well|
-          well.samples.each do | sample|
-            sample.tested!
-            sample.records << Record.new({user: current_user, note: nil, state: Sample.states[:tested]})
-            sample.save!
+          well.sample.tap do |s|
+            s.tested!
+            s.records << Record.new({user: current_user, note: nil, state: Sample.states[:tested]})
+            s.save!
           end
         end
         plate.save!
@@ -199,7 +199,7 @@ class SamplesController < ApplicationController
 
     if entries
       valid_samples = entries.select {|e| !(e[:id].blank? || e[:row].blank? || e[:col].blank?)}
-      wells = valid_samples.map {|et| {sample: Sample.find(et[:id]), row: et[:row], col: et[:col]}}
+      wells = valid_samples.map {|et| {sample: Sample.find_by(uid:et[:uid]), row: et[:row], col: et[:col]}}
       Plate.transaction do
         plate = Plate.new
         well_instances = []
@@ -218,7 +218,7 @@ class SamplesController < ApplicationController
                 s.well = new_well
               end
               plate.samples << sample
-              new_well.samples << sample
+              new_well.sample = sample
               updating_samples << sample
             end
           end

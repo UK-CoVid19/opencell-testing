@@ -1,38 +1,43 @@
+<p id="notice"><%= notice %></p>
 <div class="container text-center">
   <br>
-  
-  <p id="notice"><%= notice %></p>
-  <p>
-    <strong>User:</strong>
-    <%= @sample.user.email %>
-    <br/>
-    <strong>UID:</strong>
-    <%= @sample.uid %>
-    <br/>
-    <%= image_tag @sample.qr_code.to_data_url %>
-  </p>
-  <div class="records-list">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="records-list">
 
-    <div class="list-group">
-      <% @sample.records.each do |record| %>
-        <div class="list-group-item list-group-item-action flex-column align-items-start">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1"><%= "Changed to #{Sample.states.key(record.state).capitalize}" %></h5>
-            <small><%= record.updated_at.strftime('%A %-d %b %H:%m') %></small>
-          </div>
-          <p class="mb-1"><%= "#{record.note}" %></p>
-          <small><%= link_to record.user.name, record.user unless record.user.nil? %></small>
+        <div class="list-group">
+          <% @sample.records.each do |record| %>
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1"><%= "Changed to #{Sample.states.key(record.state).capitalize}" %></h5>
+                <small><%= record.updated_at.strftime('%A %-d %b %H:%m') %></small>
+              </div>
+              <p class="mb-1"><%= "#{record.note}" %></p>
+              <small><%= link_to record.user.name, record.user unless record.user.nil? %></small>
+            </div>
+          <% end  %>
         </div>
-      <% end  %>
+      </div>
     </div>
+    <div class="col-md-6">
+      <p>
+        <strong>User:</strong>
+        <%= @sample.user.email %>
+        <br/>
+        <strong>UID:</strong>
+        <%= @sample.uid %>
+        <br/>
+        <%= image_tag @sample.qr_code.resize(400, 400).to_data_url %>
+        <p>
+          <strong>State:</strong>
+          <%= @sample.state %>
+        </p>
+      </p>
+    </div>
+
   </div>
-
-  <p>
-    <strong>State:</strong>
-    <%= @sample.state %>
-  </p>
-
-  <%= link_to 'Edit', edit_sample_path(@sample) %> |
-  <%= link_to 'Back', samples_path %>
-
+  <div class="row">
+    <%= link_to 'Edit', edit_sample_path(@sample) %> |
+    <%= link_to 'Back', samples_path %>
+  </div>
 </div>
