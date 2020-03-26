@@ -31,20 +31,3 @@
     <% end %>
 
 </div>
-
-<script>
-  $(document).ready( function () {
-      $('#datatable').DataTable({
-        "bInfo" : false,
-        "columnDefs": [{
-          "targets": 'no-sort',
-          "orderable": false,
-         }],
-         "aaSorting": [],
-         "language": {
-            "lengthMenu": "Showing _MENU_ samples",
-            "emptyTable": "No samples to show"
-         }
-      });
-  } );
-</script>

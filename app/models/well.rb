@@ -1,5 +1,5 @@
 class Well < ApplicationRecord
   belongs_to :plate
-  has_many :samples, dependent: :nullify
-  accepts_nested_attributes_for :samples
+  has_one :sample
+  accepts_nested_attributes_for :sample
 end
