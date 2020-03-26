@@ -75,7 +75,6 @@ class SamplesController < ApplicationController
   end
 
   def step3_bulkprepared
-    # binding.pry
     get_plated_samples
     respond_to do |format|
       format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
@@ -192,7 +191,6 @@ class SamplesController < ApplicationController
 
 
   def get_plated_samples
-    binding.pry
     params.permit(:wells).each do |s|
       s.permit(:uid, :row, :col)
     end

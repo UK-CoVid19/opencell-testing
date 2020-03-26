@@ -42,7 +42,6 @@ class Sample < ApplicationRecord
 
   private
   def unique_well_in_plate?
-    binding.pry
     return if plate.nil?
     matched = plate.samples.find_by(id: id)
     if(matched)

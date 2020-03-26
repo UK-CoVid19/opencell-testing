@@ -74,22 +74,29 @@
     console.log(event);
   }
 
+  function validate_plate(uid, success, failure){
+    if(!pending_samples.includes(uid)){
+        const err = 'You cannot process this sample ID';
+        failure(err)
+    }else{
+      if(set_samples.includes(uid)){
+          const err = 'Sample has already been assigned to a well';
+
+          failure(err);
+      }else{
+          set_samples.push(uid);
+          success();
+      }
+    }
+  }
+
   $(".form-control").change(function(evt){
       const uid = evt.currentTarget.value;
-      if(!pending_samples.includes(uid)){
-          alert('You cannot process this sample ID');
-          evt.currentTarget.value = null
-      }else{
-        if(set_samples.includes(uid)){
-            alert('Sample has already been assigned to a well');
-            evt.currentTarget.value = null;
-        }else{
-            set_samples.push(uid);
-        }
-      }
+      validate_plate(uid, null, function(err){
+        evt.currentTarget.value = null;
+        alert(err);
+      })
   });
-
-
 
   function drawLine(begin, end, color) {
     canvas.beginPath();
@@ -132,16 +139,23 @@
         outputData.innerText = code.data;
 
         if (code.data){
+          const uid = code.data;
+          console.log(uid);
           new Audio('/ping.mp3').play();
-          console.log(code.data);
-          $("input.form-control:eq( " + cell_index + " )").val(code.data);
-          var row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
-          var col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
-          $("#wellToInsertSample").text(row + col);
+          validate_plate(uid, function (){
+            // success
+            $("input.form-control:eq( " + cell_index + " )").val(uid);
+            var row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
+            var col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
+            $("#wellToInsertSample").text(row + col);
+            cell_index ++;
+          }, function(err){
+            // failure
+            $("#wellToInsertSample").text(err);
+          })
           qr_code_read = true;
           outputContainer.hidden = false;
         }
-
       } else {
         outputData.parentElement.hidden = true;
       }
@@ -151,8 +165,7 @@
     }
   }
 
-  $("#nextSampleButton").on( "click", function() {
-    cell_index ++;
+  $("#nextSampleButton").on( "click", function() {    
     tick();
   });
 
