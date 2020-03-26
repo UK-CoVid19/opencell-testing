@@ -23,7 +23,7 @@ class Sample < ApplicationRecord
   after_update :send_notification_after_analysis
 
   def qr_code
-    qrcode = RQRCode::QRCode.new("http://github.com/")
+    qrcode = RQRCode::QRCode.new(uid)
     png = qrcode.as_png(
         bit_depth: 1,
         border_modules: 4,
