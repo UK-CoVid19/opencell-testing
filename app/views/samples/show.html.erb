@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+
 <div class="container text-center">
   <br>
   <div class="row">
@@ -30,7 +30,7 @@
         <%= image_tag @sample.qr_code.resize(400, 400).to_data_url %>
         <p>
           <strong>State:</strong>
-          <%= @sample.state %>
+          <%= get_badge(@sample.state) %>
         </p>
       </p>
     </div>

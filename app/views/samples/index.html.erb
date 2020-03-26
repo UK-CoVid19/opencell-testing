@@ -19,7 +19,7 @@
       <tr>
         <td><%= link_to sample.id, sample %></td>
         <td><%= sample.uid %></td>
-        <td><%= sample.state %></td>
+        <td><%= get_badge(sample.state) %></td>
         <td><%= sample.created_at %></td>
         <td><%= sample.updated_at %></td>
       </tr>

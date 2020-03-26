@@ -192,18 +192,18 @@ class SamplesController < ApplicationController
 
 
   def get_plated_samples
+    binding.pry
     params.permit(:wells).each do |s|
-      s.permit(:id, :row, :col)
+      s.permit(:uid, :row, :col)
     end
     entries = params.dig(:wells)
 
     if entries
-      valid_samples = entries.select {|e| !(e[:id].blank? || e[:row].blank? || e[:col].blank?)}
+      valid_samples = entries.select {|e| !(e[:uid].blank? || e[:row].blank? || e[:col].blank?)}
       wells = valid_samples.map {|et| {sample: Sample.find_by(uid:et[:uid]), row: et[:row], col: et[:col]}}
       Plate.transaction do
         plate = Plate.new
         well_instances = []
-        updating_samples = []
         PlateHelper.rows.each do |row|
           PlateHelper.columns.each do |column|
             new_well = Well.new(row: row, column: column)
@@ -219,13 +219,12 @@ class SamplesController < ApplicationController
               end
               plate.samples << sample
               new_well.sample = sample
-              updating_samples << sample
             end
           end
         end
         plate.wells = well_instances
         plate.save!
-        updating_samples.each {|s| s.save!}
+
       end
     else
       raise
