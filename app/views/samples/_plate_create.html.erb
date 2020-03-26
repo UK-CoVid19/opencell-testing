@@ -64,6 +64,33 @@
   var outputData = document.getElementById("outputData");
   var cell_index = 0;
 
+  let pending_samples = []
+  let set_samples = []
+  fetch('/samples/pendingprepare.json')
+      .then(res => res.json())
+      .then( js => pending_samples = js.map(item => item.uid))
+
+  const handleChange = function(event){
+    console.log(event);
+  }
+
+  $(".form-control").change(function(evt){
+      const uid = evt.currentTarget.value;
+      if(!pending_samples.includes(uid)){
+          alert('You cannot process this sample ID');
+          evt.currentTarget.value = null
+      }else{
+        if(set_samples.includes(uid)){
+            alert('Sample has already been assigned to a well');
+            evt.currentTarget.value = null;
+        }else{
+            set_samples.push(uid);
+        }
+      }
+  });
+
+
+
   function drawLine(begin, end, color) {
     canvas.beginPath();
     canvas.moveTo(begin.x, begin.y);

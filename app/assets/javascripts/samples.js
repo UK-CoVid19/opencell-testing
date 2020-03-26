@@ -1,5 +1,8 @@
 var dataTable = null
 
+let samples = []
+
+
 $(document).on('turbolinks:before-cache', function(){
   if (dataTable !== null) {
    dataTable.destroy()
@@ -21,4 +24,5 @@ $(document).on('turbolinks:load', function(){
         },
         "stateSave": true
     });
+
 });
