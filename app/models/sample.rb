@@ -6,6 +6,7 @@ class Sample < ApplicationRecord
   belongs_to :well, optional: true
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update
+  validates :uid, uniqueness: true
 
   before_create :set_uid
 

@@ -1,7 +1,7 @@
 module PlatesHelper
 
   def sample_exists?(well)
-    return well.samples && well.samples.any?
+    return !well.sample.nil?
   end
 
 
