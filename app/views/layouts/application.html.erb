@@ -89,6 +89,14 @@
         </div>
       <% end %>
     </div>
-    <%= yield %>
+    <div class="application-container">
+      <%= yield %>
+    </div>
+    <footer class="container-fluid bg-1 text-center">
+      <br>
+      <span><p class="bg1-font"> <%= link_to 'Privacy Policy', "/privacy" %> | <%= link_to 'Terms of Service', "/terms-of-service" %> | <%= link_to 'About Us', "/about" %> | <%= link_to "Sitemap", '/sitemap.xml' %> | <%= link_to "Contact", 'mailto:info@dummyurl.com' %></p> </span>
+      <span><p class="bg1-font">Copyright © 2019 <a href="https://dummyurl.com" class="bg1-font">dummyurl.com</a> All rights reserved.</p></span>
+    </footer>
+
   </body>
 </html>

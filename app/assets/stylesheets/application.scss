@@ -12,6 +12,13 @@
  *
  *= require_tree .
  *= require_self
+  *= require jquery-ui/autocomplete
  */
 
 @import "bootstrap";
+
+
+
+.application-container {
+  min-height: 65vh;
+}

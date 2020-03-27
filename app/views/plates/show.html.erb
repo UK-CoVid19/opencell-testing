@@ -10,14 +10,14 @@
     </tr>
     </thead>
     <tbody>
-    <% @plate.wells.group_by {|well| well[:row]}.each do |row, wells| %>
+    <% @plate.wells.sort_by{|w| w.row}.group_by {|well| well[:row]}.each do |row, wells| %>
       <tr>
         <td class="dark-cell text-center"><%= row %></td>
-        <% wells.each do |well| %>
+        <% wells.sort_by{|w|w.column}.each do |well| %>
           <% if sample_exists?(well) %>
-            <td><%= "Sample here!!!"%></td>
+            <td class="marked-cell"><%= link_to "#{well.row}#{well.column}", well.sample %></td>
           <% else  %>
-            <td><%= "#{well[:row]} #{well[:column]}"%></td>
+            <td><%= "#{well.row}#{well.column}"%></td>
           <% end %>
 
         <% end %>

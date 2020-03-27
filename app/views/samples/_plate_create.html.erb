@@ -41,7 +41,7 @@
                 <td>
                   <%= hidden_field_tag 'wells[][row]', row  %>
                   <%= hidden_field_tag 'wells[][col]', col  %>
-                  <input type="text" class="form-control" name="wells[][uid]">
+                  <input type="text" class="form-control sample-assign" name="wells[][uid]">
                 </td>
               <% end %>
             </tr>
@@ -85,10 +85,30 @@
           failure(err);
       }else{
           set_samples.push(uid);
-          success();
+          if(typeof success === 'function'){
+              success();
+          }else{
+              return
+          }
+
       }
     }
   }
+
+  function getRemainingSamples(){
+      console.log('get autocomplete');
+      console.log(pending_samples)
+      console.log(set_samples);
+      to_complete =  pending_samples.filter(x => !set_samples.includes(x));
+      console.log(to_complete);
+      return to_complete;
+  }
+
+  $( ".sample-assign" ).autocomplete({
+      source: function (request, response) {
+          response(getRemainingSamples());
+      },
+  });
 
   $(".form-control").change(function(evt){
       const uid = evt.currentTarget.value;

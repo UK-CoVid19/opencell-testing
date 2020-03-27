@@ -13,8 +13,8 @@ class ApplicationController < ActionController::Base
     @pendingdispatch_count = Sample.is_requested.size
     @pendingreceive_count = Sample.is_dispatched.size
     @pendingprepare_count = Sample.is_received.size
-    @pendingreadytest_count = Sample.is_preparing.size
-    @pendingtest_count = Sample.is_prepared.size
-    @pendinganalyze_count = Sample.is_tested.size
+    @pendingreadytest_count = Plate.is_preparing.size
+    @pendingtest_count = Plate.is_prepared.size
+    @pendinganalyze_count = Plate.is_testing.size
   end
 end
