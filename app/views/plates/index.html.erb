@@ -1,16 +1,15 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <h1>Plates</h1>
 
-<h1>Plates</h1>
-
-<table>
-  <thead>
+  <table id="datatable">
+    <thead>
     <tr>
       <th> Plate</th>
       <th colspan="3"></th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
+    <tbody>
     <% @plates.each do |plate| %>
       <tr>
         <td><%= plate.id %></td>
@@ -19,9 +18,11 @@
         <td><%= link_to 'Destroy', plate, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
 
-<br>
+  <br>
 
-<%= link_to 'New Plate', new_plate_path %>
+  <%= link_to 'New Plate', new_plate_path %>
+</div>
+

@@ -5,7 +5,7 @@ class TestsController < ApplicationController
   # GET /tests
   # GET /tests.json
   def index
-    @tests = Test.all
+    @tests = Test.all.where(plate: @plate)
   end
 
   # GET /tests/1
@@ -15,7 +15,8 @@ class TestsController < ApplicationController
 
   # GET /tests/new
   def new
-    @test = Test.new({plate: @plate})
+    @test_results = @plate.samples.map {|s| TestResult.new({well: s.well})}
+    @test = Test.new({plate: @plate, test_results: @test_results})
   end
 
   # GET /tests/1/edit
@@ -27,10 +28,10 @@ class TestsController < ApplicationController
   def create
     tp = test_params.merge!(plate_id: params[:plate_id])
     @test = Test.new(tp)
-
+    @test.plate.complete!
     respond_to do |format|
       if @test.save
-        format.html { redirect_to plate_tests_url(@plate, @test), notice: 'Test was successfully created.' }
+        format.html { redirect_to plate_tests_url(@plate), notice: 'Test was successfully created.' }
         format.json { render :show, status: :created, location: @test }
       else
         format.html { render :new }
@@ -75,6 +76,6 @@ class TestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def test_params
-      params.fetch(:test, {}).permit(:result_file, :user_id)
+      params.fetch(:test, {}).permit(:result_file,:user_id, test_results_attributes: [:value, :well_id] )
     end
 end
