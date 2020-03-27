@@ -11,11 +11,11 @@
     </thead>
     <tbody>
 
-      <% plate.wells.group_by {|w| w.row }.each do |row, row_wells| %>
+      <% plate.wells.sort_by{|w| w.row}.group_by {|w| w.row }.each do |row, row_wells| %>
         <tr>
         <td class="dark-cell text-center"><%= row %></td>
-        <%= form.fields_for :wells, row_wells do |builder| %>
-            <% if builder.object.samples.any? %>
+        <%= form.fields_for :wells, row_wells.sort_by{|w|w.column} do |builder| %>
+            <% unless builder.object.sample.nil? %>
               <%= builder.fields_for :samples do |sample_builder| %>
                 <td>
                   <%= "#{row} #{builder.object.column}" %>
