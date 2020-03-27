@@ -56,133 +56,135 @@
 <br><br>
 
 <script>
-  var video = document.createElement("video");
-  var canvasElement = document.getElementById("canvas");
-  var canvas = canvasElement.getContext("2d");
-  var loadingMessage = document.getElementById("loadingMessage");
-  var outputContainer = document.getElementById("output");
-  var outputData = document.getElementById("outputData");
-  var cell_index = 0;
 
-  let pending_samples = []
-  let set_samples = []
-  fetch('/samples/pendingprepare.json')
-      .then(res => res.json())
-      .then( js => pending_samples = js.map(item => item.uid))
+  $(document).on('turbolinks:load', function () {
 
-  const handleChange = function(event){
-    console.log(event);
-  }
+      var video = document.createElement("video");
+      var canvasElement = document.getElementById("canvas");
+      var canvas = canvasElement.getContext("2d");
+      var loadingMessage = document.getElementById("loadingMessage");
+      var outputContainer = document.getElementById("output");
+      var outputData = document.getElementById("outputData");
+      var cell_index = 0;
 
-  function validate_plate(uid, success, failure){
-    if(!pending_samples.includes(uid)){
-        const err = 'You cannot process this sample ID';
-        failure(err)
-    }else{
-      if(set_samples.includes(uid)){
-          const err = 'Sample has already been assigned to a well';
-
-          failure(err);
-      }else{
-          set_samples.push(uid);
-          if(typeof success === 'function'){
-              success();
-          }else{
-              return
-          }
-
-      }
-    }
-  }
-
-  function getRemainingSamples(){
-      to_complete =  pending_samples.filter(x => !set_samples.includes(x));
-      return to_complete;
-  }
-
-  $( ".sample-assign" ).autocomplete({
-      source: function (request, response) {
-          response(getRemainingSamples());
-      },
-  });
-
-  $(".form-control").change(function(evt){
-      const uid = evt.currentTarget.value;
-      validate_plate(uid, null, function(err){
-        evt.currentTarget.value = null;
-        alert(err);
-      })
-  });
-
-  function drawLine(begin, end, color) {
-    canvas.beginPath();
-    canvas.moveTo(begin.x, begin.y);
-    canvas.lineTo(end.x, end.y);
-    canvas.lineWidth = 4;
-    canvas.strokeStyle = color;
-    canvas.stroke();
-  }
-
-  // Use facingMode: environment to attemt to get the front camera on phones
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
-    video.srcObject = stream;
-    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
-    video.play();
-    requestAnimationFrame(tick);
-  });
-
-  function tick() {
-    var qr_code_read = false;
-    loadingMessage.innerText = "⌛ Loading video..."
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      loadingMessage.hidden = true;
-      canvasElement.hidden = false;
-      outputContainer.hidden = true;
-
-      canvasElement.height = video.videoHeight;
-      canvasElement.width = video.videoWidth;
-      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-      var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-      var code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: "dontInvert",
+      $( ".sample-assign" ).autocomplete({
+          source: function (request, response) {
+              response(getRemainingSamples());
+          },
       });
-      if (code) {
-        drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-        drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-        drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-        drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
-        outputData.parentElement.hidden = false;
-        outputData.innerText = code.data;
 
-        if (code.data){
-          const uid = code.data;
-          console.log(uid);
-          new Audio('/ping.mp3').play();
-          validate_plate(uid, function (){
-            // success
-            $("input.form-control:eq( " + cell_index + " )").val(uid);
-            var row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
-            var col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
-            $("#wellToInsertSample").text(row + col);
-            cell_index ++;
-          }, function(err){
-            // failure
-            $("#wellToInsertSample").text(err);
-          })
-          qr_code_read = true;
-          outputContainer.hidden = false;
-        }
-      } else {
-        outputData.parentElement.hidden = true;
+      function getRemainingSamples(){
+          to_complete =  pending_samples.filter(x => !set_samples.includes(x));
+          return to_complete;
       }
-    }
-    if (!qr_code_read){
-      requestAnimationFrame(tick);
-    }
-  }
 
-  $("#nextSampleButton").on( "click", function() {    
-    tick();
+      function validate_plate(uid, success, failure){
+          if(!pending_samples.includes(uid)){
+              const err = 'You cannot process this sample ID';
+              failure(err)
+          }else{
+              if(set_samples.includes(uid)){
+                  const err = 'Sample has already been assigned to a well';
+
+                  failure(err);
+              }else{
+                  set_samples.push(uid);
+                  if(typeof success === 'function'){
+                      success();
+                  }else{
+                      return
+                  }
+
+              }
+          }
+      }
+
+      let pending_samples = []
+      let set_samples = []
+      fetch('/samples/pendingprepare.json')
+          .then(res => res.json())
+          .then( js => pending_samples = js.map(item => item.uid))
+
+      $(".form-control").change(function(evt){
+          const uid = evt.currentTarget.value;
+          validate_plate(uid, null, function(err){
+              evt.currentTarget.value = null;
+              alert(err);
+          })
+      });
+
+      function drawLine(begin, end, color) {
+          canvas.beginPath();
+          canvas.moveTo(begin.x, begin.y);
+          canvas.lineTo(end.x, end.y);
+          canvas.lineWidth = 4;
+          canvas.strokeStyle = color;
+          canvas.stroke();
+      }
+
+      // Use facingMode: environment to attemt to get the front camera on phones
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+          video.srcObject = stream;
+          video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+          video.play();
+          requestAnimationFrame(tick);
+      });
+
+      function tick() {
+          var qr_code_read = false;
+          loadingMessage.innerText = "⌛ Loading video..."
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+              loadingMessage.hidden = true;
+              canvasElement.hidden = false;
+              outputContainer.hidden = true;
+
+              canvasElement.height = video.videoHeight;
+              canvasElement.width = video.videoWidth;
+              canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+              var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+              var code = jsQR(imageData.data, imageData.width, imageData.height, {
+                  inversionAttempts: "dontInvert",
+              });
+              if (code) {
+                  drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+                  drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+                  drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+                  drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+                  outputData.parentElement.hidden = false;
+                  outputData.innerText = code.data;
+
+                  if (code.data){
+                      const uid = code.data;
+                      console.log(uid);
+                      new Audio('/ping.mp3').play();
+                      validate_plate(uid, function (){
+                          // success
+                          $("input.form-control:eq( " + cell_index + " )").val(uid);
+                          var row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
+                          var col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
+                          $("#wellToInsertSample").text(row + col);
+                          cell_index ++;
+                      }, function(err){
+                          // failure
+                          $("#wellToInsertSample").text(err);
+                      })
+                      qr_code_read = true;
+                      outputContainer.hidden = false;
+                  }
+              } else {
+                  outputData.parentElement.hidden = true;
+              }
+          }
+          if (!qr_code_read){
+              requestAnimationFrame(tick);
+          }
+      }
+
+      $("#nextSampleButton").on( "click", function() {
+          tick();
+      });
   });
+
+
 
 </script>
