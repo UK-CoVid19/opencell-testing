@@ -96,11 +96,7 @@
   }
 
   function getRemainingSamples(){
-      console.log('get autocomplete');
-      console.log(pending_samples)
-      console.log(set_samples);
       to_complete =  pending_samples.filter(x => !set_samples.includes(x));
-      console.log(to_complete);
       return to_complete;
   }
 
