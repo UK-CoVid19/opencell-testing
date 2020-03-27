@@ -9,6 +9,7 @@ class Sample < ApplicationRecord
   validates :uid, uniqueness: true
 
   before_create :set_uid
+  before_create :set_creation_record
 
   enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected]
 
@@ -35,14 +36,14 @@ class Sample < ApplicationRecord
         module_px_size: 6,
         resize_exactly_to: false,
         resize_gte_to: false,
-        size: 120
+        size: 400
     )
     return png
   end
 
   private
   def unique_well_in_plate?
-    return if plate.nil?
+    return if plate.nil? or !well_id_changed?
     matched = plate.samples.find_by(id: id)
     if(matched)
       errors.add(:well, 'Sample exists in another well on this plate')
@@ -55,5 +56,9 @@ class Sample < ApplicationRecord
 
   def set_uid
     self.uid = SecureRandom.uuid
+  end
+
+  def set_creation_record
+    self.records << Record.new({user: self.user, note: nil, state: Sample.states[:requested]})
   end
 end

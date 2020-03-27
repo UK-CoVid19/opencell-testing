@@ -10,15 +10,15 @@ class SamplesController < ApplicationController
   end
 
   def step1_pendingdispatch
-    @samples = Sample.is_requested
+    @samples = policy_scope(Sample.is_requested)
   end
 
   def step2_pendingreceive
-    @samples = Sample.is_dispatched
+    @samples = policy_scope(Sample.is_dispatched)
   end
 
   def step3_pendingprepare
-    @samples = Sample.is_received
+    @samples = policy_scope(Sample.is_received)
   end
 
   def step4_pendingreadytest
@@ -133,11 +133,13 @@ class SamplesController < ApplicationController
     Plate.transaction do
       plates.each do |plate|
         plate.prepared!
-        plate.wells.each do | well|
-          well.sample.tap do |s|
-            s.prepared!
-            s.records << Record.new({user: current_user, note: nil, state: Sample.states[:prepared]})
-            s.save!
+        plate.wells.each do |well|
+          unless well.sample.nil?
+            well.sample.tap do |s|
+              s.prepared!
+              s.records << Record.new({user: current_user, note: nil, state: Sample.states[:prepared]})
+              s.save!
+            end
           end
         end
         plate.save!
@@ -150,10 +152,12 @@ class SamplesController < ApplicationController
       plates.each do |plate|
         plate.testing!
         plate.wells.each do | well|
-          well.sample.tap do |s|
-            s.tested!
-            s.records << Record.new({user: current_user, note: nil, state: Sample.states[:tested]})
-            s.save!
+          unless well.sample.nil?
+            well.sample.tap do |s|
+              s.tested!
+              s.records << Record.new({user: current_user, note: nil, state: Sample.states[:tested]})
+              s.save!
+            end
           end
         end
         plate.save!

@@ -27,7 +27,7 @@
         <strong>UID:</strong>
         <%= @sample.uid %>
         <br/>
-        <%= image_tag @sample.qr_code.resize(400, 400).to_data_url %>
+        <%= image_tag @sample.qr_code.to_data_url %>
         <p>
           <strong>State:</strong>
           <%= get_badge(@sample.state) %>
