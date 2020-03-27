@@ -25,6 +25,10 @@ module SamplesHelper
       return tag.span class: 'badge badge-pill badge-warning' do
         status
       end
+    when Sample.states[:rejected]
+      return tag.span class: 'badge badge-pill badge-danger' do
+        status
+      end
     else
       raise
     end

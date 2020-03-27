@@ -2,7 +2,6 @@
   <% if test.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(test.errors.count, "error") %> prohibited this test from being saved:</h2>
-
       <ul>
       <% test.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -10,13 +9,43 @@
       </ul>
     </div>
   <% end %>
-  <div class="container">
-    <%= form.label :result_file %>
-    <%= form.file_field :result_file %>
-    <%= form.label :user %>
-    <%= form.select :user_id, User.all.collect{|p| [p.name, p.id]} %>
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="row">
+        <div class="container">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <%= form.label :result_file, 'Result File', class: 'input-group-text' %>
+            </div>
+            <div class="custom-file">
+              <%= form.file_field :result_file, class: 'custom-file-input' %>
+              <%= form.label :result_file, 'Choose File', class: 'custom-file-label' %>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <%= form.label :user, 'User', class: 'input-group-text' %>
+            </div>
+            <%= form.collection_select :user_id, User.all, :id, :name,  class: 'custom-select' %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-6">
+      <div class="row">
+        <div class="list-group">
+          <%= form.fields_for :test_results, test.test_results do |result_builder| %>
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+              <%= result_builder.hidden_field :well_id %>
+              <%= result_builder.label :value, "Well #{result_builder.object.well.row}#{result_builder.object.well.column}" %>
+              <%= result_builder.text_field :value, disabled: result_builder.object.sample.rejected? %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit "Upload Results", class: 'btn btn-primary' %>
   </div>
 <% end %>

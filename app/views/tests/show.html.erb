@@ -1,4 +1,27 @@
 <p id="notice"><%= notice %></p>
+<div class="container">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+    <tr>
+      <th></th>
+      <% (1..12).each do |col| %>
+        <th><%= col %></th>
+      <% end %>
+    </tr>
+    </thead>
+    <tbody>
+    <% @plate.wells.sort_by{|w| w.row}.group_by {|well| well[:row]}.each do |row, wells| %>
+      <tr>
+        <td class="dark-cell text-center"><%= row %></td>
+        <% wells.sort_by{|w|w.column}.each do |well| %>
+          <%= generate_test_cell(well) %>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <%= link_to 'Edit', edit_plate_test_path(@plate, @test) %> |
+  <%= link_to 'Back', plate_tests_path(@plate) %>
+</div>
 
-<%= link_to 'Edit', edit_test_path(@test) %> |
-<%= link_to 'Back', tests_path %>
+

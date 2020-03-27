@@ -15,16 +15,20 @@
         <tr>
         <td class="dark-cell text-center"><%= row %></td>
         <%= form.fields_for :wells, row_wells.sort_by{|w|w.column} do |builder| %>
-            <% unless builder.object.sample.nil? %>
-              <%= builder.fields_for :samples do |sample_builder| %>
-                <td>
+
+            <td>
+              <%= builder.hidden_field :row  %>
+              <%= builder.hidden_field :column  %>
+              <% unless builder.object.sample.nil? %>
+                <%= builder.fields_for :sample do |sample_builder| %>
                   <%= "#{row} #{builder.object.column}" %>
-                  <%= sample_builder.select(:state, options_for_select([['Reject', 'rejected']]), {include_blank: true }) %>
-                </td>
+                  <%= sample_builder.select :state, [sample_builder.object.state, 'rejected'] %>
+                <% end %>
+              <% else %>
+                <b>No Sample</b>
               <% end %>
-            <% else %>
-              <td>No Sample</td>
-            <% end %>
+            </td>
+
         <% end %>
         </tr>
     <% end  %>

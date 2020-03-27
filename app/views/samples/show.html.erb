@@ -6,11 +6,11 @@
       <div class="records-list">
 
         <div class="list-group">
-          <% @sample.records.each do |record| %>
+          <% @sample.records.sort_by(&:created_at).each do |record| %>
             <div class="list-group-item list-group-item-action flex-column align-items-start">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1"><%= "Changed to #{Sample.states.key(record.state).capitalize}" %></h5>
-                <small><%= record.updated_at.strftime('%A %-d %b %H:%m') %></small>
+                <small><%= record.updated_at.strftime('%A %-d %b %H:%M') %></small>
               </div>
               <p class="mb-1"><%= "#{record.note}" %></p>
               <small><%= link_to record.user.name, record.user unless record.user.nil? %></small>

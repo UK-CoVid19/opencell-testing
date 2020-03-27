@@ -4,10 +4,10 @@ one:
   name: MyString
   dob: 2020-03-16
   telno: MyString
-  email: MyString
+  email: MyEmail
 
 two:
   name: MyString
   dob: 2020-03-16
   telno: MyString
-  email: MyString
+  email: MyOtherEmail

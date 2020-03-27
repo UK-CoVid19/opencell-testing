@@ -137,7 +137,6 @@ class SamplesController < ApplicationController
           unless well.sample.nil?
             well.sample.tap do |s|
               s.prepared!
-              s.records << Record.new({user: current_user, note: nil, state: Sample.states[:prepared]})
               s.save!
             end
           end
@@ -155,7 +154,6 @@ class SamplesController < ApplicationController
           unless well.sample.nil?
             well.sample.tap do |s|
               s.tested!
-              s.records << Record.new({user: current_user, note: nil, state: Sample.states[:tested]})
               s.save!
             end
           end
@@ -170,7 +168,6 @@ class SamplesController < ApplicationController
     Sample.transaction do
       @samples.each do |sample_hash|
         sample_hash[:sample].state = desired_state
-        sample_hash[:sample].records << Record.new({user: current_user, note: sample_hash[:note], state: desired_state})
         sample_hash[:sample].save!
       end
     end
@@ -214,7 +211,6 @@ class SamplesController < ApplicationController
             if(matching_well)
               sample = matching_well[:sample]
               sample.tap do |s|
-                s.records << Record.new({user: current_user, note: nil, state: Sample.states[:preparing]})
                 s.state = Sample.states[:preparing]
                 s.plate = plate
                 s.well = new_well
