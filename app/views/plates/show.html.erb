@@ -1,4 +1,3 @@
-<p id="notice"><%= notice %></p>
 <div class="container">
   <table class="table table-striped table-bordered">
     <thead class="thead-dark">
@@ -14,12 +13,7 @@
       <tr>
         <td class="dark-cell text-center"><%= row %></td>
         <% wells.sort_by{|w|w.column}.each do |well| %>
-          <% if sample_exists?(well) %>
-            <td class="marked-cell"><%= link_to "#{well.row}#{well.column}", well.sample %></td>
-          <% else  %>
-            <td><%= "#{well.row}#{well.column}"%></td>
-          <% end %>
-
+         <%= generate_well_cell(well) %>
         <% end %>
       </tr>
     <% end %>

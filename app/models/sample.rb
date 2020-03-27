@@ -5,11 +5,12 @@ class Sample < ApplicationRecord
   has_many :records, dependent: :destroy
   belongs_to :well, optional: true
   belongs_to :plate, optional: true
-  validate :unique_well_in_plate?, on: :update
+  validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validates :uid, uniqueness: true
 
   before_create :set_uid
   before_create :set_creation_record
+  before_update :set_change_record, if: :state_changed?
 
   enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected]
 
@@ -60,5 +61,9 @@ class Sample < ApplicationRecord
 
   def set_creation_record
     self.records << Record.new({user: self.user, note: nil, state: Sample.states[:requested]})
+  end
+
+  def set_change_record
+    self.records << Record.new({user: self.user, note: nil, state: Sample.states[state]})
   end
 end

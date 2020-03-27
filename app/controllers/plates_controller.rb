@@ -21,22 +21,6 @@ class PlatesController < ApplicationController
   def edit
   end
 
-  # POST /plates
-  # POST /plates.json
-  def create
-    @plate = Plate.new(plate_params)
-
-    respond_to do |format|
-      if @plate.save
-        format.html { redirect_to @plate, notice: 'Plate was successfully created.' }
-        format.json { render :show, status: :created, location: @plate }
-      else
-        format.html { render :new }
-        format.json { render json: @plate.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   # PATCH/PUT /plates/1
   # PATCH/PUT /plates/1.json
   def update

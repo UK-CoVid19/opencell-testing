@@ -3,7 +3,9 @@
 one:
   sample: one
   note: MyString
+  state: 1
 
 two:
   sample: two
   note: MyString
+  state: 2

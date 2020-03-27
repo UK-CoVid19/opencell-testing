@@ -21,7 +21,13 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
+  adapter: postgresql
+  encoding: unicode
   database: opencell-test
+  pool: 5
+  username: postgres
+  password: password
+  host: localhost
 
 production:
   <<: *default

@@ -15,14 +15,6 @@ class PlatesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create plate" do
-    assert_difference('Plate.count') do
-      post plates_url, params: { plate: {  } }
-    end
-
-    assert_redirected_to plate_url(Plate.last)
-  end
-
   test "should show plate" do
     get plate_url(@plate)
     assert_response :success
@@ -34,7 +26,8 @@ class PlatesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update plate" do
-    patch plate_url(@plate), params: { plate: {  } }
+    wells = 96.times.map {|a| Well.new()}.map {|w| {id: w.id}}
+    patch plate_url(@plate), params: { plate: { wells: [] } }
     assert_redirected_to plate_url(@plate)
   end
 
