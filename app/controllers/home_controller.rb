@@ -10,4 +10,12 @@ class HomeController < ApplicationController
       render 'index'
     end
   end
+
+  def privacy
+
+  end
+
+  def about
+
+  end
 end
