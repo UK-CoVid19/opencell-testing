@@ -58,6 +58,16 @@
                   <p>Awaiting Analysis</p>
                 <% end %>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More..</a>
+                <div class="dropdown-menu">
+                  <%= link_to "Samples", samples_path, class: "dropdown-item" %>
+                  <%= link_to "Plates", plates_path, class: "dropdown-item" %>
+                  <%= link_to "Completed Tests", tests_complete_path, class: "dropdown-item" %>
+                  <div class="dropdown-divider"></div>
+                  <%= link_to "Admin", admin_root_path, class: "dropdown-item" %>
+                </div>
+              </li>
             <% elsif current_user && current_user.patient? %>
               <li class="nav-item">
                   <%= link_to samples_path do  %>

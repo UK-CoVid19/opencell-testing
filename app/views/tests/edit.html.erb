@@ -1,6 +1,11 @@
-<h1>Editing Test</h1>
 
-<%= render 'form', test: @test %>
-
-<%= link_to 'Show', @test %> |
-<%= link_to 'Back', tests_path %>
+<div class="container">
+  <h1>Editing Test</h1>
+  <div class="row">
+    <%= render 'form', test: @test, plate: @plate %>
+  </div>
+  <div class="row">
+    <%= link_to 'Show', [@plate, @test] %> |
+    <%= link_to 'Back', plate_tests_path(@plate) %>
+  </div>
+</div>

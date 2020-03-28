@@ -1,7 +1,5 @@
 <div class="container">
   <br>
-    
-  <p id="notice"><%= notice %></p>
 
   <div class="row">
     <div class="col-md-4 offset-md-4">
@@ -30,7 +28,7 @@
           <div class="card-header">My Samples</div>
           <ul class="list-group list-group-flush">
             <% @user.samples.each do | sample| %>
-              <li class="list-group-item"><%= sample.state %></li>
+              <li class="list-group-item"><%= link_to sample.state, sample %></li>
             <% end %>
           </ul>
         </div>

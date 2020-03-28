@@ -14,8 +14,8 @@
     <% @samples.each do |sample| %>
       <tr>
         <td><%= link_to 'Sample', sample %></td>
-        <td><%= sample.user.id %></td>
-        <td><%= sample.state %></td>
+        <td><%= link_to sample.user.name, sample.user %></td>
+        <td><%= get_badge(sample.state) %></td>
       </tr>
     <% end %>
     </tbody>

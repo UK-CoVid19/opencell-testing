@@ -1,11 +1,15 @@
 class TestsController < ApplicationController
   before_action :set_test, only: [:show, :edit, :update, :destroy]
-  before_action :set_plate
+  before_action :set_plate, except: [:complete]
 
   # GET /tests
   # GET /tests.json
   def index
     @tests = Test.all.where(plate: @plate)
+  end
+
+  def complete
+    @tests = Test.all.joins(:plate).where(plates: {state: Plate.states[:complete]})
   end
 
   # GET /tests/1
@@ -45,7 +49,7 @@ class TestsController < ApplicationController
   def update
     respond_to do |format|
       if @test.update(test_params)
-        format.html { redirect_to @test, notice: 'Test was successfully updated.' }
+        format.html { redirect_to [@plate, @test], notice: 'Test was successfully updated.' }
         format.json { render :show, status: :ok, location: @test }
       else
         format.html { render :edit }

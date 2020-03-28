@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :plates do
     resources :tests
   end
+  get '/tests/complete', to: 'tests#complete'
   resources :samples
 
   devise_for :users
