@@ -1,0 +1,27 @@
+<div class="col-md-6 col-sm-12">
+  <h2 class="text-center">My Sample Status</h2>
+  <hr/>
+  <div class="card">
+    <div class="card-header">My Test</div>
+    <div class="container">
+      <div class="progress">
+        <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar(@user) %>%" aria-valuenow="<%= create_progress_bar(@user) %>" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <%= create_state_alert(@user.active_sample.state) %>
+    </div>
+
+    <br/>
+    <div class="col-md-12 text-center">
+      <%= image_tag @user.active_sample.qr_code.to_data_url %>
+      <p>
+        <strong>UID:</strong>
+        <%= @user.active_sample.uid %>
+        <br/>
+        <strong>State:</strong>
+        <%= get_badge(@user.active_sample.state) %>
+      </p>
+      </p>
+    </div>
+  </div>
+  <br>
+</div>

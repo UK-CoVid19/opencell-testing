@@ -47,8 +47,9 @@ class TestsController < ApplicationController
   # PATCH/PUT /tests/1
   # PATCH/PUT /tests/1.json
   def update
+    tp = test_params.merge!(plate_id: params[:plate_id])
     respond_to do |format|
-      if @test.update(test_params)
+      if @test.update(tp)
         format.html { redirect_to [@plate, @test], notice: 'Test was successfully updated.' }
         format.json { render :show, status: :ok, location: @test }
       else
@@ -80,6 +81,6 @@ class TestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def test_params
-      params.fetch(:test, {}).permit(:result_file,:user_id, test_results_attributes: [:value, :well_id] )
+      params.fetch(:test, {}).permit(:result_file,:user_id, test_results_attributes: [:value, :well_id, :id,:test_id] )
     end
 end

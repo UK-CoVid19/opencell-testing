@@ -1,17 +1,11 @@
 <div class="container">
   <br>
-
   <div class="row">
-    <div class="col-md-4 offset-md-4">
+    <div class="col-md-6 col-sm-12">
       
-      <h2 class="text-center">My Sample Status</h2>
+      <h2 class="text-center">My Profile</h2>
+      <hr/>
 
-      <div class="progress">
-        <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar(@user) %>%" aria-valuenow="<%= create_progress_bar(@user) %>" aria-valuemin="0" aria-valuemax="100"></div>
-      </div>
-      
-      <div class="alert alert-info" role="alert">Your sample has been recieved by our lab and is being processed. We will contact you once this is complete.</div>
-      
       <div class="card">
         <div class="card-header">My Profile</div>
         <ul class="list-group list-group-flush">
@@ -25,14 +19,18 @@
       <br>
 
       <div class="card">
-          <div class="card-header">My Samples</div>
+          <div class="card-header">My Previous Tests</div>
           <ul class="list-group list-group-flush">
-            <% @user.samples.each do | sample| %>
-              <li class="list-group-item"><%= link_to sample.state, sample %></li>
+            <% @user.samples.is_analysed.each do | sample| %>
+              <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result.value %> </li>
             <% end %>
           </ul>
         </div>
     </div>
-
+    <% unless @user.active_sample.nil? %>
+      <%= render 'current_sample' %>
+    <% else %>
+        <%= render 'create_sample' %>
+    <% end %>
   </div>
 </div>

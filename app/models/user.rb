@@ -17,6 +17,11 @@ class User < ApplicationRecord
   after_create :send_welcome_mail
 
 
+
+  def active_sample
+    samples.last
+  end
+
   def send_welcome_mail
     UserMailer.with(user: self).welcome_email.deliver_now
   end

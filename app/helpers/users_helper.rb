@@ -12,11 +12,34 @@ module UsersHelper
                 return 30
             when Sample.states[:preparing],
                 Sample.states[:prepared],
-                Sample.states[:tested],
-                Sample.states[:analysed]
+                Sample.states[:tested]
                 return 50
+            when Sample.states[:analysed]
+                return 75
             when Sample.states[:communicated]
                 return 100
+            else
+                raise
+        end
+    end
+
+
+    def create_state_alert(status)
+        case Sample.states.to_hash[status]
+            when Sample.states[:requested]
+                return content_tag(:div, "You have requested your sample, we will notify you when it is dispatched", class: "alert alert-info" )
+            when Sample.states[:dispatched]
+                return content_tag(:div, "Your sample has been dispatched, please return it as soon as possible", class: "alert alert-info" )
+            when Sample.states[:received]
+                return content_tag(:div, "We have received your sample and it is being processed", class: "alert alert-info" )
+            when Sample.states[:preparing],
+                Sample.states[:prepared],
+                Sample.states[:tested]
+                return content_tag(:div, "We are currently processing your sample", class: "alert alert-info" )
+            when Sample.states[:analysed]
+                return content_tag(:div, "We have generated your test results and are verifying them", class: "alert alert-info" )
+            when Sample.states[:communicated]
+                return content_tag(:div, "Your sample has been tested and analysed", class: "alert alert-info" )
             else
                 raise
         end
