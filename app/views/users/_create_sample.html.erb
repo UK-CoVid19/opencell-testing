@@ -5,9 +5,9 @@
     <div class="card-header">Request a Test</div>
     <br/>
     <div class="col-md-12 text-center">
-      <%= link_to samples_path, method: :post do %>
+      <%= link_to samples_path(sample: {user_id: @user.id}), method: :post do %>
         <button class="btn btn-dark">New Test</button>
-      <% end  %>
+      <% end %>
     </div>
     <br/>
   </div>

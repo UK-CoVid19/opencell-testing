@@ -1,6 +1,8 @@
 class TestsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_test, only: [:show, :edit, :update, :destroy]
   before_action :set_plate, except: [:complete]
+  after_action :verify_authorized
 
   # GET /tests
   # GET /tests.json
@@ -9,6 +11,7 @@ class TestsController < ApplicationController
   end
 
   def complete
+    authorize Test
     @tests = Test.all.joins(:plate).where(plates: {state: Plate.states[:complete]})
   end
 
@@ -21,6 +24,7 @@ class TestsController < ApplicationController
   def new
     @test_results = @plate.samples.map {|s| TestResult.new({well: s.well})}
     @test = Test.new({plate: @plate, test_results: @test_results})
+    authorize @test
   end
 
   # GET /tests/1/edit
@@ -72,7 +76,7 @@ class TestsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_test
-      @test = Test.find(params[:id])
+      @test = authorize Test.find(params[:id])
     end
 
     def set_plate

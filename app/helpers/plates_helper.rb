@@ -43,7 +43,7 @@ module PlatesHelper
   end
 
   def test_result_exists?(well)
-    !well.test_result.nil?
+    !well.test_result.nil? && !well.sample.nil?
   end
 
 

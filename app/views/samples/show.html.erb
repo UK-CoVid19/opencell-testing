@@ -26,6 +26,11 @@
         <br/>
         <strong>UID:</strong>
         <%= @sample.uid %>
+        <% unless @sample.test_result.nil? %>
+          <br/>
+          <strong>Value:</strong>
+          <%= @sample.test_result.value %>
+        <% end %>
         <br/>
         <%= image_tag @sample.qr_code.to_data_url %>
         <p>

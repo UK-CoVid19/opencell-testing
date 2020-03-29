@@ -9,8 +9,84 @@ class SamplePolicy < ApplicationPolicy
       end
     end
   end
+  def index?
+    staffmember?
+  end
+
+  def step1_pendingdispatch?
+    staffmember?
+  end
+
+  def step2_pendingreceive?
+    staffmember?
+  end
+
+  def step3_pendingprepare?
+    staffmember?
+  end
+
+  def step4_pendingreadytest?
+    staffmember?
+  end
+
+  def step5_pendingtest?
+    staffmember?
+  end
+
+  def step6_pendinganalyze?
+    staffmember?
+  end
+
+  def show?
+    staffmember?
+  end
+
+  def new?
+    staffmember?
+  end
+
+  def edit?
+    staffmember?
+  end
+
+  def create?
+    staffmember? || @record.user == @user
+  end
+
+  def update?
+    staffmember?
+  end
+
+  def destroy?
+    staffmember?
+  end
+
+  def step1_bulkdispatched?
+    staffmember?
+  end
+
+  def step2_bulkreceived?
+    staffmember?
+  end
+
+  def step3_bulkprepared?
+    staffmember?
+  end
+
+  def step4_bulkreadytest?
+    staffmember?
+  end
+
+  def step5_bulktested?
+    staffmember?
+  end
+
+  def step6_bulkanalysed?
+    staffmember?
+  end
 
   def dashboard?
-    user.present? && user.staff?
+    staffmember?
   end
+
 end

@@ -34,6 +34,11 @@ class ApplicationPolicy
     false
   end
 
+  protected
+  def staffmember?
+    user.present? && user.staff?
+  end
+
   class Scope
     attr_reader :user, :scope
 

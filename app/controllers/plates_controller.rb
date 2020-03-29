@@ -1,20 +1,16 @@
 class PlatesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_plate, only: [:show, :edit, :update, :destroy]
-
+  after_action :verify_authorized
   # GET /plates
   # GET /plates.json
   def index
+    authorize Plate
     @plates = Plate.all
   end
-
   # GET /plates/1
   # GET /plates/1.json
   def show
-  end
-
-  # GET /plates/new
-  def new
-    @plate = Plate.new
   end
 
   # GET /plates/1/edit
@@ -48,7 +44,7 @@ class PlatesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_plate
-      @plate = Plate.find(params[:id])
+      @plate = authorize Plate.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

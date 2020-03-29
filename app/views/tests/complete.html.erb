@@ -3,28 +3,38 @@
 
   <table id="datatable" class="table table-striped">
     <thead class="thead-dark">
-    <tr>
-      <th>ID</th>
-      <th>Created at</th>
-      <th>Tested By</th>
-      <th>Plate</th>
-      <th colspan="4"></th>
-    </tr>
-    </thead>
-
-    <tbody>
-    <% @tests.each do |test| %>
       <tr>
-        <td><%= tag.b test.id %></td>
-        <td><%= tag.b test.created_at.strftime('%A %-d %b %H:%M') %></td>
-        <td><%= link_to test.user.name, user_path(test.user) %></td>
-        <td><%= link_to test.plate.id, test.plate %></td>
-        <td><%= link_to "Download Results", rails_blob_path(test.result_file, disposition: "attachment") unless test.result_file.attachment.nil? %></td>
-        <td><%= link_to 'Show', plate_test_path(test.plate, test) %></td>
-        <td><%= link_to 'Edit', edit_plate_test_path(test.plate, test) %></td>
-        <td><%= link_to 'Destroy', plate_test_path(test.plate, test), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>ID</th>
+        <th>Created at</th>
+        <th>Tested By</th>
+        <th>Plate</th>
+        <th>Results</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
+    </thead>
+    <tbody>
+      <% @tests.each do |test| %>
+        <tr>
+          <td><%= tag.b test.id %></td>
+          <td><%= tag.b test.created_at.strftime('%A %-d %b %H:%M') %></td>
+          <td><%= link_to test.user.name, user_path(test.user) %></td>
+          <td><%= link_to test.plate.id, test.plate %></td>
+          <td><%= link_to "Download Results", rails_blob_path(test.result_file, disposition: "attachment") unless test.result_file.attachment.nil? %></td>
+          <td>
+            <%= link_to plate_test_path(test.plate, test) do  %>
+              <button class="btn btn-primary">Show</button>
+            <% end  %>
+            <%= link_to edit_plate_test_path(test.plate, test) do %>
+              <button class="btn btn-info">Edit</button>
+            <% end  %>
+            <%= link_to plate_test_path(test.plate, test), method: :delete, data: { confirm: 'Are you sure?' } do %>
+              <button class="btn btn-danger">Delete</button>
+            <% end  %>
+          </td>
+        </tr>
+      <% end %>
     </tbody>
   </table>
 </div>
+
+

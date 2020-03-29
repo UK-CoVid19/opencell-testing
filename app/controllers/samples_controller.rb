@@ -2,104 +2,57 @@
 class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
-  after_action :verify_policy_scoped, only: [:index]
+  after_action :verify_policy_scoped, only: [:index, :step1_pendingdispatch, :step2_pendingreceive, :step3_pendingprepare]
+  after_action :verify_authorized
   # GET /samples
   # GET /samples.json
   def index
     @samples = policy_scope(Sample.all)
+    authorize Sample
   end
 
   def step1_pendingdispatch
     @samples = policy_scope(Sample.is_requested)
+    authorize Sample
   end
 
   def step2_pendingreceive
     @samples = policy_scope(Sample.is_dispatched)
+    authorize Sample
   end
 
   def step3_pendingprepare
     @samples = policy_scope(Sample.is_received)
+    authorize Sample
   end
 
   def step4_pendingreadytest
     @plates = Plate.all.where(state: Plate.states[:preparing])
+    authorize Sample
   end
 
   def step5_pendingtest
     @plates = Plate.all.where(state: Plate.states[:prepared])
+    authorize Sample
   end
 
   def step6_pendinganalyze
     @plates = Plate.all.where(state: Plate.states[:testing])
+    authorize Sample
   end
   # GET /samples/1
   # GET /samples/1.json
-  def show    
+  def show
   end
 
   # GET /samples/new
   def new
     @sample = Sample.new
+    authorize @sample
   end
 
   # GET /samples/1/edit
   def edit
-  end
-
-  def dashboard
-    authorize nil, policy_class: SamplePolicy
-    @samples = Sample.all
-  end
-
-
-  def create
-    @sample = Sample.new(user: current_user, state: Sample.states[:requested])
-
-    respond_to do |format|
-      if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully created.' }
-        format.json { render :show, status: :created, location: @sample }
-      else
-        format.html { render :new }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def step1_bulkdispatched
-    bulk_action(Sample.states[:dispatched], step2_pendingreceive_path)
-  end
-
-  def step2_bulkreceived
-    bulk_action(Sample.states[:received], step3_pendingprepare_path)
-  end
-
-  def step3_bulkprepared
-    get_plated_samples
-    respond_to do |format|
-      format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
-    end
-    # bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
-  end
-
-  def step4_bulkreadytest
-    plates = get_plates
-    update_plate(plates)
-    respond_to do |format|
-      format.html { redirect_to step5_pendingtest_path, notice: "Plate to qPCR" }
-    end
-  end
-
-  def step5_bulktested
-    plates = get_plates
-    run_plates_test(plates)
-    respond_to do |format|
-      format.html { redirect_to step6_pendinganalyze_path, notice: "Plate tested" }
-    end
-  end
-
-  def step6_bulkanalysed
-    bulk_action(Sample.states[:analysed], home_index_path)
   end
 
   # PATCH/PUT /samples/1
@@ -126,9 +79,69 @@ class SamplesController < ApplicationController
     end
   end
 
+  def dashboard
+    authorize Sample
+    @samples = Sample.all
+  end
+
+
+  def create
+    @sample = Sample.new(user_id: params[:sample][:user_id], state: Sample.states[:requested])
+    authorize @sample
+    respond_to do |format|
+      if @sample.save
+        format.html { redirect_to @sample, notice: 'Sample was successfully created.' }
+        format.json { render :show, status: :created, location: @sample }
+      else
+        format.html { render :new }
+        format.json { render json: @sample.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def step1_bulkdispatched
+    authorize Sample
+    bulk_action(Sample.states[:dispatched], step2_pendingreceive_path)
+  end
+
+  def step2_bulkreceived
+    authorize Sample
+    bulk_action(Sample.states[:received], step3_pendingprepare_path)
+  end
+
+  def step3_bulkprepared
+    authorize Sample
+    get_plated_samples
+    respond_to do |format|
+      format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+    end
+    # bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
+  end
+
+  def step4_bulkreadytest
+    authorize Sample
+    plates = get_plates
+    update_plate(plates)
+    respond_to do |format|
+      format.html { redirect_to step5_pendingtest_path, notice: "Plate to qPCR" }
+    end
+  end
+
+  def step5_bulktested
+    authorize Sample
+    plates = get_plates
+    run_plates_test(plates)
+    respond_to do |format|
+      format.html { redirect_to step6_pendinganalyze_path, notice: "Plate tested" }
+    end
+  end
+
+  def step6_bulkanalysed
+    authorize Sample
+    bulk_action(Sample.states[:analysed], home_index_path)
+  end
+
   private
-
-
   def update_plate(plates)
     Plate.transaction do
       plates.each do |plate|
@@ -182,7 +195,7 @@ class SamplesController < ApplicationController
   end
 
   def set_sample
-    @sample = Sample.find(params[:id])
+    @sample = authorize Sample.find(params[:id])
   end
 
     # Only allow a list of trusted parameters through.

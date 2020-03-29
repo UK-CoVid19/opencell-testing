@@ -16,6 +16,8 @@ class User < ApplicationRecord
 
   after_create :send_welcome_mail
 
+  scope :patients, -> {where(role: User.roles[:patient])}
+
 
 
   def active_sample
