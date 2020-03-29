@@ -11,6 +11,7 @@
         <th class="no-sort" width="25"><!-- check_box_tag--></th>
         <th>Plate</th>
         <th class="no-sort">State</th>
+        <th class="no-sort">Export</th>
         <th>Created</th>
         <th>Updated</th>
       </tr>
@@ -21,6 +22,9 @@
           <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'plates[][id]', plate.id %></td>
           <td><%= link_to "Plate #{plate.id}", plate %></td>
           <td><%= get_badge(plate.state) %></td>
+          <td>
+            <%= link_to "Json", plate_path(plate, format: :json), {'data-turbolinks': false}  %>
+          </td>
           <td><%= plate.created_at.strftime('%A %-d %b %H:%M') %></td>
           <td><%= plate.updated_at.strftime('%A %-d %b %H:%M') %></td>
         </tr>
