@@ -38,6 +38,7 @@ class TestsController < ApplicationController
     tp = test_params.merge!(plate_id: params[:plate_id])
     @test = Test.new(tp)
     @test.plate.complete!
+    authorize @test
     respond_to do |format|
       if @test.save
         format.html { redirect_to plate_tests_url(@plate), notice: 'Test was successfully created.' }

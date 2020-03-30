@@ -19,13 +19,30 @@
       <br>
 
       <div class="card">
-          <div class="card-header">My Previous Tests</div>
-          <ul class="list-group list-group-flush">
-            <% @user.samples.is_analysed.each do | sample| %>
-              <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result.value %> </li>
-            <% end %>
-          </ul>
-        </div>
+        <div class="card-header">My Previous Tests</div>
+        <ul class="list-group list-group-flush">
+          <% @user.samples.is_analysed.each do | sample| %>
+            <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result.value %> </li>
+          <% end %>
+        </ul>
+      </div>
+      <br/>
+      <div class="card">
+        <div class="card-header">Manage My Account</div>
+        <ul class="list-group list-group-flush">
+          <% @user.samples.is_analysed.each do | sample| %>
+            <li class="list-group-item">
+              <%= link_to edit_user_path(@user) do  %>
+                <button class="btn btn-info">Edit profile</button>
+              <% end %>
+              <%= link_to edit_user_registration_path do  %>
+                <button class="btn btn-warning">Manage Account</button>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <br/>
     </div>
     <% unless @user.active_sample.nil? %>
       <%= render 'current_sample' %>

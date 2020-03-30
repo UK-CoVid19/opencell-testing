@@ -24,9 +24,9 @@
           </div>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
-              <%= form.label :user, 'User', class: 'input-group-text' %>
+              <%= form.label :user, 'Tested By', class: 'input-group-text' %>
             </div>
-            <%= form.collection_select :user_id, User.all, :id, :name,  class: 'custom-select' %>
+            <%= form.collection_select :user_id, User.staff, :id, :name,  class: 'custom-select' %>
           </div>
         </div>
       </div>

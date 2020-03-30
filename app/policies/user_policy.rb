@@ -1,23 +1,31 @@
 class UserPolicy < ApplicationPolicy
 
     def index?
-      user.present? && user.staff?
+      staffmember?
+    end
+
+    def new?
+      staffmember?
+    end
+
+    def create_staff?
+      staffmember?
     end
 
     def show?
-      (user.present? && user.staff?) || user == @record
+      staffmember? || user == @record
     end
 
     def edit?
-      user.present? && user.staff? || user == @record
+      staffmember? || user == @record
     end
 
     def update?
-      user.present? && user.staff? || user == @record
+      staffmember? || user == @record
     end
 
     def destroy?
-      user.present? && user.staff? || user == @record
+      staffmember? || user == @record
     end
 
     class Scope < Scope

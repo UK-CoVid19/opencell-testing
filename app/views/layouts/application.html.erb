@@ -65,16 +65,10 @@
                   <%= link_to "Plates", plates_path, class: "dropdown-item" %>
                   <%= link_to "Completed Tests", tests_complete_path, class: "dropdown-item" %>
                   <div class="dropdown-divider"></div>
-                  <%= link_to "Create Test Sample", new_sample_path, class: "dropdown-item" %>
+                  <%= link_to "New test for existing User", new_sample_path, class: "dropdown-item" %>
+                  <%= link_to "Register New User", new_user_path, class: "dropdown-item" %>
                   <%= link_to "Admin", admin_root_path, class: "dropdown-item" %>
                 </div>
-              </li>
-            <% elsif current_user && current_user.patient? %>
-              <li class="nav-item">
-                  <%= link_to samples_path do  %>
-                    <p>My Tests</p>
-                  <% end  %>
-                </a>
               </li>
             <% end %>
             <% if user_signed_in? %>
@@ -108,6 +102,5 @@
       <span><p class="bg1-font"> <%= link_to 'Privacy Policy', "/privacy" %> | <%= link_to 'About Us', "/about" %> | <%= link_to "Contact", 'mailto:info@dummyurl.com' %></p> </span>
       <span><p class="bg1-font">Copyright © 2019 <a href="https://dummyurl.com" class="bg1-font">dummyurl.com</a> All rights reserved.</p></span>
     </footer>
-
   </body>
 </html>

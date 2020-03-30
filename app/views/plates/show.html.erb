@@ -19,6 +19,9 @@
     <% end %>
     </tbody>
   </table>
+  <div class="row">
+    <%= image_tag @plate.qr_code.to_data_url %>
+  </div>
   <%= link_to 'Edit', edit_plate_path(@plate) %> |
   <%= link_to 'Back', plates_path %>
 </div>

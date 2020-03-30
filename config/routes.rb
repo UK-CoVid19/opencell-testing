@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   post 'samples/readytest', to: 'samples#step4_bulkreadytest', as: 'step4_sample_bulk_ready_test'
   post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
-
+  post 'users/create_staff', to: 'users#create_staff', as: 'create_staff'
   resources :plates do
     resources :tests
   end
