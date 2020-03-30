@@ -10,6 +10,10 @@ class TestPolicy < ApplicationPolicy
   def show?
     staffmember?
   end
+  
+  def create?
+    staffmember?
+  end
 
   def edit?
     staffmember?
