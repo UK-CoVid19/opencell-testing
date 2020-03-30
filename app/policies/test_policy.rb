@@ -1,4 +1,6 @@
 class TestPolicy < ApplicationPolicy
+
+
   def index?
     staffmember?
   end

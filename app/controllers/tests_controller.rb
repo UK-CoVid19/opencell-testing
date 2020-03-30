@@ -7,6 +7,7 @@ class TestsController < ApplicationController
   # GET /tests
   # GET /tests.json
   def index
+    authorize Test
     @tests = Test.all.where(plate: @plate)
   end
 
