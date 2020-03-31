@@ -12,7 +12,7 @@
   <body>
     <div class="container">
       <br />
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand dark" href="\">
           <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" height="40" />
         </a>
@@ -20,40 +20,40 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav text-center">
+          <ul class="navbar-nav text-center mr-auto">
             <% if current_user && user_signed_in? && current_user.staff?  %>            
-              <li class="nav-item">              
-                <a href="<%= step1_pendingdispatch_path %>">
+              <li class="nav-item">
+                <%= link_to step1_pendingdispatch_path, class: 'nav-link' do %>
                   <span class="badge badge-secondary"><%= @pendingdispatch_count %></span>
                   <p>Awaiting Dispatch</p>
-                </a>
-              </li>
-              <li class="nav-item">              
-                <a href="<%= step2_pendingreceive_path %>">
-                    <span class="badge badge-secondary"><%= @pendingreceive_count %></span>
-                    <p>Awaiting Return</p>
-                </a>
-              </li>
-              <li class="nav-item">              
-                <a href="<%= step3_pendingprepare_path %>">
-                    <span class="badge badge-secondary"><%= @pendingprepare_count %></span>
-                    <p>Awaiting Prepare</p>
-                </a>
-              </li>
-              <li class="nav-item">              
-                <a href="<%= step4_pendingreadytest_path %>">
-                    <span class="badge badge-secondary"><%= @pendingreadytest_count %></span>
-                    <p>Awaiting Ready</p>
-                </a>
+                <% end  %>
               </li>
               <li class="nav-item">
-                <%= link_to step5_pendingtest_path do %>
+                <%= link_to step2_pendingreceive_path, class: 'nav-link' do %>
+                    <span class="badge badge-secondary"><%= @pendingreceive_count %></span>
+                    <p>Awaiting Return</p>
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to step3_pendingprepare_path, class: 'nav-link' do %>
+                    <span class="badge badge-secondary"><%= @pendingprepare_count %></span>
+                    <p>Awaiting Prepare</p>
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to step4_pendingreadytest_path, class: 'nav-link' do %>
+                    <span class="badge badge-secondary"><%= @pendingreadytest_count %></span>
+                    <p>Awaiting Ready</p>
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to step5_pendingtest_path, class: 'nav-link' do %>
                     <span class="badge badge-secondary"><%= @pendingtest_count %></span>
                     <p>Awaiting Test</p>
                 <% end %>
               </li>
               <li class="nav-item">
-                <%= link_to step6_pendinganalyze_path do %>
+                <%= link_to step6_pendinganalyze_path, class: 'nav-link' do %>
                   <span class="badge badge-secondary"><%= @pendinganalyze_count %></span>
                   <p>Awaiting Analysis</p>
                 <% end %>

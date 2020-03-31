@@ -1,20 +1,22 @@
-<div class="container">
+<div class="container col-md-4">
   <br>
 
   <h2>Resend confirmation instructions</h2>
 
-  <%= form_for(resource, as: resource_name, url: user_confirmation_path(resource_name), html: { method: :post }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: user_confirmation_path(resource_name), html: { method: :post, class: 'was-validated' }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
 
-    <div class="field">
+    <div class="form-group">
       <%= f.label :email %><br />
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: 'form-control', required: true %>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
     </div>
 
     <div class="actions">
-      <%= f.submit "Resend confirmation instructions" %>
+      <%= f.submit "Resend confirmation instructions", class: 'btn btn-primary' %>
     </div>
   <% end %>
-
+  <br/>
   <%= render "devise/shared/links" %>
 </div>

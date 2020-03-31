@@ -1,4 +1,5 @@
-<%= form_with(model: sample, local: true) do |form| %>
+<br/>
+<%= form_with(model: sample, local: true, html: {class: 'form-inline'}) do |form| %>
   <% if sample.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(sample.errors.count, "error") %> prohibited this sample from being saved:</h2>
@@ -10,16 +11,9 @@
       </ul>
     </div>
   <% end %>
-  <div class="row justify-content-md-center">
-    <div class="form-row align-items-center mb-4">
-      <div class="col-auto">
-        <%= form.label :user_id, "User", class: 'mr-sm-2 sr-only' %>
-        <%= form.collection_select :user_id, User.patients, :id, :name, {}, {class: 'custom-select mr-sm-2'} %>
-      </div>
-      <div class="col-auto">
-        <%= form.submit class: 'btn btn-dark mb-2' %>
-      </div>
-    </div>
+  <div class="form-group mx-sm-3 mb-2">
+    <%= form.label :user_id, "User", class: 'sr-only' %>
+    <%= form.collection_select :user_id, User.patients, :id, :name, {}, {class: 'form-control'} %>
   </div>
-
+  <%= form.submit class: 'btn btn-primary mb-2' %>
 <% end %>

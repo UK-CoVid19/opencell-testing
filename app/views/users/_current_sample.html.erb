@@ -7,9 +7,9 @@
       <div class="progress">
         <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar(@user) %>%" aria-valuenow="<%= create_progress_bar(@user) %>" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
+      <br/>
       <%= create_state_alert(@user.active_sample.state) %>
     </div>
-
     <br/>
     <div class="col-md-12 text-center">
       <%= image_tag @user.active_sample.qr_code.to_data_url %>

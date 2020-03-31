@@ -1,9 +1,9 @@
-<div class="container text-center">
+<div class="container col-md-4">
   <br>
 
   <h1>Create New User</h1>
   <% user = @user %>
-  <%= form_with(model: user, local: true, url: create_staff_path) do |form| %>
+  <%= form_with(model: user, local: true, url: create_staff_path, html: {class: 'was-validated'}) do |form| %>
     <% if user.errors.any? %>
       <div id="error_explanation">
         <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -16,31 +16,39 @@
       </div>
     <% end %>
 
-    <div class="field">
+    <div class="form-group">
       <%= form.label :name %>
-      <%= form.text_field :name %>
+      <%= form.text_field :name, class: 'form-control', required: true %>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
     </div>
 
-    <div class="field">
+    <div class="form-row">
       <%= form.label :dob %>
-      <%= form.date_select :dob %>
+      <%= form.date_field :dob, class: 'form-control' %>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
     </div>
 
-    <div class="field">
+    <div class="form-group">
       <%= form.label :telno %>
-      <%= form.text_field :telno %>
+      <%= form.text_field :telno, class: 'form-control', required: true %>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
     </div>
 
-    <div class="field">
+    <div class="form-group">
       <%= form.label :email %>
-      <%= form.text_field :email %>
+      <%= form.text_field :email, class: 'form-control', required: true %>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
     </div>
 
     <div class="actions">
-      <%= form.submit %>
+      <%= form.submit class: 'btn btn-primary' %>
     </div>
   <% end %>
-
+  <br/>
   <%= link_to 'Back', samples_path %>
 
 </div>

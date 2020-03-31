@@ -1,5 +1,7 @@
 {
   "name": "opencell-testing",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "bootswatch": "^4.4.1"
+  }
 }
