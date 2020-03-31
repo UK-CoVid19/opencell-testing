@@ -2,6 +2,7 @@
 class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
+  around_action :wrap_in_current_user
   after_action :verify_policy_scoped, only: [:index, :step1_pendingdispatch, :step2_pendingreceive, :step3_pendingprepare]
   after_action :verify_authorized
   # GET /samples
@@ -262,6 +263,6 @@ class SamplesController < ApplicationController
 
      plates = params.dig(:plates)
      return  plates.map {|plate| Plate.find(plate[:id])}
-
    end
+
 end

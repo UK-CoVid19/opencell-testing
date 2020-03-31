@@ -19,6 +19,13 @@ class ApplicationController < ActionController::Base
     @pendinganalyze_count = Plate.is_testing.size
   end
 
+
+  protected
+  def wrap_in_current_user
+    Sample.with_user(current_user) do
+      yield
+    end
+  end
   private
   def user_not_authorized
     flash[:alert] = "You are not authorized to perform this action"

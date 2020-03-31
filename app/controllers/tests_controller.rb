@@ -2,6 +2,7 @@ class TestsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_test, only: [:show, :edit, :update, :destroy]
   before_action :set_plate, except: [:complete]
+  around_action :wrap_in_current_user
   after_action :verify_authorized
 
   # GET /tests

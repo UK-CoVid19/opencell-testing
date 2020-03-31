@@ -43,6 +43,19 @@ class Sample < ApplicationRecord
     return png
   end
 
+  def self.block_user
+    @with_user
+  end
+
+  def self.with_user(user, &block)
+    @with_user = user
+    begin
+      yield block
+    ensure
+      @with_user = nil
+    end
+  end
+
   private
   def unique_well_in_plate?
     return if plate.nil? or !well_id_changed?
@@ -61,10 +74,10 @@ class Sample < ApplicationRecord
   end
 
   def set_creation_record
-    self.records << Record.new({user: self.user, note: nil, state: Sample.states[:requested]})
+    self.records << Record.new({user: Sample.block_user, note: nil, state: Sample.states[:requested]})
   end
 
   def set_change_record
-    self.records << Record.new({user: self.user, note: nil, state: Sample.states[state]})
+    self.records << Record.new({user: Sample.block_user, note: nil, state: Sample.states[state]})
   end
 end
