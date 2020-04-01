@@ -36,6 +36,7 @@ gem 'devise'
 gem 'pundit'
 gem 'rqrcode'
 gem 'jquery-ui-rails'
+gem "sentry-raven"
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
