@@ -56,6 +56,12 @@ class SamplesController < ApplicationController
   def edit
   end
 
+  def dashboard
+    authorize Sample
+    @samples = Sample.all
+  end
+
+
   # PATCH/PUT /samples/1
   # PATCH/PUT /samples/1.json
   def update
@@ -80,18 +86,11 @@ class SamplesController < ApplicationController
     end
   end
 
-  def dashboard
-    authorize Sample
-    @samples = Sample.all
-  end
-
-
   def create
-    @sample = Sample.new(user_id: params[:sample][:user_id], state: Sample.states[:requested])
-    authorize @sample
+    @sample = authorize Sample.new(user_id: params[:sample][:user_id], state: Sample.states[:requested])
     respond_to do |format|
       if @sample.save
-        format.html { redirect_to @sample, notice: 'Sample was successfully created.' }
+        format.html { redirect_to user_path(@sample.user), notice: 'Sample was successfully created.' }
         format.json { render :show, status: :created, location: @sample }
       else
         format.html { render :new }
@@ -236,7 +235,6 @@ class SamplesController < ApplicationController
         end
         plate.wells = well_instances
         plate.save!
-
       end
     else
       raise

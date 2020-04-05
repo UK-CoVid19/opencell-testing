@@ -21,9 +21,9 @@ class UsersController < ApplicationController
 
 
   def create_staff
+    authorize User
     generated_password = Devise.friendly_token.first(8)
     @user = User.new(user_params.merge!({password: generated_password, password_confirmation: generated_password}))
-    authorize @user
     respond_to do |format|
       if @user.save
         UserMailer.with(user: @user).staff_created_user.deliver_now
@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
+      format.html { redirect_to root_url, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

@@ -58,6 +58,14 @@ group :development do
   gem 'pry'
 end
 
+
+group :development, :test do
+  gem 'rspec-rails', '~> 4.0.0'
+  gem 'factory_bot_rails'
+  gem 'mocha'
+  gem 'rails-controller-testing'
+end
+
 group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'

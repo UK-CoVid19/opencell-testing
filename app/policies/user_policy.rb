@@ -16,14 +16,6 @@ class UserPolicy < ApplicationPolicy
       staffmember? || user == @record
     end
 
-    def edit?
-      staffmember? || user == @record
-    end
-
-    def update?
-      staffmember? || user == @record
-    end
-
     def destroy?
       staffmember? || user == @record
     end
