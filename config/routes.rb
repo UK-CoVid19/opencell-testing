@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   resources :samples
 
   devise_for :users
-  resources :users
+  resources :users, except: [:edit, :update]
   root to: "home#index"
   get 'privacy', to: 'home#privacy'
   get 'about', to: 'home#about'
