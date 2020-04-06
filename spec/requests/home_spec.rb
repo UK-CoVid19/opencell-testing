@@ -25,7 +25,6 @@ RSpec.describe "/home", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      Home.create! valid_attributes
       get homes_url
       expect(response).to be_successful
     end
@@ -33,7 +32,6 @@ RSpec.describe "/home", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      home = Home.create! valid_attributes
       get home_url(home)
       expect(response).to be_successful
     end
@@ -48,7 +46,6 @@ RSpec.describe "/home", type: :request do
 
   describe "GET /edit" do
     it "render a successful response" do
-      home = Home.create! valid_attributes
       get edit_home_url(home)
       expect(response).to be_successful
     end

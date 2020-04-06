@@ -6,6 +6,7 @@ class Sample < ApplicationRecord
   belongs_to :well, optional: true
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
+  validate :check_valid_transition?, on: :update, if: :state_changed?
   validates :uid, uniqueness: true
   has_one :test_result, through: :well
 
@@ -13,7 +14,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected]
+  enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected ]
 
   scope :is_requested, -> {where(:state => Sample.states[:requested])}
   scope :is_dispatched, -> {where(:state => Sample.states[:dispatched])}
@@ -25,6 +26,7 @@ class Sample < ApplicationRecord
   scope :is_communicated, -> {where(:state => Sample.states[:communicated])}
 
   after_update :send_notification_after_analysis
+
 
   def qr_code
     qrcode = RQRCode::QRCode.new(uid)
@@ -71,6 +73,18 @@ class Sample < ApplicationRecord
 
   def set_uid
     self.uid = SecureRandom.uuid
+  end
+
+  def check_valid_transition?
+    valid =  valid_transition? state_was
+    unless(valid)
+      errors.add(:sample, "Cannot transition from #{state_was.to_s} to #{state.to_s}")
+    end
+  end
+
+  def valid_transition? previous_state
+    state_value = Sample.states[previous_state]
+    (Sample.states[state] - state_value) == 1
   end
 
   def set_creation_record

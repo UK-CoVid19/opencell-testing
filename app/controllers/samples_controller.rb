@@ -178,11 +178,19 @@ class SamplesController < ApplicationController
 
   def bulk_action(desired_state, redirect_path)
     @samples = get_samples
-    Sample.transaction do
-      @samples.each do |sample_hash|
-        sample_hash[:sample].state = desired_state
-        sample_hash[:sample].save!
+    begin
+      Sample.transaction do
+        @samples.each do |sample_hash|
+          sample_hash[:sample].state = desired_state
+          sample_hash[:sample].save!
+        end
       end
+    rescue ActiveRecord::RecordInvalid => e
+      respond_to do |format|
+        format.html { render :step1_pendingdispatch, alert: e.message, status: :unprocessable_entity }
+        format.json { render json: e.errors, status: :unprocessable_entity }
+      end
+      return
     end
     respond_to do |format|
       format.html { redirect_to redirect_path, notice: "Samples have been successfully #{Sample.states.to_hash.key(desired_state).capitalize}." }
