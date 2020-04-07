@@ -292,7 +292,7 @@ RSpec.describe SamplesController, type: :controller do
           @this_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
           @this_other_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
         end
-        post :step1_bulkdispatched, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
+        post :step1_bulkdispatched, params: { samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
         expect(Sample.all.size).to eq 3
         expect(Sample.second).to eq @this_sample
         expect(Sample.third).to eq @this_other_sample

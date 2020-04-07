@@ -83,6 +83,7 @@ class Sample < ApplicationRecord
   end
 
   def valid_transition? previous_state
+    return true if Sample.states.to_hash[state] == Sample.states[:rejected]
     state_value = Sample.states[previous_state]
     (Sample.states[state] - state_value) == 1
   end
