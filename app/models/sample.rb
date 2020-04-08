@@ -1,6 +1,8 @@
-require 'rqrcode'
-
 class Sample < ApplicationRecord
+
+  extend QrModule
+
+  qr_for :uid
   belongs_to :user
   has_many :records, dependent: :destroy
   belongs_to :well, optional: true
@@ -26,24 +28,6 @@ class Sample < ApplicationRecord
   scope :is_communicated, -> {where(:state => Sample.states[:communicated])}
 
   after_update :send_notification_after_analysis
-
-
-  def qr_code
-    qrcode = RQRCode::QRCode.new(uid)
-    png = qrcode.as_png(
-        bit_depth: 1,
-        border_modules: 4,
-        color_mode: ChunkyPNG::COLOR_GRAYSCALE,
-        color: 'black',
-        file: nil,
-        fill: 'white',
-        module_px_size: 6,
-        resize_exactly_to: false,
-        resize_gte_to: false,
-        size: 400
-    )
-    return png
-  end
 
   def self.block_user
     @with_user
