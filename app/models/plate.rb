@@ -10,7 +10,7 @@ class Plate < ApplicationRecord
   validates :wells, length: {maximum: 96, minimum: 96}
   qr_for :uid
 
-  before_create :set_uid, :set_qr
+  before_create :set_uid
   scope :is_preparing, -> {where(state: Plate.states[:preparing])}
   scope :is_prepared, -> {where(state: Plate.states[:prepared])}
   scope :is_testing, -> {where(state: Plate.states[:testing])}
