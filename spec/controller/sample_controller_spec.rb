@@ -367,5 +367,55 @@ RSpec.describe SamplesController, type: :controller do
         expect(Sample.states.to_hash[Sample.third.state]).to eq Sample.states[:dispatched]
       end
     end
+
+    describe "step3_bulkprepare" do
+      it "should create a valid plate with valid samples" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+        end
+        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}]}
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to("/samples/pendingreadytest")
+      end
+
+      it "should fail with a sample assigned to a well twice" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+          @this_other_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+        end
+        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}, {row:'A', col: 1, uid: @this_other_sample.uid}]}
+        expect(response).to have_http_status(:error)
+      end
+
+      it "should fail with a sample assigned to a well twice" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+          @this_other_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+        end
+        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}, {row:'A', col: 1, uid: @this_other_sample.uid}]}
+        expect(response).to have_http_status(:error)
+      end
+
+      it "should fail with a sample assigned to a well which has the wrong status" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+        end
+        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}]}
+        expect(response).to have_http_status(:error)
+      end
+
+      it "should fail with a sample assigned to a well which cannot be found" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+        end
+        post :step3_bulkprepared, params: {wells: [{row:'A', col: 99, uid: @this_sample.uid}]}
+        expect(response).to have_http_status(:error)
+      end
+
+      it "should fail when no sample is passed" do
+        post :step3_bulkprepared, params: {wells: []}
+        expect(response).to have_http_status(:error)
+      end
+    end
   end
 end
