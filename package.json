@@ -2,6 +2,7 @@
   "name": "opencell-testing",
   "private": true,
   "dependencies": {
-    "bootswatch": "^4.4.1"
+    "bootswatch": "^4.4.1",
+    "chart.js": "^2.9.3"
   }
 }
