@@ -42,6 +42,23 @@ class Sample < ApplicationRecord
     end
   end
 
+
+  def self.tested_today
+    Sample.joins(:records).where('records.state >= ? and records.created_at >= ?', Sample.states[:tested], Time.now.beginning_of_day).count
+  end
+
+  def self.requested_today
+    Sample.joins(:records).where('records.state = ? and records.created_at >= ?', Sample.states[:requested], Time.now.beginning_of_day).count
+  end
+
+  def self.failure_rate
+    Sample.joins(:records).where('records.state = ?', Sample.states[:rejected]).count / Sample.all.count
+  end
+
+  def self.average_testing_rate
+    Sample.joins(:records).where('records.state >= ? and records.created_at >= ?', Sample.states[:tested], Time.now.beginning_of_day - 5.days).count / 5
+  end
+
   private
   def unique_well_in_plate?
     return if plate.nil? or !well_id_changed?

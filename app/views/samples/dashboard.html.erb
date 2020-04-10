@@ -2,26 +2,74 @@
   <br/>
   <h2>Dashboard for Samples</h2>
   <br/>
-
-  <canvas id="myChart" width="400" height="400"></canvas>
-
-  <table id="datatable" class="table table-striped">
-    <thead class="thead-dark">
-    <tr>
-      <th>Sample</th>
-      <th>User</th>
-      <th>State</th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @samples.each do |sample| %>
-      <tr>
-        <td><%= link_to 'Sample', sample %></td>
-        <td><%= link_to sample.user.name, sample.user %></td>
-        <td><%= get_badge(sample.state) %></td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <canvas id="myChart" width="400" height="400"></canvas>
+      </div>
+    </div>
+    <div class="col col-md-6">
+      <div class="row">
+        <div class="col">
+          <div class="card text-white bg-info mb-3" style="max-width: 15rem;">
+            <div class="card-header">Samples Tested Today</div>
+            <div class="card-body">
+              <h4 class="card-title"><%= @tested_today %></h4>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card text-white bg-info mb-3" style="max-width: 15rem;">
+            <div class="card-header">Test Requests Today</div>
+            <div class="card-body">
+              <h4 class="card-title"><%= @requested_today %></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="card text-white bg-info mb-3" style="max-width: 15rem;">
+            <div class="card-header">Failed Tests</div>
+            <div class="card-body">
+              <h4 class="card-title"><%= @failure_rate %></h4>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card text-white bg-info mb-3" style="max-width: 15rem;">
+            <div class="card-header">5 Day Average Testing Rate</div>
+            <div class="card-body">
+              <h4 class="card-title"><%= @average_testing_rate %></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <br/>
+      <h2 class="text-center">Sample Data</h2>
+      <table id="datatable" class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+          <th>Sample</th>
+          <th>User</th>
+          <th>State</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @samples.each do |sample| %>
+          <tr>
+            <td><%= link_to 'Sample', sample %></td>
+            <td><%= link_to sample.user.name, sample.user %></td>
+            <td><%= get_badge(sample.state) %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 </div>

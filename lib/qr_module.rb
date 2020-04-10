@@ -26,7 +26,7 @@ module QrModule
 
   def qr_for(attr)
     unless(self.column_names.include? attr.to_s)
-      raise ArgumentError "unrecognised attribute passed #{attr}"
+      raise ArgumentError.new  "unrecognised attribute passed #{attr}"
     end
     self.qr_attr = attr
   end

@@ -1,20 +1,10 @@
-import 'chart.js';
-
-const data = fetch('/samples.json')
-    .then((response) => {
-        return response.json();
-    })
-    .then((data) => {
-        createData(data);
-    });
-
 let createData = (data) => {
     console.log(data);
-    let groupedByState = data.reduce((previous, current) => {
-        if (current.state in previous){
-            previous[current.state] ++;
+    let groupedByState = data.map(d => d.state).reduce((previous, current) => {
+        if (current in previous){
+            previous[current] ++;
         }else{
-            previous[current.state] = 1;
+            previous[current] = 1;
         }
         return previous;
     }, {})
@@ -23,10 +13,10 @@ let createData = (data) => {
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: groupedByState.keys(),
+            labels: Object.keys(groupedByState),
             datasets: [{
                 label: '# of Votes',
-                data: groupedByState.values(),
+                data: Object.values(groupedByState),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -57,3 +47,17 @@ let createData = (data) => {
         }
     });
 }
+
+const loadChart = () => {
+    const data = fetch('/samples.json')
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            createData(data);
+        });
+
+}
+
+
+$(document).on('turbolinks:load', () => {loadChart()});

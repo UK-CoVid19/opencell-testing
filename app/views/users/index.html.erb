@@ -12,7 +12,7 @@
         <th>Dob</th>
         <th>Telno</th>
         <th>Email</th>
-        <th colspan="3"></th>
+        <th colspan="2"></th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +23,6 @@
           <td><%= user.telno %></td>
           <td><%= user.email %></td>
           <td><%= link_to 'Show', user %></td>
-          <td><%= link_to 'Edit', edit_user_path(user) %></td>
           <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
         </tr>
       <% end %>
