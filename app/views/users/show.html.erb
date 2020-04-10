@@ -22,7 +22,7 @@
         <div class="card-header">My Previous Tests</div>
         <ul class="list-group list-group-flush">
           <% @user.samples.is_analysed.each do | sample| %>
-            <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result.value %> </li>
+            <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result&.value %> </li>
           <% end %>
         </ul>
       </div>

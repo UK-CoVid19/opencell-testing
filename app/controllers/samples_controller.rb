@@ -59,6 +59,10 @@ class SamplesController < ApplicationController
   def dashboard
     authorize Sample
     @samples = Sample.all
+    @tested_today = Sample.tested_today
+    @requested_today = Sample.requested_today
+    @failure_rate = Sample.failure_rate
+    @average_testing_rate = Sample.average_testing_rate
   end
 
 
