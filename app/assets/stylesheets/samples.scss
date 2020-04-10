@@ -3,6 +3,15 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 
+#output{
+  font-size: 1.9em;
+}
+
+#output pre{
+  font-size: 0.6em;
+  margin: 0;
+}
+
 .records-list{
   max-width: 400px;
 }

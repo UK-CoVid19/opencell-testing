@@ -14,11 +14,7 @@
  *= require_self
  *= require jquery-ui
  */
-@import "bootswatch/dist/solar/variables";
 @import "bootstrap";
-@import "bootswatch/dist/solar/bootswatch";
-
-
 
 .application-container {
   min-height: 65vh;

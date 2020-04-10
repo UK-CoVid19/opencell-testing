@@ -6,15 +6,25 @@
       <h3>1) Scan barcode</h3>
       <hr>
       <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
-      <canvas id="canvas" hidden></canvas>
+      <div class="card">
+        <canvas id="canvas" hidden></canvas>
+      </div>      
     </div>
     <div class="col-md-6">      
       <h3>2) Insert sample into well</h3>
       <hr>
       <div id="output" class="text-center" hidden>
         <br>
-        <h3 hidden>Place sample:<pre id="outputData"></pre>into well:<pre id="wellToInsertSample"></pre></h3>
-        <br><br><br>
+        <span>Place sample:</span>
+        <div class="card card-header">
+          <pre id="outputData"></pre>
+        </div>
+        <br>
+        <span>into well:</span>
+        <div class="card card-header">
+          <pre id="wellToInsertSample"></pre>
+        </div>
+        <br>
         <button id="nextSampleButton" type="button" class="btn btn-success btn-block btn-lg">Next Sample</button>
       </div>
     </div>
@@ -159,9 +169,13 @@
                       new Audio('/ping.mp3').play();
                       validate_plate(uid, function (){
                           // success
-                          $("input.form-control:eq( " + cell_index + " )").val(uid);
-                          var row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
-                          var col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
+                          const row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
+                          const col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
+                          const existingValue = $("input.form-control:eq( " + cell_index + " )").val();
+                          if (existingValue && !(confirm(`${row}${col} already has a value, do you want to overwrite it?`))){
+                            return;
+                          }
+                          $("input.form-control:eq( " + cell_index + " )").val(uid);                          
                           $("#wellToInsertSample").text(row + col);
                           cell_index ++;
                       }, function(err){
@@ -183,6 +197,10 @@
       $("#nextSampleButton").on( "click", function() {
           tick();
       });
+      $(".sample-assign").on("click", function(e){
+        cell_index = $('.sample-assign').index(this);
+      })
+
   });
 
 
