@@ -9,24 +9,24 @@
       <tr>
         <th>Plate</th>
         <th>Results</th>
+        <th>Updated At</th>
       </tr>
       </thead>
       <tbody>
       <% @plates.each do |plate| %>
         <tr>
           <td>
-            <%= link_to plate do  %>
-              <%= tag.button class: 'btn btn-sm btn-outline-primary' do  %>
-                Show
-              <% end  %>
-            <% end  %>
+            <%= link_to "Plate ##{plate.id}", plate %>
           </td>
           <td>
             <%= link_to new_plate_test_path(plate) do  %>
-              <%= tag.button class: 'btn btn-small btn-primary' do  %>
+              <%= tag.button class: 'btn btn-small btn-outline-primary' do  %>
                 Upload
               <% end  %>
             <% end  %>
+          </td>
+          <td class="text-right">
+            <%= plate.updated_at.strftime('%a %d %b %H:%M') %>
           </td>
         </tr>
       <% end %>

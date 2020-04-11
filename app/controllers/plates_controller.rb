@@ -12,6 +12,11 @@ class PlatesController < ApplicationController
   # GET /plates/1
   # GET /plates/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.csv { send_data @plate.to_csv, filename: "plate-#{@plate.uid}.csv" }
+      format.json
+    end
   end
 
   # GET /plates/1/edit
@@ -45,7 +50,7 @@ class PlatesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_plate
-      @plate = authorize Plate.find(params[:id])
+      @plate = authorize Plate.includes(wells: [:sample]).find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

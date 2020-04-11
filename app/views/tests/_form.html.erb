@@ -15,11 +15,11 @@
         <div class="container">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
-              <%= form.label :result_file, 'Result File', class: 'input-group-text' %>
+              <%= form.label :result_file, 'Result Files', class: 'input-group-text' %>
             </div>
             <div class="custom-file">
-              <%= form.file_field :result_file, class: 'custom-file-input' %>
-              <%= form.label :result_file, 'Choose File', class: 'custom-file-label' %>
+              <%= form.file_field :result_files, multiple: true, name: '[test][result_files][]', accept: '.csv', class: 'custom-file-input' %>
+              <%= form.label :result_files, 'Choose Files', class: 'custom-file-label' %>
             </div>
           </div>
           <div class="input-group mb-3">

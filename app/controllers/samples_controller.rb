@@ -28,17 +28,17 @@ class SamplesController < ApplicationController
   end
 
   def step4_pendingreadytest
-    @plates = Plate.all.where(state: Plate.states[:preparing])
+    @plates = Plate.all.where(state: Plate.states[:preparing]).order(:updated_at)
     authorize Sample
   end
 
   def step5_pendingtest
-    @plates = Plate.all.where(state: Plate.states[:prepared])
+    @plates = Plate.all.where(state: Plate.states[:prepared]).order(:updated_at)
     authorize Sample
   end
 
   def step6_pendinganalyze
-    @plates = Plate.all.where(state: Plate.states[:testing])
+    @plates = Plate.all.where(state: Plate.states[:testing]).order(:updated_at)
     authorize Sample
   end
   # GET /samples/1
@@ -125,6 +125,12 @@ class SamplesController < ApplicationController
   def step4_bulkreadytest
     authorize Sample
     plates = get_plates
+    if plates.nil? || !plates.any?
+      respond_to do |format|
+        format.html { redirect_to request.referrer, alert: "No Plates Selected" }
+      end
+      return
+    end
     update_plate(plates)
     respond_to do |format|
       format.html { redirect_to step5_pendingtest_path, notice: "Plate to qPCR" }
@@ -182,6 +188,12 @@ class SamplesController < ApplicationController
 
   def bulk_action(desired_state, redirect_path)
     @samples = get_samples
+    unless @samples.any?
+      respond_to do |format|
+        format.html { redirect_to request.referrer, alert: "No Samples Selected" }
+      end
+      return
+    end
     begin
       Sample.transaction do
         @samples.each do |sample_hash|
@@ -272,6 +284,7 @@ class SamplesController < ApplicationController
      end
 
      plates = params.dig(:plates)
+     return nil unless plates&.any?
      return  plates.map {|plate| Plate.find(plate[:id])}
    end
 

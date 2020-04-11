@@ -9,16 +9,18 @@
       <thead class="thead-dark">
       <tr>
         <th class="no-sort" width="25"><!-- check_box_tag--></th>
-        <th class="no-sort">Note</th>
         <th>Plate</th>
+        <th class="no-sort">State</th>
+        <th class="no-sort">Updated At</th>
       </tr>
       </thead>
       <tbody>
       <% @plates.each do |plate| %>
         <tr>
           <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'plates[][id]', plate.id %></td>
-          <td><%= plate.state %></td>
-          <td><%= link_to 'Plate', plate %></td>
+          <td><%= link_to "Plate ##{plate.id}", plate %></td>
+          <td><%= get_plate_badge(plate.state) %></td>
+          <td><%= plate.updated_at.strftime('%a %d %b %H:%M') %></td>
         </tr>
       <% end %>
       </tbody>

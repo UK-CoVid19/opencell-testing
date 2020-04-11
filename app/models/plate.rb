@@ -21,6 +21,17 @@ class Plate < ApplicationRecord
     self.uid = SecureRandom.uuid
   end
 
+
+  def to_csv
+    headers = %w{plate_id well_id well_row well_col sample_in_well}
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+      wells.each do |well|
+        csv << [well.plate_id, well.id, well.row, well.column, !well.sample.nil?]
+      end
+    end
+  end
+
 end
 
 module PlateHelper

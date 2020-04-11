@@ -7,10 +7,6 @@ class TestsController < ApplicationController
 
   # GET /tests
   # GET /tests.json
-  def index
-    authorize Test
-    @tests = Test.all.where(plate: @plate)
-  end
 
   def complete
     authorize Test
@@ -42,7 +38,7 @@ class TestsController < ApplicationController
     authorize @test
     respond_to do |format|
       if @test.save
-        format.html { redirect_to plate_tests_url(@plate), notice: 'Test was successfully created.' }
+        format.html { redirect_to plate_url(@plate), notice: 'Test was successfully created.' }
         format.json { render :show, status: :created, location: @test }
       else
         format.html { render :new }
@@ -88,6 +84,6 @@ class TestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def test_params
-      params.fetch(:test, {}).permit(:result_file,:user_id, test_results_attributes: [:value, :well_id, :id,:test_id] )
+      params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:value, :well_id, :id,:test_id])
     end
 end

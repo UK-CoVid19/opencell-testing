@@ -1,0 +1,21 @@
+<h2> Test Results</h2>
+<table class="table table-striped table-bordered">
+  <thead class="thead-dark">
+  <tr>
+    <th></th>
+    <% (1..12).each do |col| %>
+      <th><%= col %></th>
+    <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% @plate.wells.sort_by{|w| w.row}.group_by {|well| well[:row]}.each do |row, wells| %>
+    <tr>
+      <td class="dark-cell text-center"><%= row %></td>
+      <% wells.sort_by{|w|w.column}.each do |well| %>
+        <%= generate_test_cell(well) %>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

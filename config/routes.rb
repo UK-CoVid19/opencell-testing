@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
   post 'users/create_staff', to: 'users#create_staff', as: 'create_staff'
   resources :plates do
-    resources :tests
+    resources :tests, except: [:index]
   end
   get '/tests/complete', to: 'tests#complete'
   resources :samples

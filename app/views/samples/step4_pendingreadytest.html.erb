@@ -23,7 +23,9 @@
           <td><%= link_to "Plate #{plate.id}", plate %></td>
           <td><%= get_badge(plate.state) %></td>
           <td>
-            <%= link_to "Json", plate_path(plate, format: :json), {'data-turbolinks': false}  %>
+            <%= link_to "Download CSV", plate_path(plate, format: :csv), {'data-turbolinks': false}  %>
+            <br/>
+            <%= link_to "Download Json", plate_path(plate, format: :json), {'data-turbolinks': false}  %>
           </td>
           <td><%= plate.created_at.strftime('%A %-d %b %H:%M') %></td>
           <td><%= plate.updated_at.strftime('%A %-d %b %H:%M') %></td>

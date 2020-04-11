@@ -69,7 +69,7 @@ class Sample < ApplicationRecord
   end
 
   def send_notification_after_analysis
-      ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.analysed?)
+      ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.analysed? && Rails.application.config.email_test_results)
   end
 
   def set_uid

@@ -18,7 +18,7 @@
         <% samples.each do |sample| %>
           <tr>
             <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
-            <td><%= text_field_tag  'samples[][note]' %></td>
+            <td><%= text_field_tag  'samples[][note]', nil, placeholder: 'comment' %></td>
             <td class="text-left">
               <%= link_to sample do  %>
                 <%= tag.button class:'btn btn-sm btn-outline-primary' do %>
