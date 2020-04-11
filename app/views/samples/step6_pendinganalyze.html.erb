@@ -14,8 +14,20 @@
       <tbody>
       <% @plates.each do |plate| %>
         <tr>
-          <td><%= link_to 'Plate', plate %></td>
-          <td><%= link_to 'Upload Results', new_plate_test_path(plate) %></td>
+          <td>
+            <%= link_to plate do  %>
+              <%= tag.button class: 'btn btn-sm btn-outline-primary' do  %>
+                Show
+              <% end  %>
+            <% end  %>
+          </td>
+          <td>
+            <%= link_to new_plate_test_path(plate) do  %>
+              <%= tag.button class: 'btn btn-small btn-primary' do  %>
+                Upload
+              <% end  %>
+            <% end  %>
+          </td>
         </tr>
       <% end %>
       </tbody>

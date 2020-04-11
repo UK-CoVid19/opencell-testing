@@ -12,10 +12,14 @@
 //= require chart.js/dist/Chart.min.js
 //= require jquery
 //= require jquery-ui/widgets/autocomplete
+//= require popper
 //= require bootstrap-sprockets
 //= require rails-ujs
 //= require activestorage
 //= require turbolinks
 //= require_tree .
+
+
+$(document).on('turbolinks:load', () => {$('[data-toggle="tooltip"]').tooltip()});
 
 

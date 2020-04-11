@@ -14,8 +14,14 @@
  *= require_self
  *= require jquery-ui
  */
+
+@import "font-awesome";
 @import "bootstrap";
 
 .application-container {
   min-height: 65vh;
+}
+
+.nav-icon {
+  margin-left: 0.3em;
 }

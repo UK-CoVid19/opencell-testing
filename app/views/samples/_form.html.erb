@@ -5,9 +5,9 @@
       <h2><%= pluralize(sample.errors.count, "error") %> prohibited this sample from being saved:</h2>
 
       <ul>
-      <% sample.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+        <% sample.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>

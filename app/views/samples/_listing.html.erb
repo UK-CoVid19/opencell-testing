@@ -11,7 +11,7 @@
           <th class="no-sort" width="25"><!-- check_box_tag--></th>
           <th class="no-sort">Notes</th>
           <th>Sample</th>
-          <th>User</th>
+          <th>Patient</th>
         </tr>
         </thead>
         <tbody>      
@@ -19,8 +19,20 @@
           <tr>
             <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
             <td><%= text_field_tag  'samples[][note]' %></td>
-            <td><%= link_to 'Sample', sample %></td>
-            <td><%= sample.user.id %></td>
+            <td class="text-left">
+              <%= link_to sample do  %>
+                <%= tag.button class:'btn btn-sm btn-outline-primary' do %>
+                  Show Sample
+                <% end   %>
+              <% end  %>
+            </td>
+            <td class="text-left">
+              <%= link_to sample.user do  %>
+                <%= tag.button class: 'btn btn-sm btn-outline-primary' do %>
+                  <%= sample.user.name %>
+                <% end  %>
+              <% end  %>
+            </td>
           </tr>
         <% end %>        
       </tbody>

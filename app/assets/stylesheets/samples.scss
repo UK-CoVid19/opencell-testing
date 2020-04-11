@@ -1,6 +1,7 @@
 // Place all the styles related to the samples controller here.
 // They will automatically be included in application.scss.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+@import "bootstrap";
 
 
 #output{
@@ -16,11 +17,19 @@
   max-width: 400px;
 }
 
+.cell > a {
+  color: $white;
+}
+
+.control-cell {
+  background-color: $warning;
+}
+
 .marked-cell {
-  background-color: #5bc0de;
+  background-color: $info;
 }
 
 .rejected-cell {
-  background-color: #dc3545;
+  background-color: $danger;
 }
 

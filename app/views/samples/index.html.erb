@@ -19,9 +19,9 @@
       <tr>
         <td><%= link_to sample.id, sample %></td>
         <td><%= sample.uid %></td>
-        <td><%= get_badge(sample.state) %></td>
-        <td><%= sample.created_at %></td>
-        <td><%= sample.updated_at %></td>
+        <td class="text-center"><%= get_badge(sample.state) %></td>
+        <td class="text-right"><%= sample.created_at.strftime('%a %d %b %H:%M') %></td>
+        <td class="text-right"><%= sample.updated_at.strftime('%a %d %b %H:%M') %></td>
       </tr>
     <% end %>
     </tbody>

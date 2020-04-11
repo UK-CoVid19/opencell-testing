@@ -8,17 +8,38 @@ module PlatesHelper
   def generate_well_cell(well)
     if sample_exists?(well)
       if(Sample.states[well.sample.state] == Sample.states[:rejected])
-        tag.td class: 'rejected-cell'do
+        tag.td class: 'cell rejected-cell'do
           link_to"#{well.row}#{well.column}", well.sample
         end
       else
-        tag.td class: 'marked-cell' do
+        tag.td class: 'cell marked-cell' do
           link_to"#{well.row}#{well.column}", well.sample
         end
       end
     else
       tag.td do
         "#{well.row}#{well.column}"
+      end
+    end
+  end
+
+  def get_plate_badge(status)
+    case Plate.states.to_hash[status]
+    when Plate.states[:preparing]
+      return tag.span class: 'badge badge-pill badge-primary' do
+        status
+      end
+    when Plate.states[:prepared]
+      return tag.span class: 'badge badge-pill badge-secondary' do
+        status
+      end
+    when Plate.states[:testing]
+      return tag.span class: 'badge badge-pill badge-info' do
+        status
+      end
+    when Plate.states[:complete]
+      return tag.span class: 'badge badge-pill badge-success' do
+        status
       end
     end
   end

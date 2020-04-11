@@ -1,26 +1,75 @@
 <div class="container">
-  <table class="table table-striped table-bordered">
-    <thead class="thead-dark">
-    <tr>
-      <th></th>
-      <% (1..12).each do |col| %>
-        <th><%= col %></th>
-      <% end %>
-    </tr>
-    </thead>
-    <tbody>
-    <% @plate.wells.sort_by{|w| w.row}.group_by {|well| well[:row]}.each do |row, wells| %>
-      <tr>
-        <td class="dark-cell text-center"><%= row %></td>
-        <% wells.sort_by{|w|w.column}.each do |well| %>
-         <%= generate_well_cell(well) %>
-        <% end %>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
+  <h1 class="text-center">Plate #<%= @plate.id %> </h1>
+  <br/>
+
   <div class="row">
-    <%= image_tag @plate.qr_code.to_data_url %>
+    <div class="col">
+        <%= image_tag @plate.qr_code.to_data_url, class: 'img-thumbnail' %>
+    </div>
+    <div class="col">
+      <div class="row">
+        <table class="table table-bordered">
+          <tbody>
+          <tr>
+            <td><strong>UID</strong></td>
+            <td><i><%= @plate.uid %></i></td>
+          </tr>
+          <tr>
+            <td><strong>Created</strong></td>
+            <td><i><%= @plate.created_at.strftime('%A %-d %b %H:%M') %></i></td>
+          </tr>
+          <tr>
+            <td><strong>Status</strong></td>
+            <td><%= get_plate_badge(@plate.state) %></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <table class="table table-bordered">
+          <tbody>
+          <tr>
+            <td class="cell marked-cell"></td>
+            <td>Has Sample</td>
+          </tr>
+          <tr>
+            <td class="cell control-cell"></td>
+            <td>Control Sample</td>
+          </tr>
+          <tr>
+            <td class="cell rejected-cell"></td>
+            <td>Rejected</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col">
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+          <th></th>
+          <% (1..12).each do |col| %>
+            <th><%= col %></th>
+          <% end %>
+        </tr>
+        </thead>
+        <tbody>
+        <% @plate.wells.sort_by{|w| w.row}.group_by {|well| well[:row]}.each do |row, wells| %>
+          <tr>
+            <td class="dark-cell text-center"><%= row %></td>
+            <% wells.sort_by{|w|w.column}.each do |well| %>
+              <%= generate_well_cell(well) %>
+            <% end %>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
   <%= link_to 'Edit', edit_plate_path(@plate) %> |
   <%= link_to 'Back', plates_path %>

@@ -28,16 +28,9 @@
       </div>
       <br/>
       <% if @user == current_user %>
-        <div class="card">
-          <div class="card-header">Manage My Account</div>
-          <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                <%= link_to edit_user_registration_path do  %>
-                  <button class="btn btn-warning">Edit Account Details</button>
-                <% end %>
-              </li>
-          </ul>
-        </div>
+        <%= link_to edit_user_registration_path do  %>
+          <button class="btn btn-outline-primary">Edit Account Details</button>
+        <% end %>
       <% end %>
       <br/>
     </div>

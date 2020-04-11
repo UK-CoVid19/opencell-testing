@@ -117,6 +117,8 @@ GEM
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.12.2)
+    font-awesome-rails (4.7.0.5)
+      railties (>= 3.2, < 6.1)
     formtastic (3.1.5)
       actionpack (>= 3.2.13)
     formtastic_i18n (0.6.0)
@@ -333,6 +335,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise
   factory_bot_rails
+  font-awesome-rails
   jbuilder (~> 2.5)
   jquery-rails
   jquery-ui-rails
