@@ -17,6 +17,18 @@ class Plate < ApplicationRecord
   scope :is_complete, -> {where(state: Plate.states[:complete])}
 
 
+  def self.build_plate
+    plate = Plate.new
+    wells = []
+    PlateHelper.rows.each do |row|
+      PlateHelper.columns.each do |column|
+        wells << Well.new(row: row, column: column, plate: plate)
+      end
+    end
+    plate.wells = wells
+    plate
+  end
+
   def set_uid
     self.uid = SecureRandom.uuid
   end

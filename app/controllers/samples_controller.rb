@@ -23,6 +23,7 @@ class SamplesController < ApplicationController
   end
 
   def step3_pendingprepare
+    @plate = Plate.build_plate
     @samples = policy_scope(Sample.is_received)
     authorize Sample
   end
@@ -101,6 +102,30 @@ class SamplesController < ApplicationController
       format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
     end
     # bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
+  end
+
+  def step3_bulkprepared_2
+    authorize Sample
+    plate_params = get_bulk_plate_2
+    @plate = Plate.new(plate_params)
+    get_mapping[:mappings].reject { |swm| swm[:id].empty? }.each do |mapping|
+      sample = Sample.find(mapping[:id])
+      well = @plate.wells.find { |w| w[:column] == mapping[:column].to_i && w[:row] == mapping[:row]}
+      raise RecordNotFound, 'Illegal Well Reference' if well.nil?
+
+      well.sample = sample
+      well.sample.state = Sample.states[:preparing]
+    end
+
+    respond_to do |format|
+      if @plate.save
+        format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+        format.json { render :show, status: :created, location: @plate }
+      else
+        format.html { render :step3_bulkprepared_2 }
+        format.json { render json: @plate.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def step4_bulkreadytest
@@ -268,5 +293,12 @@ class SamplesController < ApplicationController
      return nil unless plates&.any?
      return  plates.map {|plate| Plate.find(plate[:id])}
    end
+
+  def get_bulk_plate_2
+    params.require(:plate).permit(wells_attributes:[:id, :row, :column ])
+  end
+  def get_mapping
+    params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column])
+  end
 
 end
