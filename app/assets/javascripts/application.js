@@ -9,6 +9,7 @@
 //
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
+//= require bs-custom-file-input/dist/bs-custom-file-input.min.js
 //= require chart.js/dist/Chart.min.js
 //= require jquery
 //= require jquery-ui/widgets/autocomplete
@@ -21,5 +22,6 @@
 
 
 $(document).on('turbolinks:load', () => {$('[data-toggle="tooltip"]').tooltip()});
+$(document).on('turbolinks:load', () => {bsCustomFileInput.init()});
 
 

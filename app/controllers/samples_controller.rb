@@ -1,7 +1,7 @@
 
 class SamplesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_sample, only: [:show, :edit, :update, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
+  before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
   around_action :wrap_in_current_user
   after_action :verify_policy_scoped, only: [:index, :step1_pendingdispatch, :step2_pendingreceive, :step3_pendingprepare]
   after_action :verify_authorized
@@ -52,10 +52,6 @@ class SamplesController < ApplicationController
     authorize @sample
   end
 
-  # GET /samples/1/edit
-  def edit
-  end
-
   def dashboard
     authorize Sample
     @samples = Sample.all
@@ -63,21 +59,6 @@ class SamplesController < ApplicationController
     @requested_today = Sample.requested_today
     @failure_rate = Sample.failure_rate
     @average_testing_rate = Sample.average_testing_rate
-  end
-
-
-  # PATCH/PUT /samples/1
-  # PATCH/PUT /samples/1.json
-  def update
-    respond_to do |format|
-      if @sample.update(sample_params)
-        format.html { redirect_to @sample, notice: 'Sample was successfully updated.' }
-        format.json { render :show, status: :ok, location: @sample }
-      else
-        format.html { render :edit }
-        format.json { render json: @sample.errors, status: :unprocessable_entity }
-      end
-    end
   end
 
   # DELETE /samples/1

@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     resources :tests, except: [:index]
   end
   get '/tests/complete', to: 'tests#complete'
-  resources :samples
+  resources :samples, except: [:update, :edit]
 
   devise_for :users
   resources :users, except: [:edit, :update]

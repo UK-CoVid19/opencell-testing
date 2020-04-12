@@ -33,3 +33,14 @@
   background-color: $danger;
 }
 
+
+.object-contain{
+  object-fit: contain;
+  height: auto;
+  width: 100%;
+  display: block;
+}
+
+.card-table {
+  margin-bottom: 0 !important;
+}

@@ -1,0 +1,19 @@
+<div class="card" style="max-width: 20em;">
+  <div class="card-header">
+    <h4 class="mb-1 card-title"><%= "Sample ##{@sample.id}" %></h4>
+  </div>
+  <%= image_tag @sample.qr_code.to_data_url, class: 'object-contain' %>
+  <div class="row">
+    <div class="col text-center">
+      <p><strong>Sample Barcode </strong><br/><small><%= @sample.uid %></small></p>
+    </div>
+  </div>
+  <div class="card-footer">
+    <p>State: <%= get_badge(@sample.state) %></p>
+    <% unless @sample.plate.nil? %>
+      Location: <%= link_to "Plate ##{@sample.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.plate %>
+    <% else %>
+        Location: Not yet assigned to plate
+    <% end %>
+  </div>
+</div>

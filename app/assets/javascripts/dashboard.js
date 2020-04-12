@@ -1,5 +1,4 @@
 let createData = (data) => {
-    console.log(data);
     let groupedByState = data.map(d => d.state).reduce((previous, current) => {
         if (current in previous){
             previous[current] ++;
