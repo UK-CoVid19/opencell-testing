@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_30_211058) do
+ActiveRecord::Schema.define(version: 2020_04_13_162642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,7 +92,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_211058) do
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["uid"], name: "index_samples_on_uid", unique: true
     t.index ["user_id"], name: "index_samples_on_user_id"
-    t.index ["well_id"], name: "index_samples_on_well_id"
   end
 
   create_table "test_results", force: :cascade do |t|
@@ -141,6 +140,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_211058) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["plate_id"], name: "index_wells_on_plate_id"
+    t.index ["row", "column", "plate_id"], name: "index_wells_on_row_and_column_and_plate_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

@@ -1,3 +1,12 @@
+class UniqueWellPlateValidator < ActiveModel::Validator
+
+  def validate(record)
+    if record.wells.group_by { |w| [w.row, w.column] }.any? { |_, group| group.size != 1 }
+     record.errors[:wells] << "Duplicate Well Found"
+    end
+  end
+end
+
 class Plate < ApplicationRecord
 
   extend QrModule
@@ -9,6 +18,9 @@ class Plate < ApplicationRecord
   enum state: %i[preparing prepared testing complete]
   validates :wells, length: {maximum: 96, minimum: 96}
   qr_for :uid
+
+  validates_with UniqueWellPlateValidator, on: :create
+
 
   before_create :set_uid
   scope :is_preparing, -> {where(state: Plate.states[:preparing])}
@@ -33,6 +45,17 @@ class Plate < ApplicationRecord
     self.uid = SecureRandom.uuid
   end
 
+  def assign_samples(sample_mappings)
+    sample_mappings.reject { |swm| swm[:id].blank? }.each do |mapping|
+      sample = Sample.find(mapping[:id])
+      well = wells.find { |w| w[:column] == mapping[:column].to_i && w[:row] == mapping[:row]}
+      raise RecordNotFound, 'Illegal Well Reference' if well.nil?
+
+      well.sample = sample
+      well.sample.state = Sample.states[:preparing]
+    end
+    self
+  end
 
   def to_csv
     headers = %w{plate_id well_id well_row well_col sample_in_well}

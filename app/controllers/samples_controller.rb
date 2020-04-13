@@ -107,16 +107,7 @@ class SamplesController < ApplicationController
   def step3_bulkprepared_2
     authorize Sample
     plate_params = get_bulk_plate_2
-    @plate = Plate.new(plate_params)
-    get_mapping[:mappings].reject { |swm| swm[:id].empty? }.each do |mapping|
-      sample = Sample.find(mapping[:id])
-      well = @plate.wells.find { |w| w[:column] == mapping[:column].to_i && w[:row] == mapping[:row]}
-      raise RecordNotFound, 'Illegal Well Reference' if well.nil?
-
-      well.sample = sample
-      well.sample.state = Sample.states[:preparing]
-    end
-
+    @plate = Plate.new(plate_params).assign_samples(get_mappings)
     respond_to do |format|
       if @plate.save
         format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
@@ -297,8 +288,8 @@ class SamplesController < ApplicationController
   def get_bulk_plate_2
     params.require(:plate).permit(wells_attributes:[:id, :row, :column ])
   end
-  def get_mapping
-    params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column])
+  def get_mappings
+    params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column])[:mappings]
   end
 
 end
