@@ -78,8 +78,8 @@ RSpec.describe Plate, type: :model do
         this_plate = plate.assign_samples(sample_mappings)
         expect(this_plate.save).to be false
         expect(this_plate.errors.size).to eq 1
-        expect(this_plate.errors[:well].size).to eq 1
-        expect(this_plate.errors[:well].first.include? 'Duplicate Well')
+        expect(this_plate.errors[:plate].size).to eq 1
+        expect(this_plate.errors[:plate].first.include? 'Duplicate Sample In plate Found')
       end
     end
 

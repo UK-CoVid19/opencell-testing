@@ -1,6 +1,7 @@
 class Well < ApplicationRecord
   belongs_to :plate, inverse_of: :wells
-  has_one :sample, dependent: :nullify
+  belongs_to :sample, optional: true
   has_one :test_result, dependent: :destroy
   accepts_nested_attributes_for :sample
+  validates :sample, uniqueness: true
 end

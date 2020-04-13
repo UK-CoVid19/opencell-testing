@@ -2,7 +2,10 @@ class UniqueWellPlateValidator < ActiveModel::Validator
 
   def validate(record)
     if record.wells.group_by { |w| [w.row, w.column] }.any? { |_, group| group.size != 1 }
-     record.errors[:wells] << "Duplicate Well Found"
+      record.errors[:wells] << "Duplicate Well Found"
+    end
+    if record.wells.select {|x| x.sample_id != nil}.group_by { |w| w.sample_id }.any? { |_, group| group.size != 1 }
+      record.errors[:plate] << "Duplicate Sample In plate Found"
     end
   end
 end

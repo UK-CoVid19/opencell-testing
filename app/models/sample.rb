@@ -5,13 +5,12 @@ class Sample < ApplicationRecord
   qr_for :uid
   belongs_to :user
   has_many :records, dependent: :destroy
-  belongs_to :well, optional: true
+  has_one :well
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
   validates :uid, uniqueness: true
   has_one :test_result, through: :well
-  validates :well, uniqueness: true
 
   before_create :set_uid
   before_create :set_creation_record
