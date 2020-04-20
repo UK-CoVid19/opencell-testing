@@ -73,10 +73,6 @@ class SamplePolicy < ApplicationPolicy
     staffmember?
   end
 
-  def step3_bulkprepared_2?
-    staffmember?
-  end
-
   def step4_bulkreadytest?
     staffmember?
   end
