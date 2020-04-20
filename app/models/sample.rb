@@ -52,7 +52,7 @@ class Sample < ApplicationRecord
   end
 
   def self.failure_rate
-    Sample.joins(:records).where('records.state = ?', Sample.states[:rejected]).count / Sample.all.count
+    Sample.joins(:records).where('records.state = ?', Sample.states[:rejected]).count / [Sample.all.count, 1].max
   end
 
   def self.average_testing_rate

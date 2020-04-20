@@ -12,7 +12,6 @@ Rails.application.routes.draw do
   post 'samples/dispatched', to: 'samples#step1_bulkdispatched', as: 'step1_sample_bulk_dispatched'
   post 'samples/received', to: 'samples#step2_bulkreceived', as: 'step2_sample_bulk_received'
   post 'samples/prepared', to: 'samples#step3_bulkprepared', as: 'step3_sample_bulkprepared'
-  post 'samples/prepared2', to: 'samples#step3_bulkprepared_2', as: 'step3_sample_bulkprepared_2'
   post 'samples/readytest', to: 'samples#step4_bulkreadytest', as: 'step4_sample_bulk_ready_test'
   post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'

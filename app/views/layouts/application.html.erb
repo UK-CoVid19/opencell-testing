@@ -20,8 +20,11 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav text-center mr-auto">
-            <% if current_user && user_signed_in? && current_user.staff?  %>            
+          <div class="col">
+
+
+          <ul class="d-flex navbar-nav text-center justify-content-end">
+            <% if current_user && user_signed_in? && current_user.staff?  %>
               <li class="nav-item">
                 <%= link_to step1_pendingdispatch_path, class: 'nav-link' do %>
                   <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingdispatch_count } do %>
@@ -71,7 +74,6 @@
                   <% end %>
                 <% end %>
               </li>
-              </ul>
               <ul class="navbar-nav text-center ml-auto">
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More</a>
@@ -89,7 +91,7 @@
               </ul>
             <% end %>
             <% if user_signed_in? && current_user.patient? %>
-              <li class="nav-item justify-content-end">
+              <li class="nav-item ">
                 <%= link_to destroy_user_session_path, method: :delete do   %>
                   <% tag.button class: 'btn btn-info' do %>
                     Sign Out
@@ -98,6 +100,7 @@
               </li>
             <% end %>
           </ul>
+          </div>
         </div>
       </nav>
       <% if notice %>

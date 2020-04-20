@@ -10,6 +10,15 @@ class UniqueWellPlateValidator < ActiveModel::Validator
   end
 end
 
+class HasOtherErrorsValidator < ActiveModel::Validator
+
+  def validate(record)
+     if record.assign_error == true
+        record.errors[:wells] << "Illegal Well Reference"
+     end
+  end
+end
+
 class Plate < ApplicationRecord
 
   extend QrModule
@@ -21,8 +30,9 @@ class Plate < ApplicationRecord
   enum state: %i[preparing prepared testing complete]
   validates :wells, length: {maximum: 96, minimum: 96}
   qr_for :uid
-
+  attr_accessor :assign_error
   validates_with UniqueWellPlateValidator, on: :create
+  validates_with HasOtherErrorsValidator
 
 
   before_create :set_uid
@@ -52,7 +62,10 @@ class Plate < ApplicationRecord
     sample_mappings.reject { |swm| swm[:id].blank? }.each do |mapping|
       sample = Sample.find(mapping[:id])
       well = wells.find { |w| w[:column] == mapping[:column].to_i && w[:row] == mapping[:row]}
-      raise RecordNotFound, 'Illegal Well Reference' if well.nil?
+      if (well.nil?)
+        @assign_error = true
+        break
+      end
 
       well.sample = sample
       well.sample.state = Sample.states[:preparing]

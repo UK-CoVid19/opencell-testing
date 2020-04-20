@@ -109,7 +109,8 @@ RSpec.describe Plate, type: :model do
         plate = Plate.build_plate
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [{id: @sample.id, row: nil, column: plate.wells.third.column}]
-        expect {plate.assign_samples(sample_mappings)}.to raise_error #fix error type later
+        expect(plate.assign_samples(sample_mappings).assign_error).to be true
+        expect(plate.assign_samples(sample_mappings).valid?).to be false
       end
     end
 
@@ -118,7 +119,8 @@ RSpec.describe Plate, type: :model do
         plate = Plate.build_plate
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [{id: @sample.id, row: plate.wells.third.row, column: nil}]
-        expect { plate.assign_samples(sample_mappings) }.to raise_error #fix error type later
+        expect(plate.assign_samples(sample_mappings).assign_error).to be true
+        expect(plate.assign_samples(sample_mappings).valid?).to be false
       end
     end
   end
