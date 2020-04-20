@@ -23,6 +23,7 @@ class SamplesController < ApplicationController
   end
 
   def step3_pendingprepare
+    @plate = Plate.build_plate
     @samples = policy_scope(Sample.is_received)
     authorize Sample
   end
@@ -94,13 +95,20 @@ class SamplesController < ApplicationController
     bulk_action(Sample.states[:received], step3_pendingprepare_path)
   end
 
+
   def step3_bulkprepared
     authorize Sample
-    get_plated_samples
+    plate_params = get_bulk_plate
+    @plate = Plate.new(plate_params).assign_samples(get_mappings)
     respond_to do |format|
-      format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+      if @plate.save
+        format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+        format.json { render :show, status: :created, location: @plate }
+      else
+        format.html { render :step3_pendingprepare, status: :unprocessable_entity, alert: "Could not process plate" }
+        format.json { render json: @plate.errors, status: :unprocessable_entity }
+      end
     end
-    # bulk_action(Sample.states[:preparing], step4_pendingreadytest_path)
   end
 
   def step4_bulkreadytest
@@ -195,10 +203,6 @@ class SamplesController < ApplicationController
   end
 
 
-  def plate_samples
-    @plated_samples = get_plated_samples
-  end
-
   def set_sample
     @sample = authorize Sample.find(params[:id])
   end
@@ -206,45 +210,6 @@ class SamplesController < ApplicationController
     # Only allow a list of trusted parameters through.
   def sample_params
     params.require(:sample).permit(:user_id, :state, :note)
-  end
-
-
-  def get_plated_samples
-    params.permit(:wells).each do |s|
-      s.permit(:uid, :row, :col)
-    end
-    entries = params.dig(:wells)
-
-    if entries
-      valid_samples = entries.select {|e| !(e[:uid].blank? || e[:row].blank? || e[:col].blank?)}
-      wells = valid_samples.map {|et| {sample: Sample.find_by(uid:et[:uid]), row: et[:row], col: et[:col]}}
-      Plate.transaction do
-        plate = Plate.new
-        well_instances = []
-        PlateHelper.rows.each do |row|
-          PlateHelper.columns.each do |column|
-            new_well = Well.new(row: row, column: column)
-            well_instances << new_well
-            matching_well = wells.find { |w| w[:col] == column.to_s && w[:row] == row }
-            if(matching_well)
-              sample = matching_well[:sample]
-              sample.tap do |s|
-                s.state = Sample.states[:preparing]
-                s.plate = plate
-                s.well = new_well
-              end
-              plate.samples << sample
-              new_well.sample = sample
-            end
-          end
-        end
-        plate.wells = well_instances
-        plate.save!
-      end
-    else
-      raise
-    end
-
   end
 
   def get_samples
@@ -268,5 +233,12 @@ class SamplesController < ApplicationController
      return nil unless plates&.any?
      return  plates.map {|plate| Plate.find(plate[:id])}
    end
+
+  def get_bulk_plate
+    params.require(:plate).permit(wells_attributes:[:id, :row, :column ])
+  end
+  def get_mappings
+    params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column])[:mappings]
+  end
 
 end

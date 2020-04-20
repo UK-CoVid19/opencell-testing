@@ -5,7 +5,7 @@ class Sample < ApplicationRecord
   qr_for :uid
   belongs_to :user
   has_many :records, dependent: :destroy
-  belongs_to :well, optional: true
+  has_one :well
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
@@ -16,16 +16,16 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[requested dispatched received preparing prepared tested analysed communicate rejected ]
+  enum state: %i[ requested dispatched received preparing prepared tested analysed communicate rejected ]
 
-  scope :is_requested, -> {where(:state => Sample.states[:requested])}
-  scope :is_dispatched, -> {where(:state => Sample.states[:dispatched])}
-  scope :is_received, -> {where(:state => Sample.states[:received])}
-  scope :is_preparing, -> {where(:state => Sample.states[:preparing])}
-  scope :is_prepared, -> {where(:state => Sample.states[:prepared])}
-  scope :is_tested, -> {where(:state => Sample.states[:tested])}
-  scope :is_analysed, -> {where(:state => Sample.states[:analysed])}
-  scope :is_communicated, -> {where(:state => Sample.states[:communicated])}
+  scope :is_requested, -> { where( :state => Sample.states[:requested]) }
+  scope :is_dispatched, -> { where( :state => Sample.states[:dispatched]) }
+  scope :is_received, -> { where( :state => Sample.states[:received]) }
+  scope :is_preparing, -> { where( :state => Sample.states[:preparing]) }
+  scope :is_prepared, -> { where( :state => Sample.states[:prepared]) }
+  scope :is_tested, -> { where( :state => Sample.states[:tested]) }
+  scope :is_analysed, -> { where( :state => Sample.states[:analysed]) }
+  scope :is_communicated, -> { where( :state => Sample.states[:communicated]) }
 
   after_update :send_notification_after_analysis
 
@@ -52,7 +52,7 @@ class Sample < ApplicationRecord
   end
 
   def self.failure_rate
-    Sample.joins(:records).where('records.state = ?', Sample.states[:rejected]).count / Sample.all.count
+    Sample.joins(:records).where('records.state = ?', Sample.states[:rejected]).count / [Sample.all.count, 1].max
   end
 
   def self.average_testing_rate

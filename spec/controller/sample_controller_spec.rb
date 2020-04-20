@@ -15,21 +15,8 @@ RSpec.describe SamplesController, type: :controller do
       expect(get: "/samples/1").to route_to("samples#show", id: "1")
     end
 
-    it "routes to #edit" do
-      expect(get: "/samples/1/edit").to route_to("samples#edit", id: "1")
-    end
-
-
     it "routes to #create" do
       expect(post: "/samples").to route_to("samples#create")
-    end
-
-    it "routes to #update via PUT" do
-      expect(put: "/samples/1").to route_to("samples#update", id: "1")
-    end
-
-    it "routes to #update via PATCH" do
-      expect(patch: "/samples/1").to route_to("samples#update", id: "1")
     end
 
     it "routes to #destroy" do
@@ -174,20 +161,6 @@ RSpec.describe SamplesController, type: :controller do
 
     it "should not let a patient create a sample for someone else" do
       post :create, params: {sample: {user_id: @other_user.id}}
-      expect(flash[:alert]).to eq("You are not authorized to perform this action")
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "should not let a patient update a sample " do
-      patch :update, params: {id: @sample.id, sample: @sample.attributes}
-      expect(flash[:alert]).to eq("You are not authorized to perform this action")
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "should not let a patient update a sample for someone else " do
-      patch :update, params: {id: @other_sample.id, sample: @other_sample.attributes}
       expect(flash[:alert]).to eq("You are not authorized to perform this action")
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
@@ -369,11 +342,18 @@ RSpec.describe SamplesController, type: :controller do
     end
 
     describe "step3_bulkprepare" do
+
+      before :each do
+        @wells = build_list(:well, 96)
+        @plate = build(:plate, wells: @wells )
+      end
       it "should create a valid plate with valid samples" do
         Sample.with_user(@user) do
           @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
         end
-        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}]}
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id}]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
       end
@@ -383,8 +363,10 @@ RSpec.describe SamplesController, type: :controller do
           @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
           @this_other_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
         end
-        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}, {row:'A', col: 1, uid: @this_other_sample.uid}]}
-        expect(response).to have_http_status(:error)
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id}, {row:'A', column: 1, id: @this_other_sample.id}]}}
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "should fail with a sample assigned to a well twice" do
@@ -392,29 +374,30 @@ RSpec.describe SamplesController, type: :controller do
           @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
           @this_other_sample = create(:sample, state: Sample.states[:received], user: @other_user)
         end
-        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}, {row:'A', col: 1, uid: @this_other_sample.uid}]}
-        expect(response).to have_http_status(:error)
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id}, {row:'A', column: 2, id: @this_sample.id}]}}
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "should fail with a sample assigned to a well which has the wrong status" do
         Sample.with_user(@user) do
           @this_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
         end
-        post :step3_bulkprepared, params: {wells: [{row:'A', col: 1, uid: @this_sample.uid}]}
-        expect(response).to have_http_status(:error)
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id}]}}
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "should fail with a sample assigned to a well which cannot be found" do
         Sample.with_user(@user) do
           @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
         end
-        post :step3_bulkprepared, params: {wells: [{row:'A', col: 99, uid: @this_sample.uid}]}
-        expect(response).to have_http_status(:error)
-      end
-
-      it "should fail when no sample is passed" do
-        post :step3_bulkprepared, params: {wells: []}
-        expect(response).to have_http_status(:error)
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 99, id: @this_sample.id}]}}
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end

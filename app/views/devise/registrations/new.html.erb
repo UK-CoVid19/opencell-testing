@@ -11,19 +11,19 @@
       </div>
       <div class="form-group">
         <%= f.label :name %><br />
-        <%= f.text_field :name, autofocus: true, required: true, class: 'form-control' %>
+        <%= f.text_field :name, autofocus: true, autocomplete: "name", required: true, class: 'form-control' %>
         <div class="valid-feedback">Valid.</div>
         <div class="invalid-feedback">Please fill out this field.</div>
       </div>
       <div class="form-group">
         <%= f.label :telno, 'Mobile Telephone Number' %><br />
-        <%= f.telephone_field :telno, autofocus: true, required: true, class: 'form-control'  %>
+        <%= f.telephone_field :telno, autofocus: true, autocomplete: "tel", required: true, class: 'form-control'  %>
         <div class="valid-feedback">Valid.</div>
         <div class="invalid-feedback">Please fill out this field.</div>
       </div>
       <div class="form-group">
         <%= f.label :dob, 'Date of Birth' %><br />
-        <%= f.date_field :dob, autofocus: true, required: true, class: 'form-control'  %>
+        <%= f.date_field :dob, autofocus: true, autocomplete: "bday", required: true, class: 'form-control'  %>
         <div class="valid-feedback">Valid.</div>
         <div class="invalid-feedback">Please fill out this field.</div>
       </div>

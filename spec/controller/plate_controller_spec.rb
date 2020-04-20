@@ -78,7 +78,8 @@ RSpec.describe PlatesController, type: :controller do
       @request.env["devise.mapping"] = Devise.mappings[:user]
       @user = create(:user, role: User.roles[:patient]) # in factories.rb you should create a factory for user
       sign_in @user
-      @plate = create(:plate, wells: build_list(:well, 96))
+      wells = build_list(:well, 96)
+      @plate = create(:plate, wells: wells )
     end
 
     it "routes to #index" do
