@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get 'home/index'
   devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
+  ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
   get 'samples/pendingdispatch', to: 'samples#step1_pendingdispatch', as: 'step1_pendingdispatch'
   get 'samples/pendingreceive', to: 'samples#step2_pendingreceive', as: 'step2_pendingreceive'
   get 'samples/pendingprepare', to: 'samples#step3_pendingprepare', as: 'step3_pendingprepare'
