@@ -30,10 +30,10 @@
               <button class="btn btn-primary">Show</button>
             <% end  %>
             <%= link_to edit_plate_test_path(test.plate, test) do %>
-              <button class="btn btn-info">Edit</button>
+              <button class="btn btn-outline-info">Edit</button>
             <% end  %>
             <%= link_to plate_test_path(test.plate, test), method: :delete, data: { confirm: 'Are you sure?' } do %>
-              <button class="btn btn-danger">Delete</button>
+              <button class="btn btn-outline-danger">Delete</button>
             <% end  %>
           </td>
         </tr>
