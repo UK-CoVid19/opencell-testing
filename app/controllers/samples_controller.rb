@@ -105,7 +105,7 @@ class SamplesController < ApplicationController
         format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
         format.json { render :show, status: :created, location: @plate }
       else
-        format.html { render :step3_pendingprepare, status: :unprocessable_entity, alert: "Could not process plate" }
+        format.html { redirect_to step3_pendingprepare_path, status: :unprocessable_entity, alert: "Could not process plate" }
         format.json { render json: @plate.errors, status: :unprocessable_entity }
       end
     end

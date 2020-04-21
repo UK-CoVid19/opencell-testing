@@ -9,7 +9,9 @@ module SamplesHelper
         Sample.states[:tested],
         Sample.states[:analysed],
         Sample.states[:communicated]
-      return status.capitalize
+      return tag.span class: 'badge badge-pill badge-primary' do
+        status.capitalize
+      end
     when Sample.states[:rejected]
       return tag.span class: 'badge badge-pill badge-danger' do
         status.capitalize

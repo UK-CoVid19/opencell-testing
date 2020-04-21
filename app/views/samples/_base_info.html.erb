@@ -9,11 +9,14 @@
     </div>
   </div>
   <div class="card-footer">
-    <p>State: <%= get_badge(@sample.state) %></p>
-    <% unless @sample.plate.nil? %>
-      Location: <%= link_to "Plate ##{@sample.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.plate %>
+    <span><%= get_badge(@sample.state) %></span>
+    <% unless @sample.well.plate.nil? %>
+      <span><%= link_to "Plate ##{@sample.well.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.well.plate %></span>
     <% else %>
-        Location: Not yet assigned to plate
+      <p>Not yet assigned to plate</p>
     <% end %>
+    <% if @sample.test_result.present? %>
+      <span><%= @sample.test_result.value %></span>
+    <% end  %>
   </div>
 </div>

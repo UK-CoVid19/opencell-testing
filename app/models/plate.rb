@@ -24,7 +24,7 @@ class Plate < ApplicationRecord
   extend QrModule
 
   has_many :wells, dependent: :destroy
-  has_many :samples, dependent: :nullify
+  has_many :samples, through: :wells
   has_one :test, dependent: :destroy
   accepts_nested_attributes_for :wells
   enum state: %i[preparing prepared testing complete]

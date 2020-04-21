@@ -18,10 +18,24 @@
 @import "font-awesome";
 @import "bootstrap";
 
+
+body {
+  background-color: #f8f8f8;
+}
+
+.card {
+  box-shadow: 0 13px 27px -5px rgba(50,50,93,.25), 0 8px 16px -8px rgba(0,0,0,.3), 0 -6px 16px -6px rgba(0,0,0,.025);
+}
 .application-container {
   min-height: 65vh;
 }
 
 .nav-icon {
   margin-left: 0.3em;
+}
+
+.dark-cell {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #454d55;
 }

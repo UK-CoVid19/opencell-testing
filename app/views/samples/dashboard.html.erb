@@ -1,11 +1,17 @@
 <div class="container">
   <br/>
-  <h2>Dashboard for Samples</h2>
+
   <br/>
   <div class="row">
     <div class="col col-md-6">
       <div class="card">
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <div class="card-header">
+          <h3>Sample Status Distribution</h3>
+        </div>
+        <div class="card-body p-4">
+          <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
+
       </div>
     </div>
     <div class="col col-md-6">
@@ -50,25 +56,31 @@
   <div class="row">
     <div class="col">
       <br/>
-      <h2 class="text-center">Sample Data</h2>
-      <table id="datatable" class="table table-striped">
-        <thead class="thead-dark">
-        <tr>
-          <th>Sample</th>
-          <th>User</th>
-          <th>State</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% @samples.each do |sample| %>
-          <tr>
-            <td><%= link_to 'Sample', sample %></td>
-            <td><%= link_to sample.user.name, sample.user %></td>
-            <td><%= get_badge(sample.state) %></td>
-          </tr>
-        <% end %>
-        </tbody>
-      </table>
+      <div class="card">
+        <div class="card-header">
+          <h3>Sample Data</h3>
+        </div>
+        <div class="card-body p-3">
+          <table id="datatable" class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+              <th>Sample</th>
+              <th>User</th>
+              <th>State</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @samples.each do |sample| %>
+              <tr>
+                <td><%= link_to 'Sample', sample %></td>
+                <td><%= link_to sample.user.name, sample.user %></td>
+                <td><%= get_badge(sample.state) %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
