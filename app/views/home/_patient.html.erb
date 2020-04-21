@@ -5,7 +5,7 @@
         <div class="bg-dark jumbotron">
           <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" />
           <br><br>
-          <h1 style="color: white">Increasing the CoVid-19 testing capacity to >10K/day</h1>
+          <h1 class="text-white">Increasing the CoVid-19 testing capacity to >10K/day</h1>
           <br>
           <% if current_user && current_user.patient? && current_user.samples.any? %>
             <%= link_to "Check Tests", samples_path(current_user), class: 'btn btn-info btn-lg', role: 'button' %>
