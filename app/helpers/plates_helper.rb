@@ -43,11 +43,11 @@ module PlatesHelper
     if test_result_exists?(well)
       if(Sample.states[well.sample.state] == Sample.states[:rejected])
         tag.td class: 'cell rejected-cell'do
-          link_to"#{well.row}#{well.column}", well.sample
+          link_to"#{well.test_result.value}", well.sample
         end
       else
         tag.td class: 'cell marked-cell' do
-          link_to"#{well.row}#{well.column}", well.sample
+          link_to"#{well.test_result.value}", well.sample
         end
       end
     else

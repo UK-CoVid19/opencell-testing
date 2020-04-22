@@ -29,6 +29,20 @@
   background-color: $info;
 }
 
+.states-key{
+  height: 1em;
+  width: 1em;
+  display: inline-block;
+}
+.state-keys{
+  width:100%
+}
+
+.state-key-container {
+  border: #00000030 1px solid;
+  background-color: #fff;
+}
+
 .rejected-cell {
   background-color: $danger;
 }

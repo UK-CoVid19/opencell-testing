@@ -2,32 +2,34 @@
   <br>
   <div class="row">
     <div class="col-md-6">
-      <div class="jumbotron dark">
-        <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" />
-        <br><br>
-        <h1>Increasing the CoVid-19 testing capacity to >10K/day</h1>
-        <br>
-        <% if current_user && current_user.patient? && current_user.samples.any? %>
-          <%= link_to "Check Tests", samples_path(current_user), class: 'btn btn-info btn-lg', role: 'button' %>
-        <% elsif current_user && current_user.patient? %>
-          <%= link_to "Request a Test", new_sample_path, class: 'btn btn-info btn-lg', role: 'button' %>
-        <% else %>
-          <%= link_to "Sign up", new_user_registration_path, class: 'btn btn-primary btn-lg', role: 'button' %>
-          <%= link_to "Sign in", new_user_session_path, class: 'btn btn-secondary btn-lg', role: 'button' %>
-        <% end  %>
-      </div>
+        <div class="bg-dark jumbotron">
+          <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" />
+          <br><br>
+          <h1 class="text-white">Increasing the CoVid-19 testing capacity to >10K/day</h1>
+          <br>
+          <% if current_user && current_user.patient? && current_user.samples.any? %>
+            <%= link_to "Check Tests", samples_path(current_user), class: 'btn btn-info btn-lg', role: 'button' %>
+          <% elsif current_user && current_user.patient? %>
+            <%= link_to "Request a Test", new_sample_path, class: 'btn btn-info btn-lg', role: 'button' %>
+          <% else %>
+            <%= link_to "Sign up", new_user_registration_path, class: 'btn btn-primary btn-lg', role: 'button' %>
+            <%= link_to "Sign in", new_user_session_path, class: 'btn btn-secondary btn-lg', role: 'button' %>
+          <% end  %>
+        </div>
     </div>
     <div class="col-md-6">
-      <ul class="list-group">
-        <li class="list-group-item" style="padding: 0;">
-          <img style="width: 100%;" src="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/classification_featuring_image_data/file/2169/s465_guidance.png" />
-        </li>
-        <a href="https://www.gov.uk/government/topical-events/coronavirus-covid-19-uk-government-response" class="list-group-item list-group-item-action">Coronavirus (COVID-19): UK government response</a>
-        <a href="https://www.gov.uk/government/collections/coronavirus-covid-19-list-of-guidance" class="list-group-item list-group-item-action">Coronavirus (COVID-19): guidance</a>
-        <a href="https://www.nhs.uk/conditions/coronavirus-covid-19" class="list-group-item list-group-item-action">NHS information: coronavirus (COVID-19)</a>
-        <a href="https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection" class="list-group-item list-group-item-action">Stay at home: guidance for households with possible coronavirus (COVID-19) infection</a>
-        <a href="https://www.gov.uk/government/publications/covid-19-guidance-on-social-distancing-and-for-vulnerable-people" class="list-group-item list-group-item-action">COVID-19: guidance on social distancing and for vulnerable people</a>
-      </ul>
+      <div class="card p-2">
+        <ul class="list-group">
+          <li class="list-group-item" style="padding: 0;">
+            <img style="width: 100%;" src="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/classification_featuring_image_data/file/2169/s465_guidance.png" />
+          </li>
+          <a href="https://www.gov.uk/government/topical-events/coronavirus-covid-19-uk-government-response" class="list-group-item list-group-item-action">Coronavirus (COVID-19): UK government response</a>
+          <a href="https://www.gov.uk/government/collections/coronavirus-covid-19-list-of-guidance" class="list-group-item list-group-item-action">Coronavirus (COVID-19): guidance</a>
+          <a href="https://www.nhs.uk/conditions/coronavirus-covid-19" class="list-group-item list-group-item-action">NHS information: coronavirus (COVID-19)</a>
+          <a href="https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection" class="list-group-item list-group-item-action">Stay at home: guidance for households with possible coronavirus (COVID-19) infection</a>
+          <a href="https://www.gov.uk/government/publications/covid-19-guidance-on-social-distancing-and-for-vulnerable-people" class="list-group-item list-group-item-action">COVID-19: guidance on social distancing and for vulnerable people</a>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

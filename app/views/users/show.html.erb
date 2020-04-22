@@ -3,29 +3,55 @@
   <div class="row">
     <div class="col-md-6 col-sm-12">
       
-      <h2 class="text-center">My Profile</h2>
-      <hr/>
-
       <div class="card">
-        <div class="card-header">My Profile</div>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">Name: <%= @user.name %></li>
-          <li class="list-group-item">DOB: <%= @user.dob %></li>
-          <li class="list-group-item">Number: <%= @user.telno %></li>
-          <li class="list-group-item">Email: <%= @user.email %></li>
-        </ul>
+        <div class="card-header "><h4>My Profile</h4></div>
+        <div class="card-body">
+          <div class="mt-1 mb-1">
+            <span class="profile-icon">
+              <%= fa_icon "user" %>
+            </span>
+            <span>
+              <%= @user.name %>
+            </span>
+          </div>
+          <div class="mt-1 mb-1 ">
+            <span class="profile-icon">
+              <%= fa_icon "birthday-cake" %>
+            </span>
+            <span>
+              <%= @user.dob.strftime('%-d %b %Y') %>
+            </span>
+           </div>
+          <div class="mt-1 mb-1 ">
+            <span class="profile-icon">
+              <%= fa_icon "phone" %>
+            </span>
+            <span>
+              <%= @user.telno %>
+            </span>
+          </div>
+          <div class="mt-1 mb-1 ">
+            <span class="profile-icon">
+              <%= fa_icon "envelope-open" %>
+            </span>
+            <span>
+              <%= @user.email %>
+            </span>
+          </div>
+        </div>
       </div>
 
       <br>
-
-      <div class="card">
-        <div class="card-header">My Previous Tests</div>
-        <ul class="list-group list-group-flush">
-          <% @user.samples.is_analysed.each do | sample| %>
-            <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result&.value %> </li>
-          <% end %>
-        </ul>
-      </div>
+      <% if @user.samples.is_analysed.any? %>
+        <div class="card">
+          <div class="card-header">My Previous Tests</div>
+          <ul class="list-group list-group-flush">
+            <% @user.samples.is_analysed.each do | sample| %>
+              <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result&.value %> </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <br/>
       <% if @user == current_user %>
         <%= link_to edit_user_registration_path do  %>

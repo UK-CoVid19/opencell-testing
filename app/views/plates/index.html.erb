@@ -22,10 +22,10 @@
             <button class="btn btn-primary">Show</button>
           <% end %>
           <%= link_to edit_plate_path(plate) do  %>
-            <button class="btn btn-info">Edit</button>
+            <button class="btn btn-outline-info">Edit</button>
           <% end %>
           <%= link_to plate, method: :delete, data: { confirm: 'Are you sure?' } do  %>
-            <button class="btn btn-danger">Delete</button>
+            <button class="btn btn-outline-danger">Delete</button>
           <% end %>
         </td>
       </tr>

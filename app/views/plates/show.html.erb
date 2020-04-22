@@ -1,62 +1,56 @@
 <div class="container">
-  <h1 class="text-center">Plate #<%= @plate.id %> </h1>
+
   <br/>
 
   <div class="row">
-    <div class="col">
-        <%= image_tag @plate.qr_code.to_data_url, class: 'img-thumbnail' %>
+    <div class="col col-lg-4 col-md-6 ml-md-auto mr-md-auto">
+        <div class="card">
+          <div class="card-header">
+            <h3>Plate #<%= @plate.id %> </h3>
+          </div>
+          <div class="card-body">
+            <%= image_tag @plate.qr_code.to_data_url, class: 'img-thumbnail object-contain' %>
+            <div class="p-1">
+              <div class="mt-1 mb-1">
+                <span class="profile-icon">
+                  <%= fa_icon "hashtag" %>
+                </span>
+                <span>
+                  <small><%= @plate.uid %></small>
+                </span>
+              </div>
+              <div class="mt-1 mb-1">
+                <span class="profile-icon">
+                  <%= fa_icon "clock-o" %>
+                </span>
+                <span>
+                  <small><%= @plate.created_at.strftime('%A %-d %b %H:%M') %></small>
+                </span>
+              </div>
+              <div class="mt-1 mb-1">
+                <span class="profile-icon">
+                  <%= fa_icon "magic" %>
+                </span>
+                <span>
+                  <small><%= get_plate_badge(@plate.state) %></small>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <%= link_to 'Edit', edit_plate_path(@plate), class: 'btn btn-outline-info mr-2' %>
+            <%= link_to 'Back', plates_path %>
+          </div>
+        </div>
     </div>
-    <div class="col">
-      <div class="row">
-        <table class="table table-bordered">
-          <tbody>
-          <tr>
-            <td><strong>UID</strong></td>
-            <td><i><%= @plate.uid %></i></td>
-          </tr>
-          <tr>
-            <td><strong>Created</strong></td>
-            <td><i><%= @plate.created_at.strftime('%A %-d %b %H:%M') %></i></td>
-          </tr>
-          <tr>
-            <td><strong>Status</strong></td>
-            <td><%= get_plate_badge(@plate.state) %></td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="row">
-        <table class="table table-bordered">
-          <tbody>
-          <tr>
-            <td class="cell marked-cell"></td>
-            <td>Has Sample</td>
-          </tr>
-          <tr>
-            <td class="cell control-cell"></td>
-            <td>Control Sample</td>
-          </tr>
-          <tr>
-            <td class="cell rejected-cell"></td>
-            <td>Rejected</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-  <br/>
-  <div class="row">
-    <div class="col">
+    <div class="col col-lg-8 col-md-12">
       <% unless @plate.test.nil? %>
         <%= render partial: 'after_test' %>
       <% else %>
         <%= render partial: 'before_test' %>
       <% end  %>
-
     </div>
   </div>
-  <%= link_to 'Edit', edit_plate_path(@plate) %> |
-  <%= link_to 'Back', plates_path %>
+  <br/>
+
 </div>
