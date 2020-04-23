@@ -62,3 +62,19 @@
 .scan-canvas {
   max-height: 500px;
 }
+
+.outline-viewcard {
+  border: 2px solid;
+  border-radius: 8px;
+  border-color: black;
+}
+
+.outline-viewcard-success {
+  border-color: $success;
+  background-color: hsla(141, 61%, 88%, 0.65);
+
+}
+.outline-viewcard-danger {
+  border-color: $danger;
+  background-color: hsla(354, 93%, 90%, 0.65);
+}

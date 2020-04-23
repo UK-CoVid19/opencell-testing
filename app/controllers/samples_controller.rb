@@ -56,10 +56,10 @@ class SamplesController < ApplicationController
   def dashboard
     authorize Sample
     @samples = Sample.all
-    @tested_today = Sample.tested_today
-    @requested_today = Sample.requested_today
-    @failure_rate = Sample.failure_rate
-    @average_testing_rate = Sample.average_testing_rate
+    @tested_last_week = Sample.tested_last_week
+    @requested_last_week = Sample.requested_last_week
+    @failure_rate_last_week = Sample.failure_rate_last_week
+    @total_tests = Sample.total_tests
   end
 
   # DELETE /samples/1

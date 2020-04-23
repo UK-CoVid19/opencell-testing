@@ -1,40 +1,46 @@
 <div class="container">
-  <%= form_for :samples , url: path do |f| %>
-      <h2><%= title %></h2>
-      <table id="datatable" class="table table-striped table-bordered">
-        <thead class="thead-dark">
-        <tr>
-          <th class="no-sort" width="25"><!-- check_box_tag--></th>
-          <th class="no-sort">Notes</th>
-          <th>Sample</th>
-          <th>Patient</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% samples.each do |sample| %>
+  <div class="card shadow-sm">
+    <%= form_for :samples , url: path do |f| %>
+      <div class="card-header">
+        <h2><%= title %></h2>
+      </div>
+      <div class="card-body">
+        <table id="datatable" class="table table-striped table-bordered">
+          <thead class="thead-dark">
           <tr>
-            <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
-            <td><%= text_field_tag  'samples[][note]', nil, placeholder: 'comment' %></td>
-            <td class="text-left">
-              <%= link_to sample do  %>
-                <%= tag.button class:'btn btn-sm btn-outline-primary' do %>
-                  <%= "Show Sample ##{sample.id}" %>
-                <% end   %>
-              <% end  %>
-            </td>
-            <td class="text-left">
-              <%= link_to sample.user do  %>
-                <%= tag.button class: 'btn btn-sm btn-outline-primary' do %>
-                  <%= sample.user.name %>
-                <% end  %>
-              <% end  %>
-            </td>
+            <th class="no-sort" width="25"><!-- check_box_tag--></th>
+            <th class="no-sort">Notes</th>
+            <th>Sample</th>
+            <th>Patient</th>
           </tr>
-        <% end %>
-        </tbody>
-      </table>
-      <div class="actions">
-        <%= f.submit update_text, :class => 'btn btn-primary' %>
+          </thead>
+          <tbody>
+          <% samples.each do |sample| %>
+            <tr>
+              <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
+              <td><%= text_field_tag  'samples[][note]', nil, placeholder: 'comment' %></td>
+              <td class="text-left">
+                <%= link_to sample do  %>
+                  <%= tag.button class:'btn btn-sm btn-outline-primary' do %>
+                    <%= "Show Sample ##{sample.id}" %>
+                  <% end   %>
+                <% end  %>
+              </td>
+              <td class="text-left">
+                <%= link_to sample.user do  %>
+                  <%= tag.button class: 'btn btn-sm btn-outline-primary' do %>
+                    <%= sample.user.name %>
+                  <% end  %>
+                <% end  %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <div class="actions">
+          <%= f.submit update_text, :class => 'btn btn-primary shadow' %>
+        </div>
       </div>
     <% end %>
+  </div>
 </div>
