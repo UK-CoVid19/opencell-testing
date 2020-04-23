@@ -1,9 +1,9 @@
 <div class="container">
   <div class="row mt-3 mb-4">
     <div class="container-fluid d-flex justify-content-between flex-wrap">
-      <%= render partial: 'view_card', locals: {title: 'Testing Rate', stat1: @tested_last_week.first.count, stat2: @tested_last_week.second.count, statdata: @tested_last_week.reverse.map(&:count)} %>
-      <%= render partial: 'view_card', locals: {title: 'Requesting Rate', stat1: @requested_last_week.first.count, stat2: @requested_last_week.second.count, statdata: @requested_last_week.reverse.map(&:count)} %>
-      <%= render partial: 'view_card', locals: {title: 'Failure Rate', stat1: @failure_rate_last_week.first.count, stat2: @failure_rate_last_week.second.count, statdata: @failure_rate_last_week.reverse.map(&:count)} %>
+      <%= render partial: 'view_card', locals: {title: 'Testing Rate', stat1: @tested_last_week.first ? @tested_last_week.first.count : 0 , stat2: @tested_last_week.second ? @tested_last_week.second.count : 0, statdata: @tested_last_week.reverse.map(&:count)} %>
+      <%= render partial: 'view_card', locals: {title: 'Requesting Rate', stat1: @requested_last_week.first ? @requested_last_week.first.count : 0, stat2: @requested_last_week.second ? @requested_last_week.second.count: 0, statdata: @requested_last_week.reverse.map(&:count)} %>
+      <%= render partial: 'view_card', locals: {title: 'Failure Rate', stat1: @failure_rate_last_week.first ? @failure_rate_last_week.first.count : 0, stat2: @failure_rate_last_week.second ? @failure_rate_last_week.second.count : 0, statdata: @failure_rate_last_week.reverse.map(&:count)} %>
       <div class="card shadow-sm mb-3 p-3" style="width: 15rem;">
         <div class=" d-inline-flex align-items-center" style="width: 100%">
           <span class="text-black-50">
