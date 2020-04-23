@@ -5,7 +5,7 @@ class Sample < ApplicationRecord
   qr_for :uid
   belongs_to :user
   has_many :records, dependent: :destroy
-  has_one :well
+  has_one :well, dependent: :nullify
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
@@ -43,11 +43,15 @@ class Sample < ApplicationRecord
   end
 
   def self.tested_last_week
-    Sample
+    samples = Sample
         .select("date(samples.created_at) as created_date, count(samples.id) as count")
         .where('samples.state >= ? and samples.created_at >= ?', Sample.states[:tested], 7.days.ago.beginning_of_day)
         .group("date(samples.created_at)")
         .order('created_date DESC')
+    unless samples.any?
+      return self.dummy
+    end
+    samples
   end
 
   def self.total_tests
@@ -56,20 +60,28 @@ class Sample < ApplicationRecord
 
   def self.requested_last_week
     # all samples that were created in the last week
-    Sample
+    samples = Sample
         .select("date(samples.created_at) as created_date, count(samples.id) as count")
         .where('samples.created_at >= ?', 7.days.ago.beginning_of_day)
         .group("date(samples.created_at)")
         .order('created_date DESC')
+    unless samples.any?
+      return self.dummy
+    end
+    samples
   end
 
 
   def self.failure_rate_last_week
-    Sample
-        .select("date(samples.created_at) as created_date, cast(count(CASE WHEN samples.state = #{Sample.states[:rejected]} THEN 1 END) as decimal) / count(*) as average")
+    samples = Sample
+        .select("date(samples.created_at) as created_date, cast(count(CASE WHEN samples.state = #{Sample.states[:rejected]} THEN 1 END) as decimal) / count(*) as count")
         .where('samples.created_at >= ?', 7.days.ago.beginning_of_day)
         .group("date(samples.created_at)")
         .order('created_date DESC')
+    unless samples.any?
+      return self.dummy
+    end
+    samples
   end
 
 
@@ -80,6 +92,10 @@ class Sample < ApplicationRecord
     if(matched)
       errors.add(:well, 'Sample exists in another well on this plate')
     end
+  end
+
+  def self.dummy
+    return [{count: 0}, {count: 0}]
   end
 
   def send_notification_after_analysis
