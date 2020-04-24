@@ -32,7 +32,7 @@
     </div>
   </div>
   <div class="card-footer">
-    <% unless @sample.well.plate.nil? %>
+    <% unless @sample.well.nil? or @sample.well.plate.nil? %>
       <span><%= fa_icon "location-arrow", class: 'fa-fw' %> <%= link_to "Plate ##{@sample.well.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.well.plate %></span>
     <% else %>
       <p>Not yet assigned to plate</p>
