@@ -20,11 +20,10 @@
       <span style="font-size: 1.5rem; font-weight: 700" class="pl-1"><%= stat1 %></span>
     </div>
     <div class="pb-1" style="height: 2.5rem;">
-      <% id = SecureRandom.hex(8) %>
-      <canvas id="<%= id %>" width="200" height="90"></canvas>
+      <canvas id="<%= key %>" width="200" height="90"></canvas>
       <script>
-          const getChart<%=id %> = () => {
-              const ctx = document.getElementById('<%= id %>');
+          const getChart<%= key %> = () => {
+              const ctx = document.getElementById('<%= key %>');
               const myLineChart = new Chart(ctx, {
                   type: 'line',
                   data: {
@@ -73,7 +72,7 @@
               }
               });
           }
-          $(document).on('turbolinks:load', () => {getChart<%= id %>()});
+          $(document).on('turbolinks:load', () => {getChart<%= key %>()});
       </script>
     </div>
 </div>
