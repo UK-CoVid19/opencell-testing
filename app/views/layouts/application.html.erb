@@ -11,94 +11,96 @@
 
   <body>
     <div>
-      <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand dark" href="\">
-          <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" height="40" />
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <div class="col">
-            <ul class="d-flex navbar-nav text-center justify-content-end">
-              <% if current_user && user_signed_in? && current_user.staff?  %>
-                <li class="nav-item">
-                  <%= link_to step1_pendingdispatch_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingdispatch_count } do %>
-                      <span>To Dispatch <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+      <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-dark bg-dark pb-2 pt-2">
+        <div class="container">
+          <a class="navbar-brand dark" href="\">
+            <img src="https://uploads-ssl.webflow.com/5beda5244920652be0723efa/5e4fe149b0071a1f5d5dcf4b_opencell_color_w.png" height="40" />
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="col">
+              <ul class="d-flex navbar-nav text-center justify-content-end">
+                <% if current_user && user_signed_in? && current_user.staff?  %>
+                  <li class="nav-item">
+                    <%= link_to step1_pendingdispatch_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingdispatch_count } do %>
+                        <span>To Dispatch <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end  %>
                     <% end  %>
-                  <% end  %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to step2_pendingreceive_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingreceive_count } do %>
-                      <span>To Return <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to step2_pendingreceive_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingreceive_count } do %>
+                        <span>To Return <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end  %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to step3_pendingprepare_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingprepare_count } do %>
+                        <span>To Prepare  <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end  %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to step4_pendingreadytest_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingreadytest_count } do %>
+                        <span>To Ready <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to step5_pendingtest_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingtest_count } do %>
+                        <span>To Test <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to step6_pendinganalyze_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendinganalyze_count } do %>
+                        <span>To Analyse <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to tests_complete_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @completed_tests_count } do %>
+                        <span>Complete</span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item ml-auto">
+                    <ul class="navbar-nav justify-content-md-center w-50 ml-auto mr-auto">
+                      <li class="nav-item dropdown  ">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                          <%= link_to "Samples", samples_path, class: "dropdown-item" %>
+                          <%= link_to "Plates", plates_path, class: "dropdown-item" %>
+                          <div class="dropdown-divider"></div>
+                          <%= link_to "New Test", new_sample_path, class: "dropdown-item" %>
+                          <%= link_to "New User", new_user_path, class: "dropdown-item" %>
+                          <div class="dropdown-divider"></div>
+                          <%= link_to "Account Settings", current_user, class: "dropdown-item" %>
+                          <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                <% end %>
+                <% if user_signed_in? && current_user.patient? %>
+                  <li class="nav-item ">
+                    <%= link_to destroy_user_session_path, method: :delete do   %>
+                      <% tag.button class: 'btn btn-info' do %>
+                        Sign Out
+                      <% end  %>
                     <% end  %>
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to step3_pendingprepare_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingprepare_count } do %>
-                      <span>To Prepare  <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                    <% end  %>
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to step4_pendingreadytest_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingreadytest_count } do %>
-                      <span>To Ready <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                    <% end %>
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to step5_pendingtest_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingtest_count } do %>
-                      <span>To Test <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                    <% end %>
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to step6_pendinganalyze_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendinganalyze_count } do %>
-                      <span>To Analyse <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                    <% end %>
-                  <% end %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to tests_complete_path, class: 'nav-link' do %>
-                    <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @completed_tests_count } do %>
-                      <span>Complete</span>
-                    <% end %>
-                  <% end %>
-                </li>
-                <li class="nav-item ml-auto">
-                  <ul class="navbar-nav justify-content-md-center w-50 ml-auto mr-auto">
-                    <li class="nav-item dropdown  ">
-                      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More</a>
-                      <div class="dropdown-menu dropdown-menu-right">
-                        <%= link_to "Samples", samples_path, class: "dropdown-item" %>
-                        <%= link_to "Plates", plates_path, class: "dropdown-item" %>
-                        <div class="dropdown-divider"></div>
-                        <%= link_to "New Test", new_sample_path, class: "dropdown-item" %>
-                        <%= link_to "New User", new_user_path, class: "dropdown-item" %>
-                        <div class="dropdown-divider"></div>
-                        <%= link_to "Account Settings", current_user, class: "dropdown-item" %>
-                        <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
-                      </div>
-                    </li>
-                  </ul>
-                </li>
-              <% end %>
-              <% if user_signed_in? && current_user.patient? %>
-                <li class="nav-item ">
-                  <%= link_to destroy_user_session_path, method: :delete do   %>
-                    <% tag.button class: 'btn btn-info' do %>
-                      Sign Out
-                    <% end  %>
-                  <% end  %>
-                </li>
-              <% end %>
-            </ul>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
           </div>
         </div>
       </nav>
