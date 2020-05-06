@@ -10,7 +10,7 @@ class User < ApplicationRecord
   validates :email, presence: true
 
   has_many :samples, dependent: :destroy
-  has_many :records
+  has_many :records, dependent: :destroy
   has_one :test, dependent: :destroy
 
   enum role: [:patient, :staff]

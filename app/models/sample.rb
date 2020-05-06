@@ -5,7 +5,7 @@ class Sample < ApplicationRecord
   qr_for :uid
   belongs_to :user
   has_many :records, dependent: :destroy
-  has_one :well
+  has_one :well, dependent: :nullify
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
@@ -42,22 +42,48 @@ class Sample < ApplicationRecord
     end
   end
 
-
-  def self.tested_today
-    Sample.joins(:records).where('records.state >= ? and records.created_at >= ?', Sample.states[:tested], Time.now.beginning_of_day).count
+  def self.tested_last_week
+    samples = Sample
+        .select("date(samples.created_at) as created_date, count(samples.id) as count")
+        .where('samples.state >= ? and samples.created_at >= ?', Sample.states[:tested], 7.days.ago.beginning_of_day)
+        .group("date(samples.created_at)")
+        .order('created_date DESC')
+    unless samples.any?
+      return self.dummy
+    end
+    samples
   end
 
-  def self.requested_today
-    Sample.joins(:records).where('records.state = ? and records.created_at >= ?', Sample.states[:requested], Time.now.beginning_of_day).count
+  def self.total_tests
+    where('samples.state >= ?', Sample.states[:analysed]).count
   end
 
-  def self.failure_rate
-    Sample.joins(:records).where('records.state = ?', Sample.states[:rejected]).count / [Sample.all.count, 1].max
+  def self.requested_last_week
+    # all samples that were created in the last week
+    samples = Sample
+        .select("date(samples.created_at) as created_date, count(samples.id) as count")
+        .where('samples.created_at >= ?', 7.days.ago.beginning_of_day)
+        .group("date(samples.created_at)")
+        .order('created_date DESC')
+    unless samples.any?
+      return self.dummy
+    end
+    samples
   end
 
-  def self.average_testing_rate
-    Sample.joins(:records).where('records.state >= ? and records.created_at >= ?', Sample.states[:tested], Time.now.beginning_of_day - 5.days).count / 5
+
+  def self.failure_rate_last_week
+    samples = Sample
+        .select("date(samples.created_at) as created_date, cast(count(CASE WHEN samples.state = #{Sample.states[:rejected]} THEN 1 END) as decimal) / count(*) as count")
+        .where('samples.created_at >= ?', 7.days.ago.beginning_of_day)
+        .group("date(samples.created_at)")
+        .order('created_date DESC')
+    unless samples.any?
+      return self.dummy
+    end
+    samples
   end
+
 
   private
   def unique_well_in_plate?
@@ -66,6 +92,10 @@ class Sample < ApplicationRecord
     if(matched)
       errors.add(:well, 'Sample exists in another well on this plate')
     end
+  end
+
+  def self.dummy
+    return [{count: 0}, {count: 0}]
   end
 
   def send_notification_after_analysis

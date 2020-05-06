@@ -1,26 +1,41 @@
 <div class="col-md-6 col-sm-12">
-  <div class="card">
+  <div class="card shadow" style="max-width: 20em;">
     <div class="card-header"><h4>My Current Test</h4></div>
-    <div class="container">
-      <br/>
-      <div class="progress">
+    <div class="card-body">
+      <%= image_tag @user.active_sample.qr_code.to_data_url, class: 'object-contain' %>
+      <div class="p-1">
+        <div class="mt-1 mb-1">
+          <span>
+            <%= fa_icon "hashtag", class: 'fa-fw' %>
+          </span>
+          <span>
+            <small><%= @user.active_sample.uid %></small>
+          </span>
+        </div>
+        <div class="mt-1 mb-1">
+          <span>
+            <%= fa_icon "clock-o", class: 'fa-fw' %>
+          </span>
+          <span>
+            <small><%= @user.active_sample.created_at.strftime('%A %-d %b %H:%M') %></small>
+          </span>
+        </div>
+        <div class="mt-1 mb-1">
+          <span>
+            <%= fa_icon "magic", class: 'fa-fw' %>
+          </span>
+          <span>
+            <small><%= get_badge(@user.active_sample.state) %></small>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="progress mt-2">
         <div class="progress-bar teal" role="progressbar" style="width: <%= create_progress_bar(@user) %>%" aria-valuenow="<%= create_progress_bar(@user) %>" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
       <br/>
       <%= create_state_alert(@user.active_sample.state) %>
     </div>
-    <br/>
-    <div class="col-md-12 text-center">
-      <%= image_tag @user.active_sample.qr_code.to_data_url %>
-      <p>
-        <strong>UID:</strong>
-        <%= @user.active_sample.uid %>
-        <br/>
-        <strong>State:</strong>
-        <%= get_badge(@user.active_sample.state) %>
-      </p>
-      </p>
-    </div>
   </div>
-  <br>
 </div>

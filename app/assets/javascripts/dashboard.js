@@ -14,7 +14,7 @@ let createData = (data) => {
         data: {
             labels: Object.keys(groupedByState),
             datasets: [{
-                label: '# of Votes',
+                label: '# of Samples',
                 data: Object.values(groupedByState),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -42,7 +42,9 @@ let createData = (data) => {
                         beginAtZero: true
                     }
                 }]
-            }
+            },
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 }

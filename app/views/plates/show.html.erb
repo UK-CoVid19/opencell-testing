@@ -3,8 +3,15 @@
   <br/>
 
   <div class="row">
+    <div class="col col-lg-8 col-md-12 mb-2">
+      <% unless @plate.test.nil? %>
+        <%= render partial: 'after_test' %>
+      <% else %>
+        <%= render partial: 'before_test' %>
+      <% end  %>
+    </div>
     <div class="col col-lg-4 col-md-6 ml-md-auto mr-md-auto">
-        <div class="card">
+        <div class="card shadow">
           <div class="card-header">
             <h3>Plate #<%= @plate.id %> </h3>
           </div>
@@ -12,24 +19,24 @@
             <%= image_tag @plate.qr_code.to_data_url, class: 'img-thumbnail object-contain' %>
             <div class="p-1">
               <div class="mt-1 mb-1">
-                <span class="profile-icon">
-                  <%= fa_icon "hashtag" %>
+                <span >
+                  <%= fa_icon "hashtag", class: 'fa-fw' %>
                 </span>
                 <span>
                   <small><%= @plate.uid %></small>
                 </span>
               </div>
               <div class="mt-1 mb-1">
-                <span class="profile-icon">
-                  <%= fa_icon "clock-o" %>
+                <span >
+                  <%= fa_icon "clock-o", class: 'fa-fw' %>
                 </span>
                 <span>
                   <small><%= @plate.created_at.strftime('%A %-d %b %H:%M') %></small>
                 </span>
               </div>
               <div class="mt-1 mb-1">
-                <span class="profile-icon">
-                  <%= fa_icon "magic" %>
+                <span >
+                  <%= fa_icon "magic", class: 'fa-fw' %>
                 </span>
                 <span>
                   <small><%= get_plate_badge(@plate.state) %></small>
@@ -42,13 +49,6 @@
             <%= link_to 'Back', plates_path %>
           </div>
         </div>
-    </div>
-    <div class="col col-lg-8 col-md-12">
-      <% unless @plate.test.nil? %>
-        <%= render partial: 'after_test' %>
-      <% else %>
-        <%= render partial: 'before_test' %>
-      <% end  %>
     </div>
   </div>
   <br/>

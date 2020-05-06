@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-md-6 col-sm-12">
       
-      <div class="card">
+      <div class="card shadow">
         <div class="card-header "><h4>My Profile</h4></div>
         <div class="card-body">
           <div class="mt-1 mb-1">
@@ -43,7 +43,7 @@
 
       <br>
       <% if @user.samples.is_analysed.any? %>
-        <div class="card">
+        <div class="card shadow">
           <div class="card-header">My Previous Tests</div>
           <ul class="list-group list-group-flush">
             <% @user.samples.is_analysed.each do | sample| %>

@@ -1,0 +1,78 @@
+<div class="card shadow-sm mb-3 p-3" style="width: 14rem;">
+  <div class=" d-inline-flex align-items-top" style="width: 100%">
+    <span class="text-black-50">
+      <%= title %>
+    </span>
+      <% if stat1 > stat2 %>
+      <span class="ml-auto outline-viewcard outline-viewcard-success">
+        <span class=" ml-1 "><%= fa_icon "arrow-up", class: 'fa-fw text-success' %></span>
+        <span class="pr-2" style="font-weight: 500"> <%= stat1 - stat2 %></span>
+      </span>
+      <% elsif stat2 > stat1 %>
+      <span class="ml-auto outline-viewcard outline-viewcard-danger">
+        <span class=" ml-1 "><%= fa_icon "arrow-down", class: 'fa-fw text-danger' %></span>
+        <span class="pr-2" style="font-weight: 500"> <%= stat1 - stat2 %></span>
+      </span>
+      <% end  %>
+    </span>
+  </div>
+  <div class="d-inline-flex align-items-baseline mb-1" style="width: 100%">
+      <span style="font-size: 1.5rem; font-weight: 700" class="pl-1"><%= stat1 %></span>
+    </div>
+    <div class="pb-1" style="height: 2.5rem;">
+      <canvas id="<%= key %>" width="200" height="90"></canvas>
+      <script>
+          const getChart<%= key %> = () => {
+              const ctx = document.getElementById('<%= key %>');
+              const myLineChart = new Chart(ctx, {
+                  type: 'line',
+                  data: {
+                      labels: <%= statdata.map{|d| d.to_s}.to_s.html_safe %>,
+                      datasets: [
+                          {
+                              data: <%= statdata %>,
+                              fill: false,
+                              backgroundColor: '#007bff',
+                              borderColor: '#007bff',
+                          }
+                      ]
+                  },
+                  options: {
+                    legend: {
+                        display: false
+                    },
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                            bottom: 5
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: false,
+
+                    },
+                    tooltips: {
+                        display: false
+                    },
+                    hover: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: false,
+                        }],
+                            yAxes: [{
+                            display: false,
+                        }]
+                    }
+              }
+              });
+          }
+          $(document).on('turbolinks:load', () => {getChart<%= key %>()});
+      </script>
+    </div>
+</div>
