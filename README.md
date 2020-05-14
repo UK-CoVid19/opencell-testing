@@ -16,6 +16,5 @@ https://arcane-island-35232.herokuapp.com/
  - `rake db:schema:load`
  - `rake db:seed`
  - `rails s`
- - an admin dashboard is available at `/admin` with username: `admin@example.com` and password `password`
  
  
