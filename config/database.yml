@@ -4,10 +4,8 @@
 #   Ensure the SQLite 3 gem is defined in your Gemfile
 #   gem 'sqlite3'
 #
-default: &default
 
-development:
-  <<: *default
+development: &default
   adapter: postgresql
   encoding: unicode
   database: opencell-dev
@@ -15,6 +13,7 @@ development:
   username: postgres
   password: password
   host: localhost
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

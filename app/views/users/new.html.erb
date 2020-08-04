@@ -25,7 +25,7 @@
 
     <div class="form-row">
       <%= form.label :dob %>
-      <%= form.date_field :dob, class: 'form-control' %>
+      <%= form.date_field :dob, max: Date.today, class: 'form-control' %>
       <div class="valid-feedback">Valid.</div>
       <div class="invalid-feedback">Please fill out this field.</div>
     </div>
