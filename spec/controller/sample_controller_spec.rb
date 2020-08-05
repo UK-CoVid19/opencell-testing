@@ -1,5 +1,4 @@
 require "rails_helper"
-require 'pry'
 
 RSpec.describe SamplesController, type: :controller do
   describe "controller" do

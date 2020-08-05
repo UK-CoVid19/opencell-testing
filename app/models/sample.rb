@@ -1,3 +1,4 @@
+
 class Sample < ApplicationRecord
 
   extend QrModule
@@ -12,7 +13,7 @@ class Sample < ApplicationRecord
   validates :uid, uniqueness: true
   has_one :test_result, through: :well
 
-  before_create :set_uid
+  before_create :set_uid, unless: :uid?
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 

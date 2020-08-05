@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'pry'
 RSpec.describe Plate, type: :model do
 
   describe "build_plate" do

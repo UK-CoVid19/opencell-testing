@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "plates/edit", type: :view do
   before(:each) do
-    @plate = assign(:plate, Plate.create!())
+    wells = build_list(:well, 96)
+    @plate = create(:plate, wells: wells )
   end
 
   it "renders the edit plate form" do

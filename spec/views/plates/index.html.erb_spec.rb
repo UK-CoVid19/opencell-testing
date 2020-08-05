@@ -2,9 +2,10 @@ require 'rails_helper'
 
 RSpec.describe "plates/index", type: :view do
   before(:each) do
+    wells = build_list(:well, 96)
+    @plate = create(:plate, wells: wells )
     assign(:plates, [
-      Plate.create!(),
-      Plate.create!()
+      @plate
     ])
   end
 

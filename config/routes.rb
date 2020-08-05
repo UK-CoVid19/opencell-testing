@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'home/index'
+  get 'home/index', as: 'home'
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
   get 'samples/pendingdispatch', to: 'samples#step1_pendingdispatch', as: 'step1_pendingdispatch'
@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   devise_for :users
   resources :users, except: [:edit, :update]
   root to: "home#index"
-  get 'privacy', to: 'home#privacy'
-  get 'about', to: 'home#about'
+  get 'privacy', to: 'home#privacy', as: 'privacy'
+  get 'about', to: 'home#about', as: 'about'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

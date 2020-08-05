@@ -1,5 +1,4 @@
 require "rails_helper"
-require 'pry'
 
 RSpec.describe PlatesController, type: :controller do
   include Devise::Test::ControllerHelpers
