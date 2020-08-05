@@ -4,6 +4,8 @@ https://arcane-island-35232.herokuapp.com/
 
 # README -
 
+[![Build Status](https://travis-ci.com/UK-CoVid19/opencell-testing.svg?branch=master)](https://travis-ci.com/UK-CoVid19/opencell-testing)
+
 ## How To Run
 
  - Ruby Version `2.4.2`
