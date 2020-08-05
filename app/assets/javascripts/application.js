@@ -11,6 +11,7 @@
 // about supported directives.
 //= require bs-custom-file-input/dist/bs-custom-file-input.min.js
 //= require chart.js/dist/Chart.min.js
+//= require jsqr/dist/jsQR.js
 //= require jquery
 //= require jquery-ui/widgets/autocomplete
 //= require popper
