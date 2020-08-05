@@ -16,6 +16,21 @@ https://arcane-island-35232.herokuapp.com/
  - `rake db:schema:load`
  - `rake db:seed`
  - `rails s`
- - an admin dashboard is available at `/admin` with username: `admin@example.com` and password `password`
  
+ ## Demo version
  
+A Demo version of the software is availabe to view here: https://arcane-island-35232.herokuapp.com/
+
+Login link is here: https://arcane-island-35232.herokuapp.com/users/sign_in
+
+ - To access the staff version of the site, log in with the credentials of 'email@example.com' and password of 'password' 
+
+ - To access the patient version of the you can sign up with your own details. 
+
+As a staff member you can navigate with the links at the top to see samples as different stages of the process, the dashboard link (https://arcane-island-35232.herokuapp.com/samples/dashboard) gives an overview of which samples are at which state.
+
+The 'pending prepare' step shows how a QR labeled sample can be assigned to a plate using a camera to scan the code.
+
+https://arcane-island-35232.herokuapp.com/samples/pendingprepare
+
+To do a full demo, a user would need to print off the code / show the sample code on a separate screen. A fallback mechanism with an autocomplete exists where the camera may not be available.
