@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     resources :tests, except: [:index]
   end
   get '/tests/complete', to: 'tests#complete'
+  get '/tests/:id/analyse', to: 'tests#analyse', as: 'test_analyse'
+  post '/tests/:id/analyse', to: 'tests#confirm'
   resources :samples, except: [:update, :edit]
 
   devise_for :users

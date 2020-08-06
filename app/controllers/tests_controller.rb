@@ -1,7 +1,7 @@
 class TestsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_test, only: [:show, :edit, :update, :destroy]
-  before_action :set_plate, except: [:complete]
+  before_action :set_test, only: [:show, :edit, :update, :destroy, :analyse, :confirm]
+  before_action :set_plate, except: [:complete, :analyse]
   around_action :wrap_in_current_user
   after_action :verify_authorized
 
@@ -29,6 +29,9 @@ class TestsController < ApplicationController
   def edit
   end
 
+  def analyse
+  end 
+
   # POST /tests
   # POST /tests.json
   def create
@@ -39,6 +42,21 @@ class TestsController < ApplicationController
     respond_to do |format|
       if @test.save
         format.html { redirect_to plate_url(@plate), notice: 'Test was successfully created.' }
+        format.json { render :show, status: :created, location: @test }
+      else
+        format.html { render :new }
+        format.json { render json: @test.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def confirm
+    tp = test_analysis_params.merge!(plate_id: params[:plate_id])
+    @test.update(tp)
+    @test.plate.analysed!
+    respond_to do |format|
+      if @test.save
+        format.html { redirect_to plate_url(@plate), notice: 'Test was successfully analysed.' }
         format.json { render :show, status: :created, location: @test }
       else
         format.html { render :new }
@@ -85,5 +103,9 @@ class TestsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def test_params
       params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:value, :well_id, :id,:test_id])
+    end
+
+    def test_analysis_params
+      params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
     end
 end

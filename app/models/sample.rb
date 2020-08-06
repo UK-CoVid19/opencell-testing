@@ -17,7 +17,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[ requested dispatched received preparing prepared tested analysed communicate rejected ]
+  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated rejected ]
 
   scope :is_requested, -> { where( :state => Sample.states[:requested]) }
   scope :is_dispatched, -> { where( :state => Sample.states[:dispatched]) }
@@ -100,7 +100,7 @@ class Sample < ApplicationRecord
   end
 
   def send_notification_after_analysis
-      ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.analysed? && Rails.application.config.email_test_results)
+      ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.email_test_results)
   end
 
   def set_uid

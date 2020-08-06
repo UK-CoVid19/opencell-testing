@@ -4,6 +4,8 @@ class TestResult < ApplicationRecord
   has_one :sample, through: :well
   validates :value, presence: true
 
+  enum state: %i[ positive lowpositive negative inhibit]
+
   after_create :set_sample_status
 
   def set_sample_status

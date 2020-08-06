@@ -42,37 +42,7 @@
     </div>
   </div>
   <div class="row">
-    <table class="table table-striped table-bordered">
-      <thead class="thead-dark">
-      <tr>
-        <th></th>
-        <% (1..12).each do |col| %>
-          <th><%= col %></th>
-        <% end %>
-      </tr>
-      </thead>
-      <tbody>
-      <% @plate.wells.sort_by{|w| w.row}.group_by {|w| w.row }.each do |row, row_wells| %>
-        <tr>
-          <td class="dark-cell text-center" style="width:4rem;"><%= row %></td>
-          <% row_wells.sort_by{|w| w.column}.each do |rw| %>
-            <td style="width:4rem;">
-              <% if test.test_results.map(&:well_id).include? rw.id %>
-                <%= form.fields_for :test_results, test.test_results.select{|i| i.well_id == rw.id} do |result_builder| %>
-                  <%= result_builder.hidden_field :well_id %>
-                  <%= result_builder.hidden_field :test_id %>
-                  <%= result_builder.hidden_field :id %>
-                  <%= result_builder.text_field :value, class: 'form-control' %>
-                <% end %>
-              <% else %>
-                <hr/>
-              <% end %>
-            </td>
-          <% end  %>
-        </tr>
-      <% end  %>
-      </tbody>
-    </table>
+    <%= render partial: 'plate_grid_table', locals: {test: test, form: form} %>
   </div>
   <div class="actions">
     <%= form.submit "Upload Results", class: 'btn btn-primary' %>
