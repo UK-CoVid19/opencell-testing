@@ -2,7 +2,7 @@
 <h1>Confirm Test Results</h1>
 <% @plate = @test.plate %>
 <% test = @test %>
-    <%= form_with(model: [@plate, test], local: true) do |form| %>
+    <%= form_with(model: [@plate, test], url: "confirm", local: true) do |form| %>
     <% if test.errors.any? %>
         <div id="error_explanation">
         <h2><%= pluralize(test.errors.count, "error") %> prohibited this test from being saved:</h2>
@@ -14,7 +14,7 @@
         </div>
     <% end %>
     <div class="row">
-        <%= render partial: 'plate_grid_table', locals: {test: test, form: form} %>
+        <%= render partial: 'plate_confirm_table', locals: {test: test, form: form} %>
     </div>
     <div class="actions">
         <%= form.submit "Confirm Result", class: 'btn btn-primary' %>

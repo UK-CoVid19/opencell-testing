@@ -1,44 +1,45 @@
 <div class="card shadow" style="max-width: 20em;">
-  <div class="card-header">
-    <h3>Sample #<%= @sample.id %> </h3>
-  </div>
-  <div class="card-body">
-    <%= image_tag @sample.qr_code.to_data_url, class: 'object-contain' %>
-    <div class="p-1">
-      <div class="mt-1 mb-1">
-                <span >
-                  <%= fa_icon "hashtag", class: 'fa-fw' %>
-                </span>
-        <span>
-                  <small><%= @sample.uid %></small>
-                </span>
-      </div>
-      <div class="mt-1 mb-1">
-                <span >
-                  <%= fa_icon "clock-o", class: 'fa-fw' %>
-                </span>
-        <span>
-                  <small><%= @sample.created_at.strftime('%A %-d %b %H:%M') %></small>
-                </span>
-      </div>
-      <div class="mt-1 mb-1">
-                <span >
-                  <%= fa_icon "magic", class: 'fa-fw' %>
-                </span>
-        <span>
-                  <small><%= get_badge(@sample.state) %></small>
-                </span>
-      </div>
+    <div class="card-header">
+        <h3>Sample #<%= @sample.id %> </h3>
     </div>
-  </div>
-  <div class="card-footer">
-    <% unless @sample.well.nil? or @sample.well.plate.nil? %>
-      <span><%= fa_icon "location-arrow", class: 'fa-fw' %> <%= link_to "Plate ##{@sample.well.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.well.plate %></span>
-    <% else %>
-      <p>Not yet assigned to plate</p>
-    <% end %>
-    <% if @sample.test_result.present? %>
-      <span><%= @sample.test_result.value %></span>
-    <% end  %>
-  </div>
+    <div class="card-body">
+        <%= image_tag @sample.qr_code.to_data_url, class: 'object-contain' %>
+        <div class="p-1">
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "hashtag", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <small><%= @sample.uid %></small>
+                </span>
+            </div>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "clock-o", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <small><%= @sample.created_at.strftime('%A %-d %b %H:%M') %></small>
+                </span>
+            </div>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "magic", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <small><%= get_badge(@sample.state) %></small>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <% unless @sample.well.nil? or @sample.well.plate.nil? %>
+        <span><%= fa_icon "location-arrow", class: 'fa-fw' %> <%= link_to "Plate ##{@sample.well.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.well.plate %></span>
+        <% else %>
+        <p>Not yet assigned to plate</p>
+        <% end %>
+        <% if @sample.test_result.present? %>
+        <span><%= @sample.test_result.value %></span>
+        <span><%= @sample.test_result.state %></span>
+        <% end  %>
+    </div>
 </div>

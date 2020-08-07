@@ -36,4 +36,12 @@ class TestPolicy < ApplicationPolicy
   def analyse?
     staffmember?
   end
+
+  def confirm?
+    staffmember?
+  end
+
+  def done? 
+    staffmember?
+  end
 end

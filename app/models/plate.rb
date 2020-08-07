@@ -40,6 +40,7 @@ class Plate < ApplicationRecord
   scope :is_prepared, -> {where(state: Plate.states[:prepared])}
   scope :is_testing, -> {where(state: Plate.states[:testing])}
   scope :is_complete, -> {where(state: Plate.states[:complete])}
+  scope :is_done, -> {where(state: Plate.states[:analysed])}
 
 
   def self.build_plate

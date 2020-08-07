@@ -68,7 +68,14 @@
                   <li class="nav-item">
                     <%= link_to tests_complete_path, class: 'nav-link' do %>
                       <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @completed_tests_count } do %>
-                        <span>Complete</span>
+                        <span>Complete <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                      <% end %>
+                    <% end %>
+                  </li>
+                  <li class="nav-item">
+                    <%= link_to tests_done_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @done_tests_count } do %>
+                        <span>Done</span>
                       <% end %>
                     <% end %>
                   </li>

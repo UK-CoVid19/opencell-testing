@@ -1,8 +1,8 @@
 class TestsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_test, only: [:show, :edit, :update, :destroy, :analyse, :confirm]
-  before_action :set_plate, except: [:complete, :analyse]
-  around_action :wrap_in_current_user
+  before_action :set_plate, except: [:complete, :analyse, :done]
+  around_action :wrap_in_current_user, only: [:create, :confirm, :update]
   after_action :verify_authorized
 
   # GET /tests
@@ -11,6 +11,11 @@ class TestsController < ApplicationController
   def complete
     authorize Test
     @tests = Test.all.joins(:plate).where(plates: {state: Plate.states[:complete]})
+  end
+
+  def done
+    authorize Test
+    @tests = Test.all.joins(:plate).where(plates: {state: Plate.states[:analysed]})
   end
 
   # GET /tests/1
@@ -36,6 +41,7 @@ class TestsController < ApplicationController
   # POST /tests.json
   def create
     tp = test_params.merge!(plate_id: params[:plate_id])
+    @plate.test = Test.new(tp)
     @test = Test.new(tp)
     @test.plate.complete!
     authorize @test
@@ -44,7 +50,7 @@ class TestsController < ApplicationController
         format.html { redirect_to plate_url(@plate), notice: 'Test was successfully created.' }
         format.json { render :show, status: :created, location: @test }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity  }
         format.json { render json: @test.errors, status: :unprocessable_entity }
       end
     end
@@ -54,9 +60,11 @@ class TestsController < ApplicationController
     tp = test_analysis_params.merge!(plate_id: params[:plate_id])
     @test.update(tp)
     @test.plate.analysed!
+    # update all the samples to confirmed status
+    @test.plate.samples.update(state: Sample.states[:communicated])
     respond_to do |format|
       if @test.save
-        format.html { redirect_to plate_url(@plate), notice: 'Test was successfully analysed.' }
+        format.html { redirect_to plate_url(@plate), notice: 'Test was successfully confirmed.' }
         format.json { render :show, status: :created, location: @test }
       else
         format.html { render :new }

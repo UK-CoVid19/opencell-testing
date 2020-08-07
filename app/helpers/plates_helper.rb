@@ -36,6 +36,10 @@ module PlatesHelper
       return tag.span class: 'badge badge-pill badge-success' do
         status
       end
+    when Plate.states[:analysed]
+      return tag.span class: 'badge badge-pill badge-success' do
+        status
+      end
     end
   end
 
