@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_06_103227) do
+ActiveRecord::Schema.define(version: 2020_08_06_152419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 2020_08_06_103227) do
     t.float "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "state"
+    t.text "comment"
     t.index ["test_id"], name: "index_test_results_on_test_id"
     t.index ["well_id"], name: "index_test_results_on_well_id"
   end

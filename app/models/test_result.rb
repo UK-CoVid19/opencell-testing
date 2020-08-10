@@ -3,6 +3,7 @@ class TestResult < ApplicationRecord
   belongs_to :well
   has_one :sample, through: :well
   validates :value, presence: true
+  enum state: { positive: 0, lowpositive: 1, negative: 2, inhibit: 3}
 
   after_create :set_sample_status
 

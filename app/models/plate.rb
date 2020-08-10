@@ -27,7 +27,7 @@ class Plate < ApplicationRecord
   has_many :samples, through: :wells
   has_one :test, dependent: :destroy
   accepts_nested_attributes_for :wells
-  enum state: %i[preparing prepared testing complete]
+  enum state: %i[preparing prepared testing complete analysed]
   validates :wells, length: {maximum: 96, minimum: 96}
   qr_for :uid
   attr_accessor :assign_error
@@ -40,6 +40,7 @@ class Plate < ApplicationRecord
   scope :is_prepared, -> {where(state: Plate.states[:prepared])}
   scope :is_testing, -> {where(state: Plate.states[:testing])}
   scope :is_complete, -> {where(state: Plate.states[:complete])}
+  scope :is_done, -> {where(state: Plate.states[:analysed])}
 
 
   def self.build_plate

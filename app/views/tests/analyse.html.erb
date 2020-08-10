@@ -1,0 +1,24 @@
+<div class="container">
+<h1>Confirm Test Results</h1>
+<% @plate = @test.plate %>
+<% test = @test %>
+    <%= form_with(model: [@plate, test], url: "confirm", local: true) do |form| %>
+    <% if test.errors.any? %>
+        <div id="error_explanation">
+        <h2><%= pluralize(test.errors.count, "error") %> prohibited this test from being saved:</h2>
+        <ul>
+            <% test.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+        </ul>
+        </div>
+    <% end %>
+    <div class="row">
+        <%= render partial: 'plate_confirm_table', locals: {test: test, form: form} %>
+    </div>
+    <div class="actions">
+        <%= form.submit "Confirm Result", class: 'btn btn-primary' %>
+    </div>
+    <% end %>
+    <%= link_to 'Back', plate_tests_path(@plate) %>
+</div>

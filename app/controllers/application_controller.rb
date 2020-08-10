@@ -18,7 +18,8 @@ class ApplicationController < ActionController::Base
     @pendingreadytest_count = Plate.is_preparing.size
     @pendingtest_count = Plate.is_prepared.size
     @pendinganalyze_count = Plate.is_testing.size
-    @completed_tests_count = Test.all.size
+    @completed_tests_count = Plate.is_complete.size
+    @done_tests_count = Plate.is_done.size
   end
 
 
