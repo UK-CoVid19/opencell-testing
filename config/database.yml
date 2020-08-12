@@ -20,14 +20,11 @@ development: &default
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  adapter: postgresql
-  encoding: unicode
   database: opencell-test
-  pool: 5
-  username: postgres
-  password: password
-  host: db
 
 production:
   <<: *default
   database: opencell-prod
+  host: <%= ENV['PRODUCTION_HOST'] %>
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
