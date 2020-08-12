@@ -18,6 +18,6 @@ steps:
     inputs:
       azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
       azureContainerRegistry: $(azureContainerRegistry)
-      action: build
+      action: Build service images
       repository: $(imageName)
-      dockerComposeFile: docker-compose.yml
+      dockerComposeFile: ./docker-compose.yml
