@@ -2,6 +2,9 @@
 # Package your Ruby project.
 # Add steps that install rails, analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/ruby
+variables:
+  azureSubscriptionEndpoint: opencell-lims-docker
+  azureContainerRegistry: opencelllimsdockeracr.azurecr.io
 
 trigger:
 - master
