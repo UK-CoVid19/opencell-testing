@@ -19,6 +19,7 @@ steps:
       action: Build services
       azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
       azureContainerRegistry: $(azureContainerRegistry)
+      additionalImageTags: $(Build.BuildId)
   - task: DockerCompose@0
     displayName: Run tests
     inputs:
