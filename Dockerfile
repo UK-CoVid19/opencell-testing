@@ -6,7 +6,7 @@ RUN mkdir /opencell
 WORKDIR /opencell
 COPY Gemfile /opencell/Gemfile
 COPY Gemfile.lock /opencell/Gemfile.lock
-RUN bundle install
+RUN bundle install --jobs=4
 RUN npm install
 COPY . /opencell
 
