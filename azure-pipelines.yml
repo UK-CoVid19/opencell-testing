@@ -16,8 +16,7 @@ steps:
   - task: DockerCompose@0
     displayName: Build Services
     inputs:
+      action: Build services
       azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
       azureContainerRegistry: $(azureContainerRegistry)
-      action: Build service images
-      repository: $(imageName)
-      dockerComposeFile: ./docker-compose.yml
+      
