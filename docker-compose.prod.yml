@@ -1,11 +1,12 @@
 version: '3'
 services:
   web:
-    build:  .
+    build:
+        context: .
+        args:
+            SECRET_KEY: SECRET_KEY
     dockerfile: Dockerfile.prod
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    args:
-        SECRET_KEY: SECRET_KEY
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"    
     env_file:
       - web-variables.env
     volumes:
