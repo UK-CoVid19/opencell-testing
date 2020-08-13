@@ -5,10 +5,8 @@ services:
         context: .
         args:
             SECRET_KEY: SECRET_KEY
-    dockerfile: Dockerfile.prod
+        dockerfile: Dockerfile.prod
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"    
-    env_file:
-      - web-variables.env
     volumes:
       - .:/myapp
     ports:
