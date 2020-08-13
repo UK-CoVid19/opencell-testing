@@ -16,6 +16,5 @@ module OpencellTesting
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
     Time.zone = 'London'
-    config.hosts << "opencell-lims-docker.azurewebsites.net"
   end
 end

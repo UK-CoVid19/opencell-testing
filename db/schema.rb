@@ -13,6 +13,8 @@
 ActiveRecord::Schema.define(version: 2020_08_06_152419) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_buffercache"
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|

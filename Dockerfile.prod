@@ -7,9 +7,11 @@ WORKDIR /opencell
 COPY Gemfile /opencell/Gemfile
 COPY Gemfile.lock /opencell/Gemfile.lock
 COPY package.json /opencell/package.json
-RUN bundle install --jobs 20 --retry 5
+RUN bundle install --jobs 20 --retry 5 --without development test
 RUN npm install
 COPY . /opencell
+ARG SECRET_KEY
+RUN bundle exec rake RAILS_ENV=production SECRET_KEY_BASE=${secret_key} assets:precompile
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
