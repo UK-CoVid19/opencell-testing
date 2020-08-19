@@ -86,9 +86,9 @@ RSpec.describe UsersController, type: :controller do
   describe("signed in as staff") do
     before :each do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
-      @other_user = create(:user, role: User.roles[:patient])
-      @to_create_user = build(:user, role: User.roles[:patient])
+      @user = create(:user, :staff) # in factories.rb you should create a factory for user
+      @other_user = create(:user, :patient)
+      @to_create_user = build(:user, :patient)
       sign_in @user
     end
 
@@ -118,9 +118,15 @@ RSpec.describe UsersController, type: :controller do
 
     it "should let a staff member create a user via the staff routeroutes to #create_staff" do
       post :create_staff, params: {user: @to_create_user.attributes}
-      expect(flash[:alert]).to_not be_present
-      expect(flash[:notice]).to be_present
+      expect(response).to have_http_status(:success)
+      expect(User.last.email).to eq(@to_create_user.email)
+    end
+
+    it "should let a staff member create a staff member with no API key via the staff routeroutes to #create_staff" do
+      post :create_staff, params: {user: @to_create_user.attributes.merge({role: 'staff'})}
       expect(response).to have_http_status(:redirect)
+      expect(User.last.email).to eq(@to_create_user.email)
+      expect(User.last.api_key).to be_nil
       expect(response).to redirect_to(user_path(User.last))
     end
 

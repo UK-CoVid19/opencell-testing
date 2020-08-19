@@ -11,6 +11,15 @@ FactoryBot.define do
     password_confirmation {"password"}
     telno { 1234567 }
     confirmed_at { DateTime.now}
+    trait :patient do
+      role { User.roles[:patient] }
+      api_key { SecureRandom.base64(16) }
+    end 
     role { User.roles[:patient]}
+    api_key { SecureRandom.base64(16) }
+    trait :staff do 
+      role { User.roles[:staff]}
+      api_key { nil }
+    end 
   end
 end

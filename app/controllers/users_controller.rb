@@ -1,3 +1,4 @@
+
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :destroy]
   before_action :authenticate_user!
@@ -19,16 +20,25 @@ class UsersController < ApplicationController
   def show
   end
 
+  def patient_created
+  end 
+
 
   def create_staff
     authorize User
     generated_password = Devise.friendly_token.first(8)
-    @user = User.new(user_params.merge!({password: generated_password, password_confirmation: generated_password}))
+    @api_key = User.roles[user_params[:role]] == User.roles[:staff] ? nil : SecureRandom.base64(16)
+    @user = User.new(user_params.merge!({password: generated_password, password_confirmation: generated_password, api_key: @api_key}))
     respond_to do |format|
       if @user.save
-        UserMailer.with(user: @user).staff_created_user.deliver_now
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
+        if @user.patient?
+          format.html { render :patient_created, notice: 'Patient was successfully created.' }
+          format.json { render :show, status: :created, location: @user }
+        else
+          UserMailer.with(user: @user).staff_created_user.deliver_now
+          format.html { redirect_to @user, notice: 'User was successfully created.' }
+          format.json { render :show, status: :created, location: @user }
+        end
       else
         format.html { render :new }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -54,6 +64,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :dob, :telno, :email)
+      params.require(:user).permit(:name, :dob, :telno, :email, :role)
     end
 end
