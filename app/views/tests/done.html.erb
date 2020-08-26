@@ -17,7 +17,7 @@
         <tr>
           <td><%= tag.b test.id %></td>
           <td><%= test.created_at.strftime('%A %-d %b %H:%M') %></td>
-          <td><%= link_to test.user.name, user_path(test.user) %></td>
+          <td><%= link_to test.user.email, user_path(test.user) %></td>
           <td><%= link_to test.plate.id, test.plate %></td>
           <td>
             <% test.result_files.each do |file| %>
