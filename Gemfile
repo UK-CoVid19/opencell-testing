@@ -39,6 +39,7 @@ gem 'rqrcode'
 gem 'jquery-ui-rails'
 gem "sentry-raven"
 gem "font-awesome-rails"
+gem 'newrelic_rpm'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
