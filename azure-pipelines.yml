@@ -6,8 +6,11 @@ variables:
   azureSubscriptionEndpoint: opencell-lims-docker - Azure
   azureContainerRegistry: opencelllimsdockeracr.azurecr.io
   secretKey: $(secretKeyBase)
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
 
 trigger:
+- master
+pr:
 - master
 
 pool:
@@ -32,6 +35,7 @@ steps:
       qualifyImageNames: true
       dockerComposeCommand: run -e "RAILS_ENV=test" web bundle exec rake db:create db:migrate spec
   - task: DockerCompose@0
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: Build Services
     inputs:
       action: Build services
@@ -42,6 +46,7 @@ steps:
       dockerComposeFileArgs: |
         SECRET_KEY=$(secretKey)
   - task: DockerCompose@0
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: Push services
     inputs:
       action: Push services
