@@ -118,6 +118,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
+    email_validator (2.0.1)
+      activemodel
     erubi (1.9.0)
     execjs (2.7.0)
     factory_bot (6.1.0)
@@ -343,6 +345,7 @@ DEPENDENCIES
   coffee-rails (~> 5.0)
   debase
   devise
+  email_validator
   factory_bot_rails
   font-awesome-rails
   jbuilder (~> 2.5)

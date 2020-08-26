@@ -24,7 +24,7 @@
                 <%= record.updated_at.strftime('%A %-d %b %H:%M') %>
               </td>
               <td>
-                <%= link_to record.user.name, record.user unless record.user.nil? %>
+                <%= link_to record.user.email, record.user unless record.user.nil? %>
               </td>
             </tr>
           <% end %>

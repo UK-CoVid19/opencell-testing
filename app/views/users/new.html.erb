@@ -17,31 +17,10 @@
     <% end %>
 
     <div class="form-group">
-      <%= form.label :name %>
-      <%= form.text_field :name, class: 'form-control', required: true %>
-      <div class="valid-feedback">Valid.</div>
-      <div class="invalid-feedback">Please fill out this field.</div>
-    </div>
-
-    <div class="form-row">
-      <%= form.label :dob %>
-      <%= form.date_field :dob, max: Date.today, class: 'form-control' %>
-      <div class="valid-feedback">Valid.</div>
-      <div class="invalid-feedback">Please fill out this field.</div>
-    </div>
-
-    <div class="form-group">
-      <%= form.label :telno %>
-      <%= form.text_field :telno, class: 'form-control', required: true %>
-      <div class="valid-feedback">Valid.</div>
-      <div class="invalid-feedback">Please fill out this field.</div>
-    </div>
-
-    <div class="form-group">
       <%= form.label :email %>
-      <%= form.text_field :email, class: 'form-control', required: true %>
+      <%= form.email_field :email, autofocus: true, class: 'form-control', required: true %>
       <div class="valid-feedback">Valid.</div>
-      <div class="invalid-feedback">Please fill out this field.</div>
+      <div class="invalid-feedback">Invalid Email Address</div>
     </div>
 
     <div class="form-group">

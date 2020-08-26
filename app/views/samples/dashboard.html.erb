@@ -45,7 +45,7 @@
             <% @samples.each do |sample| %>
               <tr>
                 <td><%= link_to "##{sample.id}", sample %></td>
-                <td><%= link_to sample.user.name, sample.user %></td>
+                <td><%= link_to sample.user.email, sample.user %></td>
                 <td>
                   <div class="progress" style="height:15px;">
                     <div class="progress-bar" role="progressbar" style="width: <%= get_sample_bar(sample) %>%" aria-valuenow="<%= get_sample_bar(sample) %>" aria-valuemin="0" aria-valuemax="100", data-toggle="tooltip", data-placement="bottom", title="<%= sample.state.capitalize %>" ></div>
