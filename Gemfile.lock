@@ -75,6 +75,7 @@ GEM
       io-like (~> 0.3.0)
     autoprefixer-rails (9.8.6.1)
       execjs
+    barby (0.6.8)
     bcrypt (3.1.15)
     bindex (0.8.1)
     bootsnap (1.4.7)
@@ -249,10 +250,6 @@ GEM
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
-    rqrcode (1.1.2)
-      chunky_png (~> 1.0)
-      rqrcode_core (~> 0.1)
-    rqrcode_core (0.1.2)
     rspec-core (3.9.2)
       rspec-support (~> 3.9.3)
     rspec-expectations (3.9.2)
@@ -338,11 +335,13 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin
+  barby
   bootsnap (>= 1.1.0)
   bootstrap
   byebug
   capybara (>= 2.15)
   chromedriver-helper
+  chunky_png
   coffee-rails (~> 5.0)
   debase
   devise
@@ -361,7 +360,6 @@ DEPENDENCIES
   pundit
   rails (~> 6.0.0)
   rails-controller-testing
-  rqrcode
   rspec-rails (~> 4.0.0)
   ruby-debug-ide
   sass-rails (~> 5.0)
