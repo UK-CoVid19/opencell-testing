@@ -1,4 +1,3 @@
-
 class Sample < ApplicationRecord
 
   extend QrModule
@@ -96,11 +95,11 @@ class Sample < ApplicationRecord
   end
 
   def self.dummy
-    return [{count: 0}, {count: 0}]
+    return [{count: 0 }, {count: 0 }]
   end
 
   def send_notification_after_analysis
-      ResultNotifyJob.perform_later(self) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.email_test_results)
+      ResultNotifyJob.perform_now(self) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
   end
 
   def set_uid
