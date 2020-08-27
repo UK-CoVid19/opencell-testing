@@ -73,10 +73,10 @@ class SamplesController < ApplicationController
   end
 
   def create
-    @sample = authorize Sample.new(user_id: params[:sample][:user_id], state: Sample.states[:requested])
+    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:requested])
     respond_to do |format|
       if @sample.save
-        format.html { redirect_to user_path(@sample.user), notice: 'Sample was successfully created.' }
+        format.html { redirect_to client_path(@sample.client), notice: 'Sample was successfully created.' }
         format.json { render :show, status: :created, location: @sample }
       else
         format.html { render :new }
@@ -209,7 +209,7 @@ class SamplesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
   def sample_params
-    params.require(:sample).permit(:user_id, :state, :note)
+    params.require(:sample).permit(:client_id, :state, :note)
   end
 
   def get_samples

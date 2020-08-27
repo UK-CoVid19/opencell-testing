@@ -2,8 +2,13 @@ class Sample < ApplicationRecord
 
   extend BarcodeModule
 
+<<<<<<< HEAD
   barcode_for :uid
   belongs_to :user
+=======
+  qr_for :uid
+  belongs_to :client
+>>>>>>> WIP split client model and user model
   has_many :records, dependent: :destroy
   has_one :well, dependent: :nullify
   belongs_to :plate, optional: true
@@ -44,7 +49,7 @@ class Sample < ApplicationRecord
 
   def self.tested_last_week
     samples = Sample
-        .select("date(samples.created_at) as created_date, count(samples.id) as count")
+        .select('date(samples.created_at) as created_date, count(samples.id) as count')
         .where('samples.state >= ? and samples.created_at >= ?', Sample.states[:tested], 7.days.ago.beginning_of_day)
         .group("date(samples.created_at)")
         .order('created_date DESC')
@@ -84,10 +89,11 @@ class Sample < ApplicationRecord
     samples
   end
 
-
   private
+
   def unique_well_in_plate?
     return if plate.nil? or !well_id_changed?
+
     matched = plate.samples.find_by(id: id)
     if(matched)
       errors.add(:well, 'Sample exists in another well on this plate')
@@ -95,7 +101,11 @@ class Sample < ApplicationRecord
   end
 
   def self.dummy
+<<<<<<< HEAD
     return [{count: 0 }, {count: 0 }]
+=======
+    [{ count: 0 }, { count: 0 }]
+>>>>>>> WIP split client model and user model
   end
 
   def send_notification_after_analysis

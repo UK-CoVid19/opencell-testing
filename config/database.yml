@@ -12,7 +12,7 @@ development: &default
   pool: 5
   username: postgres
   password: password
-  host: db
+  host: 172.29.128.1
 
 
 # Warning: The database defined as "test" will be erased and

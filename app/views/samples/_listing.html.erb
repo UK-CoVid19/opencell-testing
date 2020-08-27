@@ -11,7 +11,7 @@
             <th class="no-sort" width="25"><!-- check_box_tag--></th>
             <th class="no-sort">Notes</th>
             <th>Sample</th>
-            <th>Patient</th>
+            <th>Client</th>
           </tr>
           </thead>
           <tbody>
@@ -27,9 +27,9 @@
                 <% end  %>
               </td>
               <td class="text-left">
-                <%= link_to sample.user do  %>
+                <%= link_to sample.client do  %>
                   <%= tag.button class: 'btn btn-sm btn-outline-primary' do %>
-                    <%= sample.user.email %>
+                    <%= sample.client.name %>
                   <% end  %>
                 <% end  %>
               </td>

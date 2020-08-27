@@ -8,7 +8,7 @@ https://arcane-island-35232.herokuapp.com/
 
 ## How To Run
 
- - Ruby Version `2.4.2`
+ - Ruby Version `2.7.1`
  - Requires running Postgres db with user called `postgres` and password of `password` on `localhost:5432`
  - Requires`node.js`
  - `bundle install`

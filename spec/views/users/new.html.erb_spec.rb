@@ -1,14 +1,8 @@
 require 'rails_helper'
+require "shared_login"
 
 RSpec.describe "users/new", type: :view do
-  before(:each) do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
-    @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
-    Sample.with_user(@user) do
-      @sample = build(:sample, user: @user)
-    end
-    sign_in @user
-  end
+  include_context "create sample login"
 
   it "renders new user form" do
     render

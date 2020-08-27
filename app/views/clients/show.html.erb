@@ -1,0 +1,44 @@
+<div class="container">
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+
+            <div class="card shadow">
+                <div class="card-header ">
+                    <h4>Client Profile</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mt-1 mb-1 ">
+                        <span class="profile-icon">
+                            <%= fa_icon "user" %>
+                        </span>
+                        <span>
+                            <%= @client.name %>
+                        </span>
+                    </div>
+                    <div class="mt-1 mb-1 ">
+                        <span class="profile-icon">
+                            <%= fa_icon "calendar" %>
+                        </span>
+                        <span>
+                            <%= @client.created_at.strftime('%A %-d %b %H:%M') %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <% if @client.samples.any? %>
+            <div class="card shadow">
+                <div class="card-header">My Previous Tests</div>
+                <ul class="list-group list-group-flush">
+                  <% @client.samples.each do | sample| %>
+                    <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result&.value %> </li>
+                  <% end %>
+                </ul>
+            </div>
+            <% end %>
+            <br />
+        </div>
+    </div>
+    <%= link_to 'Back', clients_path %>
+</div>
