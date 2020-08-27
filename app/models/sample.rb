@@ -1,8 +1,8 @@
 class Sample < ApplicationRecord
 
-  extend QrModule
+  extend BarcodeModule
 
-  qr_for :uid
+  barcode_for :uid
   belongs_to :user
   has_many :records, dependent: :destroy
   has_one :well, dependent: :nullify

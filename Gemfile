@@ -33,9 +33,10 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 gem 'devise'
+gem 'barby'
+gem 'chunky_png'
 gem 'email_validator'
 gem 'pundit'
-gem 'rqrcode'
 gem 'jquery-ui-rails'
 gem "sentry-raven"
 gem "font-awesome-rails"

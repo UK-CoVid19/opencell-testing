@@ -16,7 +16,7 @@
             <h3>Plate #<%= @plate.id %> </h3>
           </div>
           <div class="card-body">
-            <%= image_tag @plate.qr_code.to_data_url, class: 'img-thumbnail object-contain' %>
+            <%= image_tag @plate.barcode, class: 'img-thumbnail object-contain' %>
             <div class="p-1">
               <div class="mt-1 mb-1">
                 <span >
