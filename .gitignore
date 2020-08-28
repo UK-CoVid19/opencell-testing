@@ -31,3 +31,5 @@
 /config/master.key
 /.idea
 .rspec
+
+/config/master.key
