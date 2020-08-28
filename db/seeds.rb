@@ -4,5 +4,9 @@
 sleep(2.seconds)
 AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
 
-user = User.create!(email: 'staff@example.com', password: 'password', password_confirmation: 'password', role: User.roles[:staff], api_key: 'abcd1234') if Rails.env.development?
+user = User.create!(email: 'staff@example.com', password: 'password', password_confirmation: 'password', role: User.roles[:staff]) if Rails.env.development?
 user.confirm if Rails.env.development?
+
+
+patient = User.create!(email: 'patient@example.com', password: 'password', password_confirmation: 'password', role: User.roles[:patient], api_key: SecureRandom.base64(16)) if Rails.env.development?
+patient.confirm if Rails.env.development?
