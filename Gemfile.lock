@@ -75,6 +75,13 @@ GEM
       io-like (~> 0.3.0)
     autoprefixer-rails (9.8.6.3)
       execjs
+    azure-storage-blob (2.0.0)
+      azure-storage-common (~> 2.0)
+      nokogiri (~> 1.10.4)
+    azure-storage-common (2.0.1)
+      faraday (~> 1.0)
+      faraday_middleware (~> 1.0.0.rc1)
+      nokogiri (~> 1.10.4)
     barby (0.6.8)
     bcrypt (3.1.15)
     bindex (0.8.1)
@@ -130,6 +137,8 @@ GEM
       railties (>= 5.0.0)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (1.0.0)
+      faraday (~> 1.0)
     ffi (1.13.1)
     font-awesome-rails (4.7.0.5)
       railties (>= 3.2, < 6.1)
@@ -337,6 +346,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin
+  azure-storage-blob
   barby
   bootsnap (>= 1.1.0)
   bootstrap
