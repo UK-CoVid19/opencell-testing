@@ -6,9 +6,9 @@ Rails.application.initialize!
 
 
 ActionMailer::Base.smtp_settings = {
-    :user_name => 'onlythebestevents',
+    :user_name => 'opencell.bio',
     :password =>  Rails.application.credentials.dig(:sendgrid_password),
-    :domain => 'https://arcane-island-35232.herokuapp.com/',
+    :domain => 'lims-dev.sudo.bio',
     :address => 'smtp.sendgrid.net',
     :port => 587,
     :authentication => :plain,

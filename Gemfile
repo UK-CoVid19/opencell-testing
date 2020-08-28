@@ -32,6 +32,7 @@ gem 'jbuilder', '~> 2.5'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
+gem "azure-storage-blob", require: false
 gem 'devise'
 gem 'barby'
 gem 'chunky_png'
