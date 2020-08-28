@@ -53,13 +53,40 @@
         var loadingMessage = document.getElementById("loadingMessage");
         var outputContainer = document.getElementById("output");
         var outputData = document.getElementById("outputData");
-        var cell_index = 0;
+        var cell_index = 0
 
-        $( ".sample-assign" ).autocomplete({
-            source: function (request, response) {
-                response(getRemainingSamples());
-            },
+        let pending_samples = []
+        let set_samples = []
+
+        $(window).keydown(function(event){
+          if(event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+          }
         });
+
+
+        function setSamples(items, setter){
+            mapped = items.map(item => { return {
+                          label: item.uid,
+                          value: item.id
+                      }});
+            setter(mapped)
+            return Promise.resolve();
+        }
+
+        function setAutoComplete(){
+          $( ".sample-assign" ).autocomplete({
+                source: function (request, response) {
+                response(getRemainingSamples());
+              },
+              });
+          return;
+        }
+        fetch('/samples/pendingprepare.json')
+            .then(res => res.json())
+            .then(js => setSamples(js, i => pending_samples = i))
+            .then(samples => setAutoComplete())
 
         function getRemainingSamples(){
             to_complete =  pending_samples.filter(x => !set_samples.includes(x.value.toString()));
@@ -87,14 +114,7 @@
             }
         }
 
-        let pending_samples = []
-        let set_samples = []
-        fetch('/samples/pendingprepare.json')
-            .then(res => res.json())
-            .then( js => pending_samples = js.map(item => { return {
-                          label: item.uid,
-                          value: item.id
-                      }}))
+        
 
         $(".form-control").change(function(evt){
             const uid = evt.currentTarget.value;
