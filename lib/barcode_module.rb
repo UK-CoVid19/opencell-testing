@@ -10,7 +10,7 @@ module BarcodeModule
     base.class_eval do
       def barcode
         barcode = Barby::Code128B.new(self.send(self.class.barcode_attr))
-        png = barcode.to_png(height: 150, margin: 5, width: 400)
+        png = barcode.to_png(height: 200, margin: 5, xdim: 4)
         b64 = Base64.encode64(png)
         data_uri = "data:image/png;base64,#{b64}"
         data_uri
