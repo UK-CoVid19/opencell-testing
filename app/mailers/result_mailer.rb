@@ -1,6 +1,6 @@
 class ResultMailer < ApplicationMailer
 
-  default from: 'info@opencell.bio'
+  default from: 'anthony@opencell.bio'
 
   def results_email
     @sample = params[:sample]
