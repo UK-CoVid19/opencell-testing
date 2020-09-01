@@ -1,4 +1,3 @@
-
 class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
@@ -45,6 +44,7 @@ class SamplesController < ApplicationController
   # GET /samples/1
   # GET /samples/1.json
   def show
+    authorize Sample
   end
 
   # GET /samples/new
@@ -65,6 +65,7 @@ class SamplesController < ApplicationController
   # DELETE /samples/1
   # DELETE /samples/1.json
   def destroy
+    authorize @sample
     @sample.destroy
     respond_to do |format|
       format.html { redirect_to samples_url, notice: 'Sample was successfully destroyed.' }
@@ -94,7 +95,6 @@ class SamplesController < ApplicationController
     authorize Sample
     bulk_action(Sample.states[:received], step3_pendingprepare_path)
   end
-
 
   def step3_bulkprepared
     authorize Sample
@@ -201,7 +201,6 @@ class SamplesController < ApplicationController
       format.html { redirect_to redirect_path, notice: "Samples have been successfully #{Sample.states.to_hash.key(desired_state).capitalize}." }
     end
   end
-
 
   def set_sample
     @sample = authorize Sample.find(params[:id])

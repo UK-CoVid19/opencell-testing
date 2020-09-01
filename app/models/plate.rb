@@ -20,25 +20,16 @@ class HasOtherErrorsValidator < ActiveModel::Validator
 end
 
 class Plate < ApplicationRecord
-<<<<<<< HEAD
 
   extend BarcodeModule
-=======
-  extend QrModule
->>>>>>> WIP split client model and user model
 
   has_many :wells, dependent: :destroy
   has_many :samples, through: :wells
   has_one :test, dependent: :destroy
   accepts_nested_attributes_for :wells
   enum state: %i[preparing prepared testing complete analysed]
-<<<<<<< HEAD
   validates :wells, length: {maximum: 96, minimum: 96}
   barcode_for :uid
-=======
-  validates :wells, length: { maximum: 96, minimum: 96 }
-  qr_for :uid
->>>>>>> WIP split client model and user model
   attr_accessor :assign_error
   validates_with UniqueWellPlateValidator, on: :create
   validates_with HasOtherErrorsValidator

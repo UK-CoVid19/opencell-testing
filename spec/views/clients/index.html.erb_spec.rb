@@ -5,11 +5,11 @@ RSpec.describe "clients/index", type: :view do
     assign(:clients, [
       Client.create!(
         name: "Name",
-        api_key_hash: "Api Key Hash"
+        api_key: "Api Key Hash"
       ),
       Client.create!(
         name: "Name",
-        api_key_hash: "Api Key Hash"
+        api_key: "Api Key Hash"
       )
     ])
   end
@@ -17,6 +17,5 @@ RSpec.describe "clients/index", type: :view do
   it "renders a list of clients" do
     render
     assert_select "tr>td", text: "Name".to_s, count: 2
-    assert_select "tr>td", text: "Api Key Hash".to_s, count: 2
   end
 end

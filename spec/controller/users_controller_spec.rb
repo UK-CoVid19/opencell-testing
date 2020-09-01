@@ -116,9 +116,9 @@ RSpec.describe UsersController, type: :controller do
       expect(response).to have_http_status(:success)
     end
 
-    it "should let a staff member create a user via the staff routeroutes to #create_staff" do
+    it "should let a staff member create a patient via the staff routeroutes to #create_staff" do
       post :create_staff, params: {user: @to_create_user.attributes}
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:redirect)
       expect(User.last.email).to eq(@to_create_user.email)
     end
 

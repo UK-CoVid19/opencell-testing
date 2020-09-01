@@ -4,7 +4,7 @@ RSpec.shared_context "create sample login", shared_context: :metadata do
       @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
       @client = create(:client) # in factories.rb you should create a factory for user
       Sample.with_user(@user) do
-        @sample = build(:sample, client: @client)
+        @sample = create(:sample, client: @client)
       end
       sign_in @user
     end

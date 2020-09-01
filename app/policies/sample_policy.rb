@@ -50,7 +50,7 @@ class SamplePolicy < ApplicationPolicy
   end
 
   def create?
-    staffmember? || @record.user == @user
+    staffmember?
   end
 
   def update?

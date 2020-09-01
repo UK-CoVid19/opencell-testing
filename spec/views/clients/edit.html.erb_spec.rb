@@ -4,7 +4,8 @@ RSpec.describe "clients/edit", type: :view do
   before(:each) do
     @client = assign(:client, Client.create!(
       name: "MyString",
-      api_key_hash: "MyString"
+      api_key_hash: "MyString",
+      api_key: "otherstring"
     ))
   end
 
@@ -15,7 +16,6 @@ RSpec.describe "clients/edit", type: :view do
 
       assert_select "input[name=?]", "client[name]"
 
-      assert_select "input[name=?]", "client[api_key_hash]"
     end
   end
 end

@@ -32,7 +32,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.save
         if @user.patient?
-          format.html { render :patient_created, notice: 'Patient was successfully created.' }
+          format.html { redirect_to @user, notice: 'Patient was successfully created.' }
           format.json { render :show, status: :created, location: @user }
         else
           UserMailer.with(user: @user).staff_created_user.deliver_now
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user =  authorize User.find(params[:id])
+      @user = authorize User.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

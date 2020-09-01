@@ -1,4 +1,5 @@
 require "rails_helper"
+require "shared_login"
 
 RSpec.describe SamplesController, type: :controller do
   describe "controller" do
@@ -26,16 +27,13 @@ RSpec.describe SamplesController, type: :controller do
   context("signed in as patient") do
     before :each do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      @user = create(:user, role: User.roles[:patient]) # in factories.rb you should create a factory for user
       @other_user = create(:user, role: User.roles[:patient])
-      Sample.with_user(@user) do
-        @sample = create(:sample, user: @user)
+      @client = create(:client)
+      Sample.with_user(@other_user) do
+        @sample = create(:sample, client: @client)
       end
 
-      Sample.with_user(@other_user) do
-        @other_sample = create(:sample, user: @other_user)
-      end
-      sign_in @user
+      sign_in @other_user
     end
 
     it "should not let a patient see samples" do
@@ -150,16 +148,16 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to redirect_to(root_path)
     end
 
-    it "should let a patient create a sample for themselves" do
-      post :create, params: {sample: {user_id: @user.id}}
-      expect(flash[:alert]).to_not be_present
-      expect(flash[:notice]).to be_present
+    it "should not let a patient create a sample for themselves" do
+      post :create, params: {sample: {client_id: @client.id}}
+      expect(flash[:alert]).to be_present
+      expect(flash[:notice]).to_not be_present
       expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(user_path(@user))
+      expect(response).to redirect_to(root_path)
     end
 
     it "should not let a patient create a sample for someone else" do
-      post :create, params: {sample: {user_id: @other_user.id}}
+      post :create, params: {sample: {client_id: @client.id}}
       expect(flash[:alert]).to eq("You are not authorized to perform this action")
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
@@ -173,7 +171,7 @@ RSpec.describe SamplesController, type: :controller do
     end
 
     it "should not let a patient destroy someone elses sample " do
-      delete :destroy, params: {id: @other_sample.id}
+      delete :destroy, params: {id: @sample.id}
       expect(flash[:alert]).to eq("You are not authorized to perform this action")
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
@@ -181,16 +179,8 @@ RSpec.describe SamplesController, type: :controller do
   end
 
   context("signed in as staff member") do
-    before :each do
-      @request.env["devise.mapping"] = Devise.mappings[:user]
-      @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
-      @other_user = create(:user, role: User.roles[:patient])
-      Sample.with_user(@user) do
-        @sample = create(:sample, user: @user)
-      end
-
-      sign_in @user
-    end
+    
+    include_context "create sample login"
 
     it "should let a staff member see samples" do
       get :index
@@ -251,7 +241,7 @@ RSpec.describe SamplesController, type: :controller do
     describe("step1_bulkdispatched") do
       it "should accept a valid input for bulk updating samples in step1_bulkdispatched" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
         end
         post :step1_bulkdispatched, params: {samples: [{id: @this_sample.id, note: "this is a note"}]}
         expect(Sample.all.size).to eq 2
@@ -261,8 +251,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "should accept a valid input for bulk updating 2 samples in step1_bulkdispatched" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:requested], client: @client)
         end
         post :step1_bulkdispatched, params: { samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
         expect(Sample.all.size).to eq 3
@@ -274,8 +264,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "if 1 valid sample and 1 invalid sample, none of them update step1_bulkdispatched" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:prepared], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:prepared], client: @client)
         end
         post :step1_bulkdispatched, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
         expect(response).to have_http_status(:unprocessable_entity)
@@ -290,7 +280,7 @@ RSpec.describe SamplesController, type: :controller do
     describe("step2_bulkreceived") do
       it "should accept a valid input for bulk receiving samples" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
         end
         post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}]}
         expect(Sample.all.size).to eq 2
@@ -300,8 +290,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "should accept a valid input for bulk updating 2 samples in step2_bulkreceived" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
         end
         post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
         expect(Sample.all.size).to eq 3
@@ -313,8 +303,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "if 1 valid sample and 1 invalid sample, none of them update step2_bulkreceived" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
         end
         post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
         expect(response).to have_http_status(:unprocessable_entity)
@@ -327,8 +317,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "it cannot have an invalid backwards state transition" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:prepared], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:prepared], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
         end
         post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
         expect(response).to have_http_status(:unprocessable_entity)
@@ -344,11 +334,11 @@ RSpec.describe SamplesController, type: :controller do
 
       before :each do
         @wells = build_list(:well, 96)
-        @plate = build(:plate, wells: @wells )
+        @plate = build(:plate, wells: @wells)
       end
       it "should create a valid plate with valid samples" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
@@ -359,8 +349,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "should fail with a sample assigned to a well twice" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
@@ -370,8 +360,8 @@ RSpec.describe SamplesController, type: :controller do
 
       it "should fail with a sample assigned to a well twice" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
-          @this_other_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+          @this_other_sample = create(:sample, state: Sample.states[:received], client: @client)
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
@@ -381,7 +371,7 @@ RSpec.describe SamplesController, type: :controller do
 
       it "should fail with a sample assigned to a well which has the wrong status" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:dispatched], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
@@ -391,7 +381,7 @@ RSpec.describe SamplesController, type: :controller do
 
       it "should fail with a sample assigned to a well which cannot be found" do
         Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:received], user: @other_user)
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
