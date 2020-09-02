@@ -2,7 +2,6 @@
 
 class Client < ApplicationRecord
   has_many :samples, dependent: :destroy
-  has_one :test, dependent: :destroy
 
   before_create :hash_api_key
 

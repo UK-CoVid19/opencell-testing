@@ -35,7 +35,7 @@ class TestsController < ApplicationController
   end
 
   def analyse
-  end 
+  end
 
   # POST /tests
   # POST /tests.json
@@ -97,22 +97,22 @@ class TestsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_test
-      @test = authorize Test.find(params[:id])
-    end
+private
+  # Use callbacks to share common setup or constraints between actions.
+  def set_test
+    @test = authorize Test.find(params[:id])
+  end
 
-    def set_plate
-      @plate = Plate.find(params[:plate_id])
-    end
+  def set_plate
+    @plate = Plate.find(params[:plate_id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def test_params
-      params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:value, :well_id, :id,:test_id])
-    end
+  # Only allow a list of trusted parameters through.
+  def test_params
+    params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:value, :well_id, :id,:test_id])
+  end
 
-    def test_analysis_params
-      params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
-    end
+  def test_analysis_params
+    params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
+  end
 end
