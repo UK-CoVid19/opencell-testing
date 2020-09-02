@@ -83,3 +83,5 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data'
+
+gem "clamby", "~> 1.6"

@@ -41,16 +41,16 @@ class TestsController < ApplicationController
   # POST /tests.json
   def create
     tp = test_params.merge!(plate_id: params[:plate_id])
-    @plate.test = Test.new(tp)
-    @plate.complete!
+    @test = Test.new(tp)
     authorize Test
     respond_to do |format|
-      if @plate.test.save
-        format.html { redirect_to plate_url(@plate), notice: 'Test was successfully created.' }
-        format.json { render :show, status: :created, location: @plate.test }
+      if @test.save
+        @test.plate.complete!
+        format.html { redirect_to plate_url(@test.plate), notice: 'Test was successfully created.'}
+        format.json { render :show, status: :created, location: test }
       else
-        format.html { render :new, status: :unprocessable_entity  }
-        format.json { render json: @plate.test.errors, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity}
+        format.json { render json: @test.errors, status: :unprocessable_entity }
       end
     end
   end
