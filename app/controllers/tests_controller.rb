@@ -42,16 +42,15 @@ class TestsController < ApplicationController
   def create
     tp = test_params.merge!(plate_id: params[:plate_id])
     @plate.test = Test.new(tp)
-    @test = Test.new(tp)
-    @test.plate.complete!
-    authorize @test
+    @plate.complete!
+    authorize Test
     respond_to do |format|
-      if @test.save
+      if @plate.test.save
         format.html { redirect_to plate_url(@plate), notice: 'Test was successfully created.' }
-        format.json { render :show, status: :created, location: @test }
+        format.json { render :show, status: :created, location: @plate.test }
       else
         format.html { render :new, status: :unprocessable_entity  }
-        format.json { render json: @test.errors, status: :unprocessable_entity }
+        format.json { render json: @plate.test.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -110,10 +109,10 @@ class TestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def test_params
-      params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:value, :well_id, :id,:test_id])
+      params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:value, :well_id, :id,:test_id])
     end
 
     def test_analysis_params
-      params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
+      params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
     end
 end

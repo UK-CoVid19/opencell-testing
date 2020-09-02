@@ -20,7 +20,7 @@
           <td><%= link_to test.user.email, user_path(test.user) %></td>
           <td><%= link_to test.plate.id, test.plate %></td>
           <td>
-            <% test.result_files.each do |file| %>
+            <% test.result_file.tap do |file| %>
               <%= link_to "Download #{file.filename}", rails_blob_path(file, disposition: "attachment") %>
               <br/>
             <% end  %>
