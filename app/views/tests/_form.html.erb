@@ -15,22 +15,13 @@
         <div class="container">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
-              <%= form.label :result_files, 'Choose File A', class: 'input-group-text' %>
+              <%= form.label :result_file, 'qPCR raw output', class: 'input-group-text' %>
             </div>
             <div class="custom-file">
-              <%= form.file_field :result_files, name: '[test][result_files][]', accept: '.csv', class: 'custom-file-input' %>
-              <%= form.label :result_files, nil, class: 'custom-file-label' %>
+              <%= form.file_field :result_file, name: '[test][result_file]', accept: '.csv', class: 'custom-file-input' %>
+              <%= form.label :result_file, nil, class: 'custom-file-label' %>
             </div>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <%= form.label :result_files, 'Choose File B', class: 'input-group-text' %>
-            </div>
-            <div class="custom-file">
-              <%= form.file_field :result_files, name: '[test][result_files][]', accept: '.csv', class: 'custom-file-input' %>
-              <%= form.label :result_files, nil, class: 'custom-file-label' %>
-            </div>
-          </div>
+          </div>          
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <%= form.label :user, 'Tested By', class: 'input-group-text' %>

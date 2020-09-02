@@ -109,10 +109,10 @@ class TestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def test_params
-      params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:value, :well_id, :id,:test_id])
+      params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:value, :well_id, :id,:test_id])
     end
 
     def test_analysis_params
-      params.fetch(:test, {}).permit(:user_id, result_files: [] , test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
+      params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:comment, :state, :well_id, :id,:test_id])
     end
 end
