@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_26_121400) do
+ActiveRecord::Schema.define(version: 2020_08_27_102618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,6 +62,14 @@ ActiveRecord::Schema.define(version: 2020_08_26_121400) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "clients", force: :cascade do |t|
+    t.string "name"
+    t.string "api_key_hash"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
+  end
+
   create_table "plates", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -82,16 +90,16 @@ ActiveRecord::Schema.define(version: 2020_08_26_121400) do
   end
 
   create_table "samples", force: :cascade do |t|
-    t.bigint "user_id"
     t.integer "state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "well_id"
     t.bigint "plate_id"
     t.string "uid"
+    t.bigint "client_id"
+    t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["uid"], name: "index_samples_on_uid", unique: true
-    t.index ["user_id"], name: "index_samples_on_user_id"
   end
 
   create_table "test_results", force: :cascade do |t|
@@ -149,8 +157,8 @@ ActiveRecord::Schema.define(version: 2020_08_26_121400) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
+  add_foreign_key "samples", "clients"
   add_foreign_key "samples", "plates"
-  add_foreign_key "samples", "users"
   add_foreign_key "samples", "wells"
   add_foreign_key "test_results", "tests"
   add_foreign_key "test_results", "wells"

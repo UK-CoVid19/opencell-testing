@@ -1,12 +1,7 @@
 require 'rails_helper'
-
+require "shared_login"
 RSpec.describe "samples/show", type: :view do
-  before(:each) do
-    @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
-    Sample.with_user(@user) do
-      @sample = create(:sample, user: @user)
-    end
-  end
+  include_context "create sample login"
 
   it "renders attributes in <p>" do
     render

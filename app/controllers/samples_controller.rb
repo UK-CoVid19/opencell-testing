@@ -1,4 +1,3 @@
-
 class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
@@ -45,6 +44,7 @@ class SamplesController < ApplicationController
   # GET /samples/1
   # GET /samples/1.json
   def show
+    authorize Sample
   end
 
   # GET /samples/new
@@ -65,6 +65,7 @@ class SamplesController < ApplicationController
   # DELETE /samples/1
   # DELETE /samples/1.json
   def destroy
+    authorize @sample
     @sample.destroy
     respond_to do |format|
       format.html { redirect_to samples_url, notice: 'Sample was successfully destroyed.' }
@@ -73,10 +74,10 @@ class SamplesController < ApplicationController
   end
 
   def create
-    @sample = authorize Sample.new(user_id: params[:sample][:user_id], state: Sample.states[:requested])
+    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:requested])
     respond_to do |format|
       if @sample.save
-        format.html { redirect_to user_path(@sample.user), notice: 'Sample was successfully created.' }
+        format.html { redirect_to client_path(@sample.client), notice: 'Sample was successfully created.' }
         format.json { render :show, status: :created, location: @sample }
       else
         format.html { render :new }
@@ -94,7 +95,6 @@ class SamplesController < ApplicationController
     authorize Sample
     bulk_action(Sample.states[:received], step3_pendingprepare_path)
   end
-
 
   def step3_bulkprepared
     authorize Sample
@@ -202,14 +202,13 @@ class SamplesController < ApplicationController
     end
   end
 
-
   def set_sample
     @sample = authorize Sample.find(params[:id])
   end
 
     # Only allow a list of trusted parameters through.
   def sample_params
-    params.require(:sample).permit(:user_id, :state, :note)
+    params.require(:sample).permit(:client_id, :state, :note)
   end
 
   def get_samples

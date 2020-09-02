@@ -5,14 +5,15 @@ RSpec.describe Sample, type: :model do
 
     before :each do
       @user = create(:user)
+      @client = create(:client)
     end
 
     it "should not allow the state to transition to an invalid state" do
-        Sample.with_user(@user) do
-            @sample = create(:sample, state: Sample.states[:requested])
-            @sample.state = Sample.states[:prepared]
-            expect { @sample.save! }.to raise_error(ActiveRecord::RecordInvalid)
-        end
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:requested])
+        @sample.state = Sample.states[:prepared]
+        expect { @sample.save! }.to raise_error(ActiveRecord::RecordInvalid)
+      end
     end
 
     Sample.states.each do |key, value|
@@ -36,15 +37,15 @@ RSpec.describe Sample, type: :model do
     end
 
     describe "validations" do
-      it "should have a unique UID via indifferent assignment" do
-        new_sample = Sample.create(user: @user, uid: "abc")
-        other_sample = Sample.create(user: @user, uid: "abc")
-        expect(other_sample.uid).to eq new_sample.uid
+      it "should not allow duplicate ID" do
+        new_sample = Sample.create(client: @client, uid: "abc")
+        other_sample = Sample.new(client: @client, uid: "abc")
+        expect(other_sample.save).to be false
       end
 
       it "should create a new UID if one is not provided" do
-        new_sample = Sample.create(user: @user)
-        other_sample = Sample.create(user: @user)
+        new_sample = Sample.create(client: @client)
+        other_sample = Sample.create(client: @client)
         expect(other_sample.uid).to_not eq new_sample.uid
       end 
 

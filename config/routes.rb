@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :clients
   get 'home/index', as: 'home'
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad

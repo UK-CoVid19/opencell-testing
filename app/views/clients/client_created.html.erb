@@ -2,16 +2,15 @@
   <br>
   <div class="row">
     <div class="col-md-6 col-sm-12">
-      
       <div class="card shadow">
-        <div class="card-header "><h4>Newly generated API patient</h4></div>
+        <div class="card-header "><h4>Newly generated Client</h4></div>
         <div class="card-body">
           <div class="mt-1 mb-1 ">
             <span class="profile-icon">
-              <%= fa_icon "envelope-open" %>
+              <%= fa_icon "user" %>
             </span>
             <span>
-              <%= @user.email %>
+              <%= @client.name %>
             </span>
           </div>
           <div class="mt-1 mb-1 ">
@@ -19,7 +18,7 @@
               <%= fa_icon "key" %>
             </span>
             <span>
-              <%= @api_key %>
+              <code><%= @api_key %></code>
             </span>
             <span>
               <i>One time only API key</i>

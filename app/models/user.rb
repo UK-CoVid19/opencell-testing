@@ -7,9 +7,8 @@ class User < ApplicationRecord
   validates :email, presence: true, email: true
   validates :api_key, uniqueness: true, allow_nil: true
 
-  has_many :samples, dependent: :destroy
   has_many :records, dependent: :destroy
-  has_one :test, dependent: :destroy
+  has_many :tests, dependent: :destroy
 
   enum role: [:patient, :staff]
 

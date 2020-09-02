@@ -1,15 +1,14 @@
 class Sample < ApplicationRecord
-
   extend BarcodeModule
 
   barcode_for :uid
-  belongs_to :user
+  belongs_to :client
   has_many :records, dependent: :destroy
   has_one :well, dependent: :nullify
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
-  validates :uid, uniqueness: true
+  validates_uniqueness_of :uid, uniqueness: true
   has_one :test_result, through: :well
 
   before_create :set_uid, unless: :uid?
@@ -18,14 +17,14 @@ class Sample < ApplicationRecord
 
   enum state: %i[ requested dispatched received preparing prepared tested analysed communicated rejected ]
 
-  scope :is_requested, -> { where( :state => Sample.states[:requested]) }
-  scope :is_dispatched, -> { where( :state => Sample.states[:dispatched]) }
-  scope :is_received, -> { where( :state => Sample.states[:received]) }
-  scope :is_preparing, -> { where( :state => Sample.states[:preparing]) }
-  scope :is_prepared, -> { where( :state => Sample.states[:prepared]) }
-  scope :is_tested, -> { where( :state => Sample.states[:tested]) }
-  scope :is_analysed, -> { where( :state => Sample.states[:analysed]) }
-  scope :is_communicated, -> { where( :state => Sample.states[:communicated]) }
+  scope :is_requested, -> { where(state: Sample.states[:requested]) }
+  scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }
+  scope :is_received, -> { where(state: Sample.states[:received]) }
+  scope :is_preparing, -> { where(state: Sample.states[:preparing]) }
+  scope :is_prepared, -> { where(state: Sample.states[:prepared]) }
+  scope :is_tested, -> { where(state: Sample.states[:tested]) }
+  scope :is_analysed, -> { where(state: Sample.states[:analysed]) }
+  scope :is_communicated, -> { where(state: Sample.states[:communicated]) }
 
   after_update :send_notification_after_analysis
 
@@ -44,7 +43,7 @@ class Sample < ApplicationRecord
 
   def self.tested_last_week
     samples = Sample
-        .select("date(samples.created_at) as created_date, count(samples.id) as count")
+        .select('date(samples.created_at) as created_date, count(samples.id) as count')
         .where('samples.state >= ? and samples.created_at >= ?', Sample.states[:tested], 7.days.ago.beginning_of_day)
         .group("date(samples.created_at)")
         .order('created_date DESC')
@@ -71,7 +70,6 @@ class Sample < ApplicationRecord
     samples
   end
 
-
   def self.failure_rate_last_week
     samples = Sample
         .select("date(samples.created_at) as created_date, cast(count(CASE WHEN samples.state = #{Sample.states[:rejected]} THEN 1 END) as decimal) / count(*) as count")
@@ -84,18 +82,19 @@ class Sample < ApplicationRecord
     samples
   end
 
-
   private
+
   def unique_well_in_plate?
     return if plate.nil? or !well_id_changed?
+
     matched = plate.samples.find_by(id: id)
-    if(matched)
-      errors.add(:well, 'Sample exists in another well on this plate')
-    end
+    return unless matched
+
+    errors.add(:well, 'Sample exists in another well on this plate')
   end
 
   def self.dummy
-    return [{count: 0 }, {count: 0 }]
+    [{ count: 0 }, { count: 0 }]
   end
 
   def send_notification_after_analysis
@@ -103,27 +102,28 @@ class Sample < ApplicationRecord
   end
 
   def set_uid
-    self.uid = SecureRandom.uuid
+    self.uid = SecureRandom.base64(14)
   end
 
   def check_valid_transition?
     valid =  valid_transition? state_was
-    unless(valid)
-      errors.add(:sample, "Cannot transition from #{state_was.to_s} to #{state.to_s}")
-    end
+    return if valid
+
+    errors.add(:sample, "Cannot transition from #{state_was.to_s} to #{state.to_s}")
   end
 
   def valid_transition? previous_state
     return true if Sample.states.to_hash[state] == Sample.states[:rejected]
+
     state_value = Sample.states[previous_state]
     (Sample.states[state] - state_value) == 1
   end
 
   def set_creation_record
-    self.records << Record.new({user: Sample.block_user, note: nil, state: Sample.states[:requested]})
+    records << Record.new(user: Sample.block_user, note: nil, state: Sample.states[:requested])
   end
 
   def set_change_record
-    self.records << Record.new({user: Sample.block_user, note: nil, state: Sample.states[state]})
+    records << Record.new(user: Sample.block_user, note: nil, state: Sample.states[state])
   end
 end

@@ -13,9 +13,9 @@ end
 class HasOtherErrorsValidator < ActiveModel::Validator
 
   def validate(record)
-     if record.assign_error == true
-        record.errors[:wells] << "Illegal Well Reference"
-     end
+    if record.assign_error == true
+      record.errors[:wells] << 'Illegal Well Reference'
+    end
   end
 end
 
@@ -34,14 +34,12 @@ class Plate < ApplicationRecord
   validates_with UniqueWellPlateValidator, on: :create
   validates_with HasOtherErrorsValidator
 
-
   before_create :set_uid
-  scope :is_preparing, -> {where(state: Plate.states[:preparing])}
-  scope :is_prepared, -> {where(state: Plate.states[:prepared])}
-  scope :is_testing, -> {where(state: Plate.states[:testing])}
-  scope :is_complete, -> {where(state: Plate.states[:complete])}
-  scope :is_done, -> {where(state: Plate.states[:analysed])}
-
+  scope :is_preparing, -> { where(state: Plate.states[:preparing]) }
+  scope :is_prepared, -> { where(state: Plate.states[:prepared]) }
+  scope :is_testing, -> { where(state: Plate.states[:testing]) }
+  scope :is_complete, -> { where(state: Plate.states[:complete]) }
+  scope :is_done, -> { where(state: Plate.states[:analysed]) }
 
   def self.build_plate
     plate = Plate.new
@@ -83,7 +81,6 @@ class Plate < ApplicationRecord
       end
     end
   end
-
 end
 
 module PlateHelper

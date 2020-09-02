@@ -12,8 +12,9 @@
     </div>
   <% end %>
   <div class="form-group mx-sm-3 mb-2">
-    <%= form.label :user_id, "User", class: 'sr-only' %>
-    <%= form.collection_select :user_id, User.patients, :id, :email, {}, {class: 'form-control'} %>
+    <%= form.label :client_id, "Client", class: 'sr-only' %>
+    <%= form.collection_select :client_id, Client.all, :id, :name, {}, {class: 'form-control'} %>
   </div>
   <%= form.submit class: 'btn btn-primary mb-2' %>
 <% end %>
+  
