@@ -6,6 +6,8 @@ AdminUser.create!(email: 'admin@example.com', password: 'password', password_con
 user = User.create!(email: 'staff@example.com', password: 'password', password_confirmation: 'password', role: User.roles[:staff]) if Rails.env.development?
 user.confirm if Rails.env.development?
 
+client = Client.create!(name: 'testclient', api_key: "abcd1234") if Rails.env.development?
 
-patient = User.create!(email: 'patient@example.com', password: 'password', password_confirmation: 'password', role: User.roles[:patient], api_key: SecureRandom.base64(16)) if Rails.env.development?
-patient.confirm if Rails.env.development?
+Sample.with_user(user) do
+    4.times { |n| Sample.create(client: client, uid: n.to_s, state: Sample.states[:requested]) } if Rails.env.development?
+end
