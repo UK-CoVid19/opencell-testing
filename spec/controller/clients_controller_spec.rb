@@ -1,5 +1,4 @@
 require "rails_helper"
-require 'pry'
 
 RSpec.describe ClientsController, type: :controller do
   include Devise::Test::ControllerHelpers
@@ -16,6 +15,10 @@ RSpec.describe ClientsController, type: :controller do
       expect(get: "/clients/1").to route_to("clients#show", id: "1")
     end
 
+    it "routes to #edit" do
+      expect(get: "/clients/1/edit").to route_to("clients#edit", id: "1")
+    end
+
     it "routes to #destroy" do
       expect(delete: "/clients/1").to route_to("clients#destroy", id: "1")
     end
@@ -24,8 +27,7 @@ RSpec.describe ClientsController, type: :controller do
   describe("Signed in") do
     before :each do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      @user = create(:user, role: User.roles[:patient]) # in factories.rb you should create a factory for user
-      @other_user = create(:user, role: User.roles[:patient])
+      @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
       sign_in @user
     end
 
@@ -48,6 +50,25 @@ RSpec.describe ClientsController, type: :controller do
       expect(response).to have_http_status(:success)
     end
 
+    it "should create a client" do
+      @client = build(:client, notify: true, name: "test name")
+      post :create, params: { client: @client.attributes }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:success)
+      expect(Client.last.notify).to eq true
+      expect(Client.last.name).to eq "test name"
+    end
+
+    it "should update a client" do 
+      @client = create(:client, notify: true, name: "test name")
+      put :update, params: { id: @client.id, client: {id: @client.id, name: "edited name" } }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:redirect)
+      expect(Client.last.notify).to eq true
+      expect(Client.last.name).to eq "edited name"
+      expect(response).to redirect_to(client_path(@client))
+    end 
+
     it "should let a user delete themselves from the users controller" do
       @client = create(:client)
       delete :destroy, params: {id: @client.id}
@@ -55,7 +76,6 @@ RSpec.describe ClientsController, type: :controller do
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(clients_path)
     end
-   
   end
 
   describe("not signed in") do
@@ -81,6 +101,22 @@ RSpec.describe ClientsController, type: :controller do
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)
     end
+
+    it "should be signed in create a client" do
+      @client = build(:client, notify: true, name: "test name")
+      post :create, params: { client: @client.attributes }
+      expect(flash[:alert]).to be_present
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "should be signed in to update a client" do 
+      @client = create(:client, notify: true, name: "test name")
+      put :update, params: { id: @client.id, client: {id: @client.id, name: "edited name" } }
+      expect(flash[:alert]).to be_present
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(new_user_session_path)
+    end 
 
     it "should not allow deletion" do
       @client = create(:client)
