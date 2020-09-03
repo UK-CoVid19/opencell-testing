@@ -24,6 +24,18 @@
                             <%= @client.created_at.strftime('%A %-d %b %H:%M') %>
                         </span>
                     </div>
+                    <div class="mt-1 mb-1 ">
+                        <span class="profile-icon">
+                            <%= fa_icon "paper-plane" %>
+                        </span>
+                        <span>
+                            <% if @client.notify %>
+                                <%= fa_icon "check" %>
+                            <% else %>
+                                <%= fa_icon "times" %>
+                            <% end %>                            
+                        </span>
+                    </div>
                 </div>
             </div>
             <br>

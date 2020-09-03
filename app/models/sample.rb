@@ -15,7 +15,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated rejected ]
+  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated rejected commfailed ]
 
   scope :is_requested, -> { where(state: Sample.states[:requested]) }
   scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }

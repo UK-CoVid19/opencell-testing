@@ -71,6 +71,7 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'ruby-debug-ide'
   gem 'debase'
+  gem 'dotenv-rails'
 end
 
 group :test do

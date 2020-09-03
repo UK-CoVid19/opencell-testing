@@ -33,3 +33,4 @@
 .rspec
 
 /config/master.key
+.env

@@ -1,7 +1,7 @@
 class TestsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_test, only: [:show, :edit, :update, :destroy, :analyse, :confirm]
-  before_action :set_plate, except: [:complete, :analyse, :done]
+  before_action :set_plate, except: [:complete, :done]
   around_action :wrap_in_current_user, only: [:create, :confirm, :update]
   after_action :verify_authorized
 
@@ -35,6 +35,10 @@ class TestsController < ApplicationController
   end
 
   def analyse
+    if @plate.analysed?
+      flash[:alert] = "Invalid plate state to analyse"
+      redirect_to(request.referrer || staff_dashboard_path) and return 
+    end
   end
 
   # POST /tests
@@ -56,6 +60,12 @@ class TestsController < ApplicationController
   end
 
   def confirm
+
+    if @plate.analysed?
+      flash[:alert] = "Invalid plate state to confirm"
+      redirect_to(request.referrer || plates_tests_path(@plate, @test)) and return 
+    end
+
     tp = test_analysis_params.merge!(plate_id: params[:plate_id])
     @test.update(tp)
     @test.plate.analysed!
