@@ -15,7 +15,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated rejected commfailed ]
+  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated commcomplete commfailed rejected  ]
 
   scope :is_requested, -> { where(state: Sample.states[:requested]) }
   scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }
@@ -114,6 +114,7 @@ class Sample < ApplicationRecord
 
   def valid_transition? previous_state
     return true if Sample.states.to_hash[state] == Sample.states[:rejected]
+    return true if Sample.states.to_hash[state] == Sample.states[:commfailed] && Sample.states[previous_state] == Sample.states[:communicated]
 
     state_value = Sample.states[previous_state]
     (Sample.states[state] - state_value) == 1

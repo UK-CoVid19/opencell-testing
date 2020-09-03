@@ -1,17 +1,23 @@
 require 'net/http'
 
-ALL_NET_HTTP_ERRORS = [
-  Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
-  Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
-]
 class ResultNotifyJob < ApplicationJob
+  class NotifyException < StandardError
+  end
+
+  ALL_NET_HTTP_ERRORS = [
+    Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
+    Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
+  ]
   queue_as :default
 
   retry_on NotifyException
 
   def perform(sample)
 
-    return unless sample.client.notify
+    unless sample.client.notify
+      sample.commcomplete!
+      return
+    end
 
     to_send = {
       'sample_id' => sample.uid,
@@ -34,8 +40,10 @@ class ResultNotifyJob < ApplicationJob
       sample.commfailed!
       raise NotifyException.new(e), "Request failed with exception #{e}"
     end
-
-    return if [200, 202].include? response.code
+    if [200, 202].include? response.code.to_i
+      sample.commcomplete!
+      return
+    end
 
     sample.commfailed!
     raise NotifyException.new(response), "Request failed with code #{response.code} and body #{response.body}"
@@ -56,5 +64,3 @@ class ResultNotifyJob < ApplicationJob
 end
 
 
-class NotifyException < StandardError
-end
