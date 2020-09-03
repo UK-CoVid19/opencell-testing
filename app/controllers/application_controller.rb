@@ -8,8 +8,6 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_state_quantities
-    @pendingdispatch_count = Sample.is_requested.size
-    @pendingreceive_count = Sample.is_dispatched.size
     @pendingprepare_count = Sample.is_received.size
     @pendingreadytest_count = Plate.is_preparing.size
     @pendingtest_count = Plate.is_prepared.size

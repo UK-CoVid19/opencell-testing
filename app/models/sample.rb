@@ -15,10 +15,8 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated rejected ]
+  enum state: %i[ received preparing prepared tested analysed communicated rejected ]
 
-  scope :is_requested, -> { where(state: Sample.states[:requested]) }
-  scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }
   scope :is_received, -> { where(state: Sample.states[:received]) }
   scope :is_preparing, -> { where(state: Sample.states[:preparing]) }
   scope :is_prepared, -> { where(state: Sample.states[:prepared]) }
@@ -120,7 +118,7 @@ class Sample < ApplicationRecord
   end
 
   def set_creation_record
-    records << Record.new(user: Sample.block_user, note: nil, state: Sample.states[:requested])
+    records << Record.new(user: Sample.block_user, note: nil, state: Sample.states[:received])
   end
 
   def set_change_record

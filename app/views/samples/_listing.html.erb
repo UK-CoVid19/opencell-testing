@@ -9,7 +9,7 @@
           <thead class="thead-dark">
           <tr>
             <th class="no-sort" width="25"><!-- check_box_tag--></th>
-            <th class="no-sort">Notes</th>
+            <th class="no-sort">Sample UID</th>
             <th>Sample</th>
             <th>Client</th>
           </tr>
@@ -18,15 +18,17 @@
           <% samples.each do |sample| %>
             <tr>
               <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
-              <td><%= text_field_tag  'samples[][note]', nil, placeholder: 'comment' %></td>
+              <td>
+                <%= sample.uid %>
+              </td>
               <td class="text-left">
                 <%= link_to sample do  %>
                   <%= tag.button class:'btn btn-sm btn-outline-primary' do %>
-                    <%= "Show Sample ##{sample.id}" %>
-                  <% end   %>
-                <% end  %>
+                    <%= "View" %>
+                  <% end %>
+                <% end %>                
               </td>
-              <td class="text-left">
+              <td>
                 <%= link_to sample.client do  %>
                   <%= tag.button class: 'btn btn-sm btn-outline-primary' do %>
                     <%= sample.client.name %>

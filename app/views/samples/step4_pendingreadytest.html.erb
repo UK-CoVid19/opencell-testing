@@ -20,7 +20,7 @@
       <% @plates.each do |plate| %>
         <tr>
           <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'plates[][id]', plate.id %></td>
-          <td><%= link_to "Plate #{plate.id}", plate %></td>
+          <td><%= link_to "Plate #{plate.uid}", plate %></td>
           <td><%= get_badge(plate.state) %></td>
           <td>
             <%= link_to "Download CSV", plate_path(plate, format: :csv), {'data-turbolinks': false}  %>

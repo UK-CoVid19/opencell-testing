@@ -9,5 +9,5 @@ user.confirm if Rails.env.development?
 client = Client.create!(name: 'testclient', api_key: "abcd1234") if Rails.env.development?
 
 Sample.with_user(user) do
-    4.times { |n| Sample.create(client: client, uid: n.to_s, state: Sample.states[:requested]) } if Rails.env.development?
+    4.times { |n| Sample.create(client: client, uid: n.to_s, state: Sample.states[:preparing]) } if Rails.env.development?
 end

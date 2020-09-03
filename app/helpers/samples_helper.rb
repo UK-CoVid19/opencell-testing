@@ -2,8 +2,12 @@ module SamplesHelper
 
   def get_badge(status)
     case Sample.states.to_hash[status]
-    when Sample.states[:requested], Sample.states[:dispatched],
-        Sample.states[:received],
+    when 
+        Sample.states[:received]
+      return tag.span class: 'badge badge-pill badge-info' do
+        status.capitalize
+      end
+    when
         Sample.states[:preparing],
         Sample.states[:prepared],
         Sample.states[:tested],
@@ -45,5 +49,4 @@ module SamplesHelper
       raise
     end
   end
-
 end

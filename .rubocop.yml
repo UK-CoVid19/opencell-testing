@@ -4,3 +4,8 @@ Style/StringLiterals:
     Enabled: false
 Style/FrozenStringLiteralComment:
     Enabled: false
+Metrics/LineLength:
+    Max: 120
+    IgnoredPatterns: ['(\A|\s)#']
+Metrics/BlockLength:
+    ExcludedMethods: ['describe' ,'RSpec.describe']

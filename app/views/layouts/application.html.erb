@@ -22,21 +22,7 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <div class="col">
               <ul class="d-flex navbar-nav text-center justify-content-end">
-                <% if current_user && user_signed_in? && current_user.staff?  %>
-                  <li class="nav-item">
-                    <%= link_to step1_pendingdispatch_path, class: 'nav-link' do %>
-                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingdispatch_count } do %>
-                        <span>To Dispatch <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                      <% end  %>
-                    <% end  %>
-                  </li>
-                  <li class="nav-item">
-                    <%= link_to step2_pendingreceive_path, class: 'nav-link' do %>
-                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingreceive_count } do %>
-                        <span>To Return <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                      <% end  %>
-                    <% end %>
-                  </li>
+                <% if current_user && user_signed_in? && current_user.staff?  %>                  
                   <li class="nav-item">
                     <%= link_to step3_pendingprepare_path, class: 'nav-link' do %>
                       <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingprepare_count } do %>

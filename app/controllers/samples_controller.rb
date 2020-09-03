@@ -11,16 +11,6 @@ class SamplesController < ApplicationController
     authorize Sample
   end
 
-  def step1_pendingdispatch
-    @samples = policy_scope(Sample.is_requested)
-    authorize Sample
-  end
-
-  def step2_pendingreceive
-    @samples = policy_scope(Sample.is_dispatched)
-    authorize Sample
-  end
-
   def step3_pendingprepare
     @plate = Plate.build_plate
     @samples = policy_scope(Sample.is_received)
@@ -74,7 +64,7 @@ class SamplesController < ApplicationController
   end
 
   def create
-    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:requested])
+    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:received])
     respond_to do |format|
       if @sample.save
         format.html { redirect_to client_path(@sample.client), notice: 'Sample was successfully created.' }
@@ -84,16 +74,6 @@ class SamplesController < ApplicationController
         format.json { render json: @sample.errors, status: :unprocessable_entity }
       end
     end
-  end
-
-  def step1_bulkdispatched
-    authorize Sample
-    bulk_action(Sample.states[:dispatched], step2_pendingreceive_path)
-  end
-
-  def step2_bulkreceived
-    authorize Sample
-    bulk_action(Sample.states[:received], step3_pendingprepare_path)
   end
 
   def step3_bulkprepared
@@ -185,9 +165,9 @@ class SamplesController < ApplicationController
     end
     begin
       Sample.transaction do
-        @samples.each do |sample_hash|
-          sample_hash[:sample].state = desired_state
-          sample_hash[:sample].save!
+        @samples.each do |sample|
+          sample.state = desired_state
+          sample.save!
         end
       end
     rescue ActiveRecord::RecordInvalid => e
@@ -198,7 +178,8 @@ class SamplesController < ApplicationController
       return
     end
     respond_to do |format|
-      format.html { redirect_to redirect_path, notice: "Samples have been successfully #{Sample.states.to_hash.key(desired_state).capitalize}." }
+      message = "Samples have been successfully #{Sample.states.to_hash.key(desired_state).capitalize}."
+      format.html { redirect_to redirect_path, notice: message }
     end
   end
 
@@ -206,7 +187,7 @@ class SamplesController < ApplicationController
     @sample = authorize Sample.find(params[:id])
   end
 
-    # Only allow a list of trusted parameters through.
+  # Only allow a list of trusted parameters through.
   def sample_params
     params.require(:sample).permit(:client_id, :state, :note)
   end
@@ -217,7 +198,7 @@ class SamplesController < ApplicationController
     end
     entries = params.dig(:samples)
     if entries
-      @samples = entries.select {|e| !(e[:id].nil? || e[:note].nil?)}.map {|id| {sample: Sample.find(id[:id]), note: id[:note]}}
+      @samples = entries.select {|e| !(e[:id].nil? )}.map {|id| Sample.find(id[:id]) }
     else
       []
     end
