@@ -86,3 +86,4 @@ end
 gem 'tzinfo-data'
 
 gem "clamby", "~> 1.6"
+gem 'activestorage-validator'
