@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 2020_09_04_194406) do
     t.datetime "confirmation_sent_at"
     t.string "api_key"
     t.datetime "locked_at"
-    t.integer "failed_attempts"
+    t.integer "failed_attempts", default: 0
     t.string "unlock_token"
     t.index ["api_key"], name: "index_users_on_api_key"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
