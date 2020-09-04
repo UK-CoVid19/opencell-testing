@@ -20,7 +20,7 @@ class ResultNotifyJob < ApplicationJob
     end
 
     to_send = {
-      'sample_id' => sample.uid,
+      'sampleid' => sample.uid,
       'result' => get_result(sample.test_result.state)
     }
     url = URI.parse(ENV['NOTIFY_URL'])
