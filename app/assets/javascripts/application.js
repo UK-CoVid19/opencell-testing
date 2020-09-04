@@ -12,8 +12,8 @@
 //= require bs-custom-file-input/dist/bs-custom-file-input.min.js
 //= require chart.js/dist/Chart.min.js
 //= require jsqr/dist/jsQR.js
-//= require jquery
-//= require jquery-ui/widgets/autocomplete
+//= require jquery/dist/jquery.min.js
+//= require jquery-ui-dist/jquery-ui.min.js
 //= require popper
 //= require bootstrap-sprockets
 //= require rails-ujs

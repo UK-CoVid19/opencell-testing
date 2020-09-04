@@ -8,7 +8,6 @@ gem 'rails', '~> 6.0.0'
 # Use sqlite3 as the database for Active Record
 gem 'bootstrap'
 gem 'activeadmin'
-gem 'jquery-rails'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 gem 'pg'
@@ -38,7 +37,6 @@ gem 'barby'
 gem 'chunky_png'
 gem 'email_validator'
 gem 'pundit'
-gem 'jquery-ui-rails'
 gem "sentry-raven"
 gem "font-awesome-rails"
 gem 'newrelic_rpm'
@@ -87,3 +85,4 @@ gem 'tzinfo-data'
 
 gem "clamby", "~> 1.6"
 gem 'activestorage-validator'
+gem "strong_password", "~> 0.0.9"

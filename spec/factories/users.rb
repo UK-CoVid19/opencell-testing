@@ -5,8 +5,8 @@ FactoryBot.define do
 
   factory :user do
     email {generate(:email)}
-    password {"password"}
-    password_confirmation {"password"}
+    password {"b]^$t&JF}?kN3Z5n"}
+    password_confirmation {"b]^$t&JF}?kN3Z5n"}
     confirmed_at { DateTime.now}
     trait :patient do
       role { User.roles[:patient] }

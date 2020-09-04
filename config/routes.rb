@@ -2,7 +2,11 @@ Rails.application.routes.draw do
   resources :clients
   get 'home/index', as: 'home'
   devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
+
+  constraints(ip: Regexp.new(ENV['PERMITTED_IP'])) do
+    ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
+  end
+
   get 'samples/pendingdispatch', to: 'samples#step1_pendingdispatch', as: 'step1_pendingdispatch'
   get 'samples/pendingreceive', to: 'samples#step2_pendingreceive', as: 'step2_pendingreceive'
   get 'samples/pendingprepare', to: 'samples#step3_pendingprepare', as: 'step3_pendingprepare'
