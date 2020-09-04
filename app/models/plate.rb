@@ -34,7 +34,7 @@ class Plate < ApplicationRecord
   validates_with UniqueWellPlateValidator, on: :create
   validates_with HasOtherErrorsValidator
 
-  before_create :set_uid
+  after_create :set_uid
   scope :is_preparing, -> { where(state: Plate.states[:preparing]) }
   scope :is_prepared, -> { where(state: Plate.states[:prepared]) }
   scope :is_testing, -> { where(state: Plate.states[:testing]) }
@@ -54,7 +54,7 @@ class Plate < ApplicationRecord
   end
 
   def set_uid
-    self.uid = SecureRandom.uuid
+    update(uid: "#{Date.today}-#{id}")
   end
 
   def assign_samples(sample_mappings)
