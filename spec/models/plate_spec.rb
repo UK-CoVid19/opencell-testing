@@ -9,6 +9,12 @@ RSpec.describe Plate, type: :model do
       expect(plate.samples.size).to be 0
     end
 
+    it "Should create a valid plate with a correct UID" do
+      plate =  Plate.build_plate
+      expect(plate.save).to be true
+      expect(plate.uid).to eq "#{Date.today}-#{plate.id}"
+    end
+
     it "Should not create a plate with insufficient wells" do
       plate =  Plate.new
       wells = []
