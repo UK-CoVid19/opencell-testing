@@ -11,6 +11,7 @@ RUN bundle install --jobs 20 --retry 5 --without development test
 RUN npm install
 COPY . /opencell
 ARG SECRET_KEY
+ENV PERMITTED_IP=\d+\.\d+\.\d+\.\d+
 RUN bundle exec rake RAILS_ENV=production SECRET_KEY_BASE=${SECRET_KEY} assets:precompile
 # Add a script to be executed every time the container starts.
 
