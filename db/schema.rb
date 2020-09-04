@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_03_101305) do
+ActiveRecord::Schema.define(version: 2020_09_04_194406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_101305) do
     t.datetime "updated_at", null: false
     t.integer "state", default: 0
     t.string "uid"
+    t.index ["state"], name: "index_plates_on_state"
     t.index ["uid"], name: "index_plates_on_uid", unique: true
   end
 
@@ -100,6 +101,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_101305) do
     t.bigint "client_id"
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
+    t.index ["state"], name: "index_samples_on_state"
     t.index ["uid"], name: "index_samples_on_uid", unique: true
   end
 
@@ -137,6 +139,9 @@ ActiveRecord::Schema.define(version: 2020_09_03_101305) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "api_key"
+    t.datetime "locked_at"
+    t.integer "failed_attempts"
+    t.string "unlock_token"
     t.index ["api_key"], name: "index_users_on_api_key"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
