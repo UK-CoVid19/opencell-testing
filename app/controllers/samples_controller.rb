@@ -99,16 +99,19 @@ class SamplesController < ApplicationController
   def step3_bulkprepared
     authorize Sample
     plate_params = get_bulk_plate
-    @plate = Plate.new(plate_params).assign_samples(get_mappings)
-    respond_to do |format|
-      if @plate.save
-        format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
-        format.json { render :show, status: :created, location: @plate }
-      else
-        format.html { redirect_to step3_pendingprepare_path, status: :unprocessable_entity, alert: "Could not process plate" }
-        format.json { render json: @plate.errors, status: :unprocessable_entity }
+    Plate.transaction do
+      @plate = Plate.new(plate_params).assign_samples(get_mappings)
+      respond_to do |format|
+        if @plate.save
+          format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+          format.json { render :show, status: :created, location: @plate }
+        else
+          format.html { redirect_to step3_pendingprepare_path, status: :unprocessable_entity, alert: "Could not process plate" }
+          format.json { render json: @plate.errors, status: :unprocessable_entity }
+        end
       end
     end
+    
   end
 
   def step4_bulkreadytest
@@ -237,7 +240,7 @@ class SamplesController < ApplicationController
     params.require(:plate).permit(wells_attributes:[:id, :row, :column ])
   end
   def get_mappings
-    params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column])[:mappings]
+    params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column, :control, :control_code])[:mappings]
   end
 
 end

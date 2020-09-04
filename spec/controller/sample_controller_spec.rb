@@ -331,7 +331,7 @@ RSpec.describe SamplesController, type: :controller do
     end
 
     describe "step3_bulkprepare" do
-
+      # note that samples should not be in the permanent control wells
       before :each do
         @wells = build_list(:well, 96)
         @plate = build(:plate, wells: @wells)
@@ -342,9 +342,30 @@ RSpec.describe SamplesController, type: :controller do
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
-        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id}]}}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'C', column: 1, id: @this_sample.id, control: false}]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
+      end
+
+      it "needs a permanent variable control well to have the checking value" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+        end
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id, control: true, control_code: 1234}]}}
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to("/samples/pendingreadytest")
+      end
+
+      it "should fail without a correct control cell check value" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+        end
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id, control: true, control_code: nil}]}}
+        expect(response).to have_http_status(:unprocessable_entity)
       end
 
       it "should fail with a sample assigned to a well twice" do
@@ -354,7 +375,7 @@ RSpec.describe SamplesController, type: :controller do
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
-        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id}, {row:'A', column: 1, id: @this_other_sample.id}]}}
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'C', column: 1, id: @this_sample.id, control: false}, {row:'C', column: 1, id: @this_other_sample.id, control: false}]}}
         expect(response).to have_http_status(:unprocessable_entity)
       end
 
@@ -387,6 +408,31 @@ RSpec.describe SamplesController, type: :controller do
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
         post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 99, id: @this_sample.id}]}}
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "should not create new samples if the transcation fails" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+        end
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        current_samples = Sample.all.size
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 99, id: @this_sample.id}, {row:'A', column: 1, id: nil, control: true, control_code: Sample::CONTROL_CODE}]}}
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(Sample.all.size).to eq current_samples
+      end
+
+      it "should create new samples if the transcation succeeds for the controls" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+        end
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        current_samples = Sample.all.size
+        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 6, id: @this_sample.id}, {row:'A', column: 1, id: nil, control: true, control_code: Sample::CONTROL_CODE}]}}
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to("/samples/pendingreadytest")
+        expect(Sample.all.size).to eq current_samples + 1
       end
     end
   end

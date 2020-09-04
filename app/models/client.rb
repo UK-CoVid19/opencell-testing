@@ -7,6 +7,12 @@ class Client < ApplicationRecord
 
   attr_accessor :api_key
 
+  def self.control_client
+    find_by!(name: CONTROL_NAME)
+  end
+
+  CONTROL_NAME = "control"
+
   def hash_api_key
     raise if api_key.blank?
 

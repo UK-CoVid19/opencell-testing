@@ -8,6 +8,8 @@ user.confirm if Rails.env.development?
 
 client = Client.create!(name: 'testclient', api_key: "abcd1234") if Rails.env.development?
 
+control_client = Client.create!(name: Client::CONTROL_NAME, api_key:"666", notify: false)
+
 Sample.with_user(user) do
     4.times { |n| Sample.create(client: client, uid: n.to_s, state: Sample.states[:requested]) } if Rails.env.development?
 end

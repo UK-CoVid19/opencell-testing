@@ -47,4 +47,11 @@ module SamplesHelper
     end
   end
 
+  def control?(row, col)
+    PlateHelper.control_positions.include?(row: row, col: col)
+  end
+
+  def auto_control?(row, col)
+    PlateHelper.auto_control_positions.include?(row: row, col: col)
+  end
 end

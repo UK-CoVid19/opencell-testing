@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(version: 2020_09_04_194406) do
     t.bigint "plate_id"
     t.string "uid"
     t.bigint "client_id"
+    t.boolean "control", default: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"
