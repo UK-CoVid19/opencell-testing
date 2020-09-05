@@ -24,13 +24,28 @@
         <tr>
           <td class="dark-cell text-center"><%= row %></td>
           <%= form.fields_for :wells, row_wells.sort_by{|w|w.column} do |builder| %>
+            <% if auto_control?(builder.object.row, builder.object.column) %>
+            <td class="auto-control-cell" data-control="auto">
+            <% elsif control?(builder.object.row, builder.object.column) %>
+            <td class="control-cell" data-control="manual">
+            <% else %>
             <td>
+            <% end %>
               <%= builder.hidden_field :row, name: '[sample_well_mapping][mappings][][row]'  %>
               <%= builder.hidden_field :row  %>
               <%= builder.hidden_field :column, name: '[sample_well_mapping][mappings][][column]'  %>
               <%= builder.hidden_field :column  %>
               <%= builder.fields_for :sample, Sample.new do |sample_builder| %>
+                <% if auto_control?(builder.object.row, builder.object.column) %>
+                <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control", disabled: true, placeholder: 'N/A' %>
+                <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
+                <% elsif control?(builder.object.row, builder.object.column) %>
+                <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control" %>
+                <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
+                <% else %>
                 <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control sample-assign" %>
+                <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: false %>
+                <% end %>                
               <% end %>
             </td>
           <% end %>
@@ -116,7 +131,7 @@
 
         
 
-        $(".form-control").change(function(evt){
+        $(".sample-assign").change(function(evt){
             const uid = evt.currentTarget.value;
             validate_plate(uid, null, function(err){
                 evt.currentTarget.value = null;

@@ -92,7 +92,7 @@ RSpec.describe Plate, type: :model do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
         @sample = create(:sample, state: Sample.states[:received])
-        sample_mappings = [{id: nil, row: plate.wells.third.row, column: plate.wells.third.column}]
+        sample_mappings = [{id: nil, row: plate.wells.third.row, column: plate.wells.third.column, control: false}]
         this_plate = plate.assign_samples(sample_mappings)
         expect(this_plate.save).to be true
         expect(this_plate.wells.third.sample).to be nil
@@ -102,7 +102,7 @@ RSpec.describe Plate, type: :model do
     it "should handle an empty sample id" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
-        sample_mappings = [{id: "", row: plate.wells.third.row, column: plate.wells.third.column}]
+        sample_mappings = [{id: "", row: plate.wells.third.row, column: plate.wells.third.column, control: false}]
         this_plate = plate.assign_samples(sample_mappings)
         expect(this_plate.save).to be true
         expect(this_plate.wells.third.sample).to be nil
@@ -128,7 +128,26 @@ RSpec.describe Plate, type: :model do
         expect(plate.assign_samples(sample_mappings).valid?).to be false
       end
     end
-  end
 
+    it "should handle a valid control sample" do
+      Sample.with_user(create(:user, role: User.roles[:staff])) do
+        plate = Plate.build_plate
+        @sample = create(:sample, state: Sample.states[:received])
+        control_position = PlateHelper.control_positions.first
+        sample_mappings = [{id: nil, column: control_position[:col], row: control_position[:row], control: true, control_code: Sample::CONTROL_CODE}]
+        expect(plate.assign_samples(sample_mappings).valid?).to be true
+      end
+    end
+
+    it "should reject an invalid control sample" do
+      Sample.with_user(create(:user, role: User.roles[:staff])) do
+        plate = Plate.build_plate
+        @sample = create(:sample, state: Sample.states[:received])
+        control_position = PlateHelper.control_positions.first
+        sample_mappings = [{id: nil, column: control_position[:col], row: control_position[:row], control: true, control_code: 'WRONG CODE'}]
+        expect(plate.assign_samples(sample_mappings).valid?).to be false
+      end
+    end
+  end
 
 end

@@ -28,6 +28,8 @@ class Sample < ApplicationRecord
 
   after_update :send_notification_after_analysis
 
+  CONTROL_CODE = 1234
+
   def self.block_user
     @with_user
   end

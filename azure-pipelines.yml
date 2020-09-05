@@ -33,7 +33,7 @@ steps:
       dockerComposeFile: docker-compose.yml 
       projectName: $(Build.Repository.Name)
       qualifyImageNames: true
-      dockerComposeCommand: run -e "RAILS_ENV=test" -e "PERMITTED_IP=\d+\.\d+\.\d+\.\d+" web bundle exec rake db:create db:migrate spec
+      dockerComposeCommand: run -e "RAILS_ENV=test" -e "PERMITTED_IP=\d+\.\d+\.\d+\.\d+" web bundle exec rake db:create db:migrate db:seed spec
   - task: DockerCompose@0
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: Build Services

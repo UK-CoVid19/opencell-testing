@@ -22,6 +22,17 @@ module SamplesHelper
     end
   end
 
+  def get_control_badge(control)
+    if control
+      tag.span class: 'badge badge-pill badge-warning' do
+        "Control"
+      end
+    else
+      tag.span class: 'badge badge-pill badge-primary' do
+        "Sample"
+      end
+    end
+  end
 
   def get_sample_bar(sample)
     status = sample.state
@@ -47,4 +58,11 @@ module SamplesHelper
     end
   end
 
+  def control?(row, col)
+    PlateHelper.control_positions.include?(row: row, col: col)
+  end
+
+  def auto_control?(row, col)
+    PlateHelper.auto_control_positions.include?(row: row, col: col)
+  end
 end
