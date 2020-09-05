@@ -29,6 +29,14 @@
                     <small><%= get_badge(@sample.state) %></small>
                 </span>
             </div>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "flask", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <small><%= get_control_badge(@sample.control?) %></small>
+                </span>
+            </div>
         </div>
     </div>
     <div class="card-footer">
