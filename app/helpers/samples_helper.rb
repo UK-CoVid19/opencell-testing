@@ -65,4 +65,17 @@ module SamplesHelper
   def auto_control?(row, col)
     PlateHelper.auto_control_positions.include?(row: row, col: col)
   end
+
+  def get_result_icon(result)
+    case TestResult.states.to_hash[result.state]
+    when TestResult.states[:positive]
+      fa_icon "plus-circle", class: 'fa-fw'
+    when TestResult.states[:lowpositive]
+      fa_icon "plus", class: 'fa-fw'
+    when TestResult.states[:negative]
+      fa_icon "minus", class: 'fa-fw'
+    when TestResult.states[:inhibit]
+      fa_icon "question-circle", class: 'fa-fw'
+    end
+  end
 end

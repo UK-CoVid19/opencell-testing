@@ -18,7 +18,7 @@
                   <%= result_builder.hidden_field :well_id %>
                   <%= result_builder.hidden_field :test_id %>
                   <%= result_builder.hidden_field :id %>
-                  <%= result_builder.text_field :value, class: 'form-control m-2' %>
+                  <%= result_builder.select :state, TestResult.states.map {|key, val| [key.humanize, key]},{}, {class: 'form-control m-2'} %>
                 <% end %>
               <% else %>
                 <hr/>

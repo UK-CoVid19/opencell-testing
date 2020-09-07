@@ -2,7 +2,7 @@ class TestsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_test, only: [:show, :edit, :update, :destroy, :analyse, :confirm]
   before_action :set_plate, except: [:complete, :done]
-  around_action :wrap_in_current_user, only: [:create, :confirm, :update]
+  around_action :wrap_in_current_user, only: [:create, :confirm, :update, :createfile]
   after_action :verify_authorized
 
   # GET /tests
@@ -68,17 +68,13 @@ class TestsController < ApplicationController
     raise if Clamby.virus?(result_file.tempfile.path)
 
     test_results = JSON.parse(result_file.tempfile.read)
-    puts test_results
     mapped_results = test_results.each.map do |tr|
       well = @plate.wells.where.not(sample: nil).find_by!(row: tr['row'], column: tr['column'])
-      value = 5
       state = tr['state']
-      { well_id: well.id, value: value, state: TestResult.states[state] }
+      { well_id: well.id, state: TestResult.states[state] }
     end
 
     params = tp.merge!(test_results_attributes: mapped_results).except(:computed_results)
-    puts test_results
-    puts params
     @test = Test.new(params)
     authorize Test
     respond_to do |format|
@@ -87,8 +83,7 @@ class TestsController < ApplicationController
         format.html { redirect_to plate_url(@test.plate), notice: 'Test was successfully created.'}
         format.json { render :show, status: :created, location: test }
       else
-        puts @test.errors.full_messages
-        format.html { render :new, status: :unprocessable_entity}
+        format.html { render :new, status: :unprocessable_entity, alert: "Could not create test"}
         format.json { render json: @test.errors, status: :unprocessable_entity }
       end
     end
@@ -154,7 +149,7 @@ private
 
   # Only allow a list of trusted parameters through.
   def test_params
-    params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:value, :well_id, :id,:test_id])
+    params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:state, :well_id, :id,:test_id])
   end
 
   def test_file_params

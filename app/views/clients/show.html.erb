@@ -44,7 +44,7 @@
                 <div class="card-header">Requested Tests</div>
                 <ul class="list-group list-group-flush">
                   <% @client.samples.each do | sample| %>
-                    <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.test_result&.value %> | <%= sample.id %> </li>
+                    <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.id %> </li>
                   <% end %>
                 </ul>
             </div>

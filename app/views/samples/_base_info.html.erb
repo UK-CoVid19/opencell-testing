@@ -37,6 +37,18 @@
                     <small><%= get_control_badge(@sample.control?) %></small>
                 </span>
             </div>
+            <% if @sample.test_result.present? %>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "check", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <span><%= get_result_icon(@sample.test_result) %></span>
+                    <span><%= @sample.test_result.state.capitalize %></span>
+                </span>
+            </div>
+            
+            <% end  %>
         </div>
     </div>
     <div class="card-footer">
@@ -45,9 +57,6 @@
         <% else %>
         <p>Not yet assigned to plate</p>
         <% end %>
-        <% if @sample.test_result.present? %>
-        <span><%= @sample.test_result.value %></span>
-        <span><%= @sample.test_result.state %></span>
-        <% end  %>
+        
     </div>
 </div>

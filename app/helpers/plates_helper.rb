@@ -51,15 +51,21 @@ module PlatesHelper
     if test_result_exists?(well)
       if(Sample.states[well.sample.state] == Sample.states[:rejected])
         tag.td class: 'cell rejected-cell'do
-          link_to"#{well.test_result.value}", well.sample
+          link_to well.sample do
+            get_result_icon(well.sample.test_result)
+          end
         end
       elsif( well.sample.control?)
         tag.td class: 'cell control-cell'do
-          link_to"#{well.test_result.value}", well.sample
+          link_to well.sample do
+            get_result_icon(well.sample.test_result)
+          end
         end
       else
         tag.td class: 'cell marked-cell' do
-          link_to"#{well.test_result.value}", well.sample
+          link_to well.sample do
+            get_result_icon(well.sample.test_result)
+          end
         end
       end
     else
@@ -69,9 +75,24 @@ module PlatesHelper
     end
   end
 
+
+  
+
   def test_result_exists?(well)
     !well.test_result.nil? && !well.sample.nil?
   end
 
-
+  
+  def get_result_icon(result)
+    case TestResult.states.to_hash[result.state]
+    when TestResult.states[:positive]
+      fa_icon "plus-circle", class: 'fa-fw'
+    when TestResult.states[:lowpositive]
+      fa_icon "plus", class: 'fa-fw'
+    when TestResult.states[:negative]
+      fa_icon "minus", class: 'fa-fw'
+    when TestResult.states[:inhibit]
+      fa_icon "question-circle", class: 'fa-fw'
+    end
+  end
 end
