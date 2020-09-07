@@ -1,9 +1,22 @@
 <div class="container">
-  <h1>Upload Test Results</h1>
+    <h1>Upload Test Results</h1>
+    <ul class="nav nav-pills" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Manual</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Upload results</a>
+        </li>
+    </ul>
+    <br/>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+          <%= render 'form', test: @test %>      
+        </div>
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <%= render 'file_form', test: @test %>      
+        </div>
+    </div>
 
-  <%= render 'form', test: @test %>
-
-  <%= link_to 'Back', plate_tests_path %>
+    <%= link_to 'Back', plate_tests_path %>
 </div>
-
-

@@ -1,0 +1,47 @@
+<%= form_with(model: [@plate, test], local: true, url: createfile_plate_tests_path ) do |form| %>
+  <% if test.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(test.errors.count, "error") %> prohibited this test from being saved:</h2>
+      <ul>
+        <% test.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col col-md-4">
+      <div class="row">
+        <div class="container">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <%= form.label :result_file, 'qPCR raw output', class: 'input-group-text' %>
+            </div>
+            <div class="custom-file">
+              <%= form.file_field :result_file, name: '[test][result_file]', accept: '.csv', class: 'custom-file-input' %>
+              <%= form.label :result_file, nil, class: 'custom-file-label' %>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <%= form.label :computed_results, 'Computed Results', class: 'input-group-text' %>
+            </div>
+            <div class="custom-file">
+              <%= form.file_field :computed_results, name: '[test][computed_results]', accept: '.json', class: 'custom-file-input' %>
+              <%= form.label :computed_results, nil, class: 'custom-file-label' %>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <%= form.label :user, 'Tested By', class: 'input-group-text' %>
+            </div>
+            <%= form.collection_select :user_id, User.staffmembers, :id, :email,  class: 'custom-select' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <%= form.submit "Upload Results", class: 'btn btn-primary' %>
+  </div>
+<% end %>

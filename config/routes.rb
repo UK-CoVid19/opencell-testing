@@ -21,12 +21,16 @@ Rails.application.routes.draw do
   post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
   post 'users/create_staff', to: 'users#create_staff', as: 'create_staff'
+  
   resources :plates do
     resources :tests, except: [:index] do 
       member do
         get 'analyse'
         patch 'confirm' 
       end 
+      collection do
+        post 'createfile'
+      end
     end 
   end
   get '/tests/complete', to: 'tests#complete'

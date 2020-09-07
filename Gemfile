@@ -86,3 +86,5 @@ gem 'tzinfo-data'
 gem "clamby", "~> 1.6"
 gem 'activestorage-validator'
 gem "strong_password", "~> 0.0.9"
+
+gem "json-schema", "~> 2.8"

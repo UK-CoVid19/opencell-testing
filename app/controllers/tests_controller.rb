@@ -59,6 +59,41 @@ class TestsController < ApplicationController
     end
   end
 
+  RESULTS_FORMAT = [ 'application/json', 'text/json' ]
+  def createfile
+    tp = test_file_params.merge!(plate_id: params[:plate_id])
+    result_file = tp[:computed_results]
+
+    raise unless RESULTS_FORMAT.include? result_file.content_type
+    raise if Clamby.virus?(result_file.tempfile.path)
+
+    test_results = JSON.parse(result_file.tempfile.read)
+    puts test_results
+    mapped_results = test_results.each.map do |tr|
+      well = @plate.wells.where.not(sample: nil).find_by!(row: tr['row'], column: tr['column'])
+      value = 5
+      state = tr['state']
+      { well_id: well.id, value: value, state: TestResult.states[state] }
+    end
+
+    params = tp.merge!(test_results_attributes: mapped_results).except(:computed_results)
+    puts test_results
+    puts params
+    @test = Test.new(params)
+    authorize Test
+    respond_to do |format|
+      if @test.save
+        @test.plate.complete!
+        format.html { redirect_to plate_url(@test.plate), notice: 'Test was successfully created.'}
+        format.json { render :show, status: :created, location: test }
+      else
+        puts @test.errors.full_messages
+        format.html { render :new, status: :unprocessable_entity}
+        format.json { render json: @test.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def confirm
 
     if @plate.analysed?
@@ -120,6 +155,10 @@ private
   # Only allow a list of trusted parameters through.
   def test_params
     params.fetch(:test, {}).permit(:user_id, :result_file, test_results_attributes: [:value, :well_id, :id,:test_id])
+  end
+
+  def test_file_params
+    params.fetch(:test, {}).permit(:user_id, :result_file, :computed_results)
   end
 
   def test_analysis_params

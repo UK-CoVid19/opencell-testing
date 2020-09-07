@@ -17,6 +17,10 @@ class TestPolicy < ApplicationPolicy
     staffmember?
   end
 
+  def createfile?
+    staffmember?
+  end
+
   def edit?
     staffmember?
   end
