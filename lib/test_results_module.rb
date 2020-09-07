@@ -10,17 +10,17 @@ module TestResultsModule
         "row" => {
           "type" => "string"
         },
-        "col": {
+        "column": {
           "type" => "integer"
         },
-        "result" => {
+        "state" => {
           "type" => "string"
         }
       },
       "required": [
         "row",
-        "col",
-        "result"
+        "column",
+        "state"
       ]
     }
     ]

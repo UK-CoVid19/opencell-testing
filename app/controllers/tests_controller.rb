@@ -68,6 +68,8 @@ class TestsController < ApplicationController
     raise if Clamby.virus?(result_file.tempfile.path)
 
     test_results = JSON.parse(result_file.tempfile.read)
+    raise "invalid json format" unless TestResultsModule.validate_results(test_results)
+
     mapped_results = test_results.each.map do |tr|
       well = @plate.wells.where.not(sample: nil).find_by!(row: tr['row'], column: tr['column'])
       state = tr['state']
