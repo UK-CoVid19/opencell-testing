@@ -117,6 +117,7 @@ class Sample < ApplicationRecord
   def valid_transition? previous_state
     return true if Sample.states.to_hash[state] == Sample.states[:rejected]
     return true if Sample.states.to_hash[state] == Sample.states[:commfailed] && Sample.states[previous_state] == Sample.states[:communicated]
+    return true if Sample.states.to_hash[state] == Sample.states[:commcomplete] && Sample.states[previous_state] == Sample.states[:commfailed]
 
     state_value = Sample.states[previous_state]
     (Sample.states[state] - state_value) == 1

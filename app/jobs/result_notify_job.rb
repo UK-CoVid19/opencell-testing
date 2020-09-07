@@ -38,6 +38,7 @@ class ResultNotifyJob < ApplicationJob
       response = http.request(request)
     rescue *ALL_NET_HTTP_ERRORS => e
       sample.commfailed!
+      Rails.logger.error("Request failed with exception #{e}")
       raise NotifyException.new(e), "Request failed with exception #{e}"
     end
     if [200, 202].include? response.code.to_i

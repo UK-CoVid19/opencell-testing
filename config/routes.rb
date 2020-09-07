@@ -14,12 +14,12 @@ Rails.application.routes.draw do
   get 'samples/pendingtest', to: 'samples#step5_pendingtest', as: 'step5_pendingtest'
   get 'samples/pendinganalyze', to: 'samples#step6_pendinganalyze', as: 'step6_pendinganalyze'
   get 'samples/dashboard', to: 'samples#dashboard', as: 'staff_dashboard'
-  post 'samples/dispatched', to: 'samples#step1_bulkdispatched', as: 'step1_bulk_dispatched'
-  post 'samples/received', to: 'samples#step2_bulkreceived', as: 'step2_bulk_received'
-  post 'samples/prepared', to: 'samples#step3_bulkprepared', as: 'step3_bulkprepared'
-  post 'samples/readytest', to: 'samples#step4_bulkreadytest', as: 'step4_bulk_ready_test'
-  post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_bulk_tested'
-  post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_bulk_analysed'
+  post 'samples/dispatched', to: 'samples#step1_bulkdispatched', as: 'step1_sample_bulk_dispatched'
+  post 'samples/received', to: 'samples#step2_bulkreceived', as: 'step2_sample_bulk_received'
+  post 'samples/prepared', to: 'samples#step3_bulkprepared', as: 'step3_sample_bulkprepared'
+  post 'samples/readytest', to: 'samples#step4_bulkreadytest', as: 'step4_sample_bulk_ready_test'
+  post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
+  post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
   post 'users/create_staff', to: 'users#create_staff', as: 'create_staff'
   resources :plates do
     resources :tests, except: [:index] do 

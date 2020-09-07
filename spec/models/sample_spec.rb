@@ -16,6 +16,22 @@ RSpec.describe Sample, type: :model do
       end
     end
 
+    it "should  allow the state to transition from commfailed to commcomplete" do
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:commfailed])
+        @sample.state = Sample.states[:commcomplete]
+        expect { @sample.save! }.to_not raise_error
+      end
+    end
+
+    it "should allow the state to transition from communicated to commfailed" do
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:communicated])
+        @sample.state = Sample.states[:commfailed]
+        expect { @sample.save! }.to_not raise_error
+      end
+    end
+
     Sample.states.each do |key, value|
       it "should allow any state to transition from #{key} to rejected" do
         Sample.with_user(@user) do
