@@ -4,14 +4,27 @@
 
   <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'was-validated' }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
-
+    
     <div class="form-group">
       <%= f.label :email %><br />
       <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
       <div class="valid-feedback">Valid.</div>
       <div class="invalid-feedback">Please fill out this field.</div>
     </div>
-
+    <div class="form-row">
+      <%= f.label :security_question %>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <%= f.collection_select :security_question, SecurityQuestion.all, :id, :name, {}, {class: 'form-control'} %>
+      </div>
+      <div class="col">
+        <%= f.text_field :security_question_answer, class: 'form-control', required: true, name: 'security_question_answer' %>
+        <div class="valid-feedback">Valid.</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+      </div>
+    </div>
+    <%= recaptcha_tags %>
     <div class="actions">
       <%= f.submit "Send me reset password instructions", class: 'btn btn-primary' %>
     </div>

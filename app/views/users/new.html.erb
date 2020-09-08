@@ -30,6 +30,20 @@
       <div class="invalid-feedback">Please fill out this field.</div>
     </div>
 
+    <div class="form-row">
+      <%= form.label :security_question %>
+    </div>
+    <div class="form-row">
+      <div class="col">
+        <%= form.collection_select :security_question_id, SecurityQuestion.all, :id, :name, {}, {class: 'form-control'} %>
+      </div>
+      <div class="col">
+        <%= form.text_field :security_question_answer, class: 'form-control', required: true %>
+        <div class="valid-feedback">Valid.</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+      </div>
+    </div>
+
     <div class="actions">
       <%= form.submit class: 'btn btn-primary' %>
     </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_07_133843) do
+ActiveRecord::Schema.define(version: 2020_09_08_165157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,11 @@ ActiveRecord::Schema.define(version: 2020_09_07_133843) do
     t.index ["uid"], name: "index_samples_on_uid", unique: true
   end
 
+  create_table "security_questions", force: :cascade do |t|
+    t.string "locale", null: false
+    t.string "name", null: false
+  end
+
   create_table "test_results", force: :cascade do |t|
     t.bigint "test_id"
     t.bigint "well_id"
@@ -142,10 +147,14 @@ ActiveRecord::Schema.define(version: 2020_09_07_133843) do
     t.datetime "locked_at"
     t.integer "failed_attempts", default: 0
     t.string "unlock_token"
+    t.string "unique_session_id"
+    t.bigint "security_question_id"
+    t.string "security_question_answer"
     t.index ["api_key"], name: "index_users_on_api_key"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["security_question_id"], name: "index_users_on_security_question_id"
   end
 
   create_table "wells", force: :cascade do |t|
@@ -170,6 +179,7 @@ ActiveRecord::Schema.define(version: 2020_09_07_133843) do
   add_foreign_key "test_results", "wells"
   add_foreign_key "tests", "plates"
   add_foreign_key "tests", "users"
+  add_foreign_key "users", "security_questions"
   add_foreign_key "wells", "plates"
   add_foreign_key "wells", "samples"
 end
