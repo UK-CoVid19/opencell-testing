@@ -30,10 +30,10 @@
                         </span>
                         <span>
                             <% if @client.notify %>
-                                <%= fa_icon "check" %>
+                            <%= fa_icon "check" %>
                             <% else %>
-                                <%= fa_icon "times" %>
-                            <% end %>                            
+                            <%= fa_icon "times" %>
+                            <% end %>
                         </span>
                     </div>
                 </div>
@@ -41,11 +41,22 @@
             <br>
             <% if @client.samples.any? %>
             <div class="card shadow">
-                <div class="card-header">Requested Tests</div>
+                <div class="card-header">Tests</div>
                 <ul class="list-group list-group-flush">
-                  <% @client.samples.each do | sample| %>
-                    <li class="list-group-item"><%= link_to sample.state, sample %> | <%= sample.created_at.strftime('%A %-d %b %H:%M')%> | <%= sample.id %> </li>
-                  <% end %>
+                    <% @client.samples.each do | sample| %>
+                        <%= link_to sample, class: "list-group-item list-group-item-action flex-column align-items-start" do %>
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">#<%= sample.uid %></h5>
+                                <small><%=sample.created_at.strftime('%A %-d %b %H:%M') %></small>
+                            </div>
+                            <p class="mb-1">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"  style="width: <%= get_sample_bar(sample) %>%"aria-valuenow=<%= get_sample_bar(sample) %> aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            </p>
+                            <small><%= get_badge(sample.state)%></small>
+                        <% end %>
+                    <% end %>
                 </ul>
             </div>
             <% end %>

@@ -1,8 +1,8 @@
 let createData = (data) => {
     let groupedByState = data.map(d => d.state).reduce((previous, current) => {
-        if (current in previous){
-            previous[current] ++;
-        }else{
+        if (current in previous) {
+            previous[current]++;
+        } else {
             previous[current] = 1;
         }
         return previous;
@@ -50,7 +50,10 @@ let createData = (data) => {
 }
 
 const loadChart = () => {
-    const data = fetch('/samples.json')
+    if (window.location.pathname != '/samples/dashboard') {
+        return;
+    }
+    fetch('/samples.json')
         .then((response) => {
             return response.json();
         })
@@ -60,5 +63,4 @@ const loadChart = () => {
 
 }
 
-
-$(document).on('turbolinks:load', () => {loadChart()});
+$(document).on('turbolinks:load', () => { loadChart() });

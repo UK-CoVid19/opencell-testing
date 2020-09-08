@@ -23,6 +23,14 @@
             </div>
             <div class="mt-1 mb-1">
                 <span>
+                    <%= fa_icon "user", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <small><%= link_to @sample.client.name, @sample.client %></small>
+                </span>
+            </div>
+            <div class="mt-1 mb-1">
+                <span>
                     <%= fa_icon "magic", class: 'fa-fw' %>
                 </span>
                 <span>
@@ -47,7 +55,7 @@
                     <span><%= @sample.test_result.state.capitalize %></span>
                 </span>
             </div>
-            
+
             <% end  %>
         </div>
     </div>
@@ -57,6 +65,6 @@
         <% else %>
         <p>Not yet assigned to plate</p>
         <% end %>
-        
+
     </div>
 </div>
