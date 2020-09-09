@@ -3,7 +3,7 @@
 #
 AdminUser.create!(email: 'admin@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n') if Rails.env.development?
 
-user = User.create!(email: 'staff@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n', role: User.roles[:staff]) if Rails.env.development?
+user = User.create!(email: 'staff@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n', role: User.roles[:staff], security_question: SecurityQuestion.first, security_question_answer:"London") if Rails.env.development?
 user.confirm if Rails.env.development?
 
 client = Client.create!(name: 'testclient', api_key: "abcd1234") if Rails.env.development?
