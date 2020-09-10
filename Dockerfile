@@ -11,7 +11,7 @@ RUN bundle install --jobs 20 --retry 5
 RUN npm install
 COPY . /opencell
 # Add a script to be executed every time the container starts.
-ENV ENVIRONMENT=development
+
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
     chmod 750 /var/run/clamav && \

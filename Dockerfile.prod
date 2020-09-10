@@ -11,7 +11,6 @@ RUN bundle install --jobs 20 --retry 5 --without development test
 RUN npm install
 COPY . /opencell
 ARG SECRET_KEY
-ENV ENVIRONMENT=production
 ENV PERMITTED_IP=\d+\.\d+\.\d+\.\d+
 RUN bundle exec rake RAILS_ENV=production SECRET_KEY_BASE=${SECRET_KEY} assets:precompile
 # Add a script to be executed every time the container starts.
@@ -28,4 +27,4 @@ ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000 2222
 
 # Start the main process.
-CMD ["rails", "s", "-d", "-b", "0.0.0.0", "-e", "production"]
+CMD ["rails", "server", "-b", "0.0.0.0", "-e", "production"]

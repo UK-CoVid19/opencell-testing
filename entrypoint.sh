@@ -11,6 +11,4 @@ freshclam -d
 echo "Started AV Fetch Daemon"
 clamd
 echo "Started AV service"
-bundle exec sidekiq -d -e $ENVIRONMENT n -C config/sidekiq.yml &
-echo "Started Sidekiq"
 exec "$@"
