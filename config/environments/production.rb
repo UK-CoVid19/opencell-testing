@@ -94,6 +94,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   config.hosts << 'opencell-lims-docker.azurewebsites.net'
   config.hosts << 'lims-dev.sudo.bio'
+  config.hosts << 'opencell-lims.azurewebsites.net'
 
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector
