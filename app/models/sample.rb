@@ -98,9 +98,9 @@ class Sample < ApplicationRecord
   def self.dummy
     [{ count: 0 }, { count: 0 }]
   end
-
+  
   def send_notification_after_analysis
-      ResultNotifyJob.perform_now(self) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
+      ResultNotifyJob.perform_later(self, Sample.block_user) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
   end
 
   def set_uid

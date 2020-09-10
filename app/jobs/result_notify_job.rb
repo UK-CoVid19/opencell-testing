@@ -10,10 +10,17 @@ class ResultNotifyJob < ApplicationJob
   ]
   queue_as :default
 
+
   retry_on NotifyException
 
-  def perform(sample)
+  def perform(sample, user)
+    Sample.with_user(user) do
+      send_message(sample)
+    end
+  end
 
+  private
+  def send_message(sample)
     unless sample.client.notify
       sample.commcomplete!
       return
@@ -62,6 +69,7 @@ class ResultNotifyJob < ApplicationJob
       'Inconclusive'
     end
   end
+  
 end
 
 
