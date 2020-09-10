@@ -1,5 +1,10 @@
 version: '3'
 services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    command: redis-server
   db:
     image: postgres
     environment:
@@ -10,10 +15,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -d -p 3000 -b '0.0.0.0' && bundle exec sidekiq -C config/sidekiq.yml"
     volumes:
       - .:/opencell
+      - ./tmp/av:/var/lib/clamav
     ports:
       - "3000:3000"
     depends_on:
       - db
+      - redis

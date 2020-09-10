@@ -1,3 +1,4 @@
+require 'sidekiq/web'
 Rails.application.routes.draw do
   resources :clients
   get 'home/index', as: 'home'
@@ -5,6 +6,7 @@ Rails.application.routes.draw do
 
   constraints(ip: Regexp.new(ENV['PERMITTED_IP'])) do
     ActiveAdmin.routes(self) rescue ActiveAdmin::DatabaseHitDuringLoad
+    mount Sidekiq::Web => '/sidekiq'
   end
 
   get 'samples/pendingdispatch', to: 'samples#step1_pendingdispatch', as: 'step1_pendingdispatch'

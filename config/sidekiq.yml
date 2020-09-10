@@ -1,0 +1,7 @@
+:concurrency: 10
+:pidfile: ./tmp/pids/server.pid
+:logfile: ./log/sidekiq.log
+:queues:
+  - default
+  - opencell_testing_development_default
+:daemon: true
