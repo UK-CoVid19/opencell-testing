@@ -15,7 +15,8 @@ COPY . /opencell
 RUN mkdir /var/run/clamav && \
     chown clamav:clamav /var/run/clamav && \
     chmod 750 /var/run/clamav && \
-    sed -i 's/User clamav/User root/g' /etc/clamav/clamd.conf
+    sed -i 's/User clamav/User root/g' /etc/clamav/clamd.conf && \
+    sed -i 's/DatabaseOwner clamav/DatabaseOwner root/g' /etc/clamav/freshclam.conf
 
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
