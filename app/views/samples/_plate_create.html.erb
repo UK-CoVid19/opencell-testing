@@ -62,12 +62,6 @@
 
     $(document).on('turbolinks:load', function () {
 
-        var video = document.createElement("video");
-        var canvasElement = document.getElementById("canvas");
-        var canvas = canvasElement.getContext("2d");
-        var loadingMessage = document.getElementById("loadingMessage");
-        var outputContainer = document.getElementById("output");
-        var outputData = document.getElementById("outputData");
         var cell_index = 0
 
         let pending_samples = []
@@ -92,10 +86,11 @@
 
         function setAutoComplete(){
           $( ".sample-assign" ).autocomplete({
+                autoFocus: true,
                 source: function (request, response) {
                 response(getRemainingSamples());
               },
-              });
+              })
           return;
         }
         fetch('/samples/pendingprepare.json')
@@ -110,7 +105,7 @@
 
         function validate_plate(sampleId, success, failure){
             if(!pending_samples.map(x => x.value.toString()).includes(sampleId)){
-                const err = 'You cannot process this sample ID';
+                const err = 'You cannot process this sample ID ' + sampleId;
                 failure(err)
             }else{
                 if(set_samples.includes(sampleId)){
@@ -129,93 +124,70 @@
             }
         }
 
-        
+        function validate_input(sampleId, success, failure){
+            item = pending_samples.find(p => p.label == sampleId)
+            console.log(item);
+            if(!item){
+                const err = 'You cannot process this sample ID ' + sampleId;
+                failure(err)
+            }else{
+                if(set_samples.includes(item.value)){
+                    const err = 'Sample has already been assigned to a well';
+
+                    failure(err);
+                }else{
+                    set_samples.push(item.value);
+                    if(typeof success === 'function'){
+                        success(item);
+                    }else{
+                        return
+                    }
+
+                }
+            }
+        }
+
+
+        $(".sample-assign").on('input', (event) => {
+          console.log("input")
+          console.log(set_samples)
+          const uid  = event.currentTarget.value;
+
+          if(uid == null || uid == "" ){
+            oldValue = event.currentTarget.getAttribute('data-set-item');
+            if(oldValue){
+              setIndex = set_samples.indexOf(oldValue)
+              if(setIndex == -1){
+                console.log("cannot remove sample not set")
+                return;
+              }
+              set_samples.splice(setIndex,1)
+            }
+            return
+          }
+          if(uid.length > 1) {
+            validate_input(uid, (match) => {
+              event.currentTarget.value = match.value
+              event.currentTarget.setAttribute('data-set-item', match.value)
+            }, (err) => {
+              event.currentTarget.value = null;
+              alert(err);
+            }  )
+          }
+          
+        })
 
         $(".sample-assign").change(function(evt){
             const uid = evt.currentTarget.value;
-            validate_plate(uid, null, function(err){
+            console.log("input change")
+            console.log(uid);
+            validate_plate(uid, () => {
+              evt.currentTarget.value = uid
+              evt.currentTarget.setAttribute('data-set-item', uid)
+            }, function(err){
                 evt.currentTarget.value = null;
                 alert(err);
             })
-        });
-
-        function drawLine(begin, end, color) {
-            canvas.beginPath();
-            canvas.moveTo(begin.x, begin.y);
-            canvas.lineTo(end.x, end.y);
-            canvas.lineWidth = 4;
-            canvas.strokeStyle = color;
-            canvas.stroke();
-        }
-
-        // Use facingMode: environment to attemt to get the front camera on phones
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
-            video.srcObject = stream;
-            video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
-            video.play();
-            requestAnimationFrame(tick);
-        });
-
-        function tick() {
-            var qr_code_read = false;
-            loadingMessage.innerText = "⌛ Loading video..."
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                loadingMessage.hidden = true;
-                canvasElement.hidden = false;
-                outputContainer.hidden = true;
-
-                canvasElement.height = video.videoHeight;
-                canvasElement.width = video.videoWidth;
-                canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-                var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-                var code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
-                if (code) {
-                    drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-                    drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-                    drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-                    drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
-                    outputData.parentElement.hidden = false;
-                    outputData.innerText = code.data;
-
-                    if (code.data){
-                        const uid = code.data;
-                        console.log(uid);
-                        new Audio('/ping.mp3').play();
-                        validate_plate(uid, function (){
-                            // success
-                            const row = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__row')[0].value;
-                            const col = $("input.form-control:eq( " + cell_index + " )").siblings('#wells__col')[0].value;
-                            const existingValue = $("input.form-control:eq( " + cell_index + " )").val();
-                            if (existingValue && !(confirm(`${row}${col} already has a value, do you want to overwrite it?`))){
-                                return;
-                            }
-                            $("input.form-control:eq( " + cell_index + " )").val(uid);
-                            $("#wellToInsertSample").text(row + col);
-                            cell_index ++;
-                        }, function(err){
-                            // failure
-                            $("#wellToInsertSample").text(err);
-                        })
-                        qr_code_read = true;
-                        outputContainer.hidden = false;
-                    }
-                } else {
-                    outputData.parentElement.hidden = true;
-                }
-            }
-            if (!qr_code_read){
-                requestAnimationFrame(tick);
-            }
-        }
-
-        $("#nextSampleButton").on( "click", function() {
-            tick();
-        });
-        $(".sample-assign").on("click", function(e){
-            cell_index = $('.sample-assign').index(this);
-        })
-
+        });       
     });
 </script>

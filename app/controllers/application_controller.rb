@@ -8,14 +8,16 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_state_quantities
-    @pendingdispatch_count = Sample.is_requested.size
-    @pendingreceive_count = Sample.is_dispatched.size
-    @pendingprepare_count = Sample.is_received.size
-    @pendingreadytest_count = Plate.is_preparing.size
-    @pendingtest_count = Plate.is_prepared.size
-    @pendinganalyze_count = Plate.is_testing.size
-    @completed_tests_count = Plate.is_complete.size
-    @done_tests_count = Plate.is_done.size
+    sample_groups = Sample.group(:state).count
+    plate_groups = Plate.group(:state).count
+    @pendingdispatch_count = sample_groups[:requested.to_s] || 0
+    @pendingreceive_count = sample_groups[:dispatched.to_s] || 0
+    @pendingprepare_count = sample_groups[:received.to_s] || 0
+    @pendingreadytest_count = plate_groups[:preparing.to_s] || 0
+    @pendingtest_count = plate_groups[:prepared.to_s] || 0
+    @pendinganalyze_count = plate_groups[:testing.to_s] || 0
+    @completed_tests_count = plate_groups[:complete.to_s] || 0
+    @done_tests_count = plate_groups[:analysed.to_s] || 0
   end
 
 

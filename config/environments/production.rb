@@ -64,7 +64,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "opencell_testing_production"
 
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { :host => 'https://opencell-lims-docker.azurewebsites.net' }
+  config.action_mailer.default_url_options = { host: ENV.fetch("CURRENT_DOMAIN") {'https://opencell-lims-docker.azurewebsites.net'} }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

@@ -55,7 +55,7 @@ class SamplesController < ApplicationController
 
   def dashboard
     authorize Sample
-    @samples = Sample.all
+    @samples = Sample.includes(:client).all
     @tested_last_week = Sample.tested_last_week
     @requested_last_week = Sample.requested_last_week
     @failure_rate_last_week = Sample.failure_rate_last_week
@@ -211,16 +211,16 @@ class SamplesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
   def sample_params
-    params.require(:sample).permit(:client_id, :state, :note)
+    params.require(:sample).permit(:client_id, :state)
   end
 
   def get_samples
     params.permit(:samples).each do |s|
-      s.permit(:id, :note)
+      s.permit(:id)
     end
     entries = params.dig(:samples)
     if entries
-      @samples = entries.select {|e| !(e[:id].nil? || e[:note].nil?)}.map {|id| {sample: Sample.find(id[:id]), note: id[:note]}}
+      @samples = entries.select {|e| !(e[:id].nil?)}.map {|id| {sample: Sample.find(id[:id])}}
     else
       []
     end
