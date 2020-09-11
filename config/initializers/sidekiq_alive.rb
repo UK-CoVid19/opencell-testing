@@ -4,7 +4,7 @@ SidekiqAlive.setup do |config|
   # Can also be set with the environment variable SIDEKIQ_ALIVE_PORT.
   # default: 7433
   #
-  config.port = 3000
+  # config.port = 3000
 
   # ==> Server path
   # HTTP path to respond to.

@@ -23,14 +23,14 @@ steps:
       action: Build services
       azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
       azureContainerRegistry: $(azureContainerRegistry)
-      dockerComposeFile: docker-compose.yml
+      dockerComposeFile: docker-compose-ci.yml
   - task: DockerCompose@0
     displayName: Run tests
     inputs:
       action: Run a Docker Compose command
       azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
       azureContainerRegistry: $(azureContainerRegistry)
-      dockerComposeFile: docker-compose.yml 
+      dockerComposeFile: docker-compose-ci.yml 
       projectName: $(Build.Repository.Name)
       qualifyImageNames: true
       dockerComposeCommand: run -e "RAILS_ENV=test" -e "PERMITTED_IP=\d+\.\d+\.\d+\.\d+" web bundle exec rake db:create db:migrate db:seed spec

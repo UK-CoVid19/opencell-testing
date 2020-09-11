@@ -20,6 +20,7 @@ RUN mkdir /var/run/clamav && \
 
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
+RUN freshclam
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
 

@@ -14,13 +14,10 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment: 
       DISABLE_SIDEKIQ_ALIVE: 'true'
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    volumes:
-      - .:/opencell
-      - ./tmp/av:/var/lib/clamav
     ports:
       - "3000:3000"
     depends_on:
@@ -29,13 +26,10 @@ services:
   sidekiq:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment: 
       SIDEKIQ_ALIVE_PORT: 1234
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec sidekiq -C config/sidekiq.yml"
-    volumes:
-      - .:/opencell
-      - ./tmp/av:/var/lib/clamav
     ports:
       - "1234:1234"
     depends_on:
