@@ -90,3 +90,5 @@ gem "json-schema", "~> 2.8"
 gem "devise-security", "~> 0.14.3"
 gem "recaptcha"
 gem "sidekiq"
+
+gem "sidekiq_alive", "~> 2.0"

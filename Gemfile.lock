@@ -323,6 +323,8 @@ GEM
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
+    sidekiq_alive (2.0.3)
+      sidekiq
     spring (2.1.1)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -402,6 +404,7 @@ DEPENDENCIES
   selenium-webdriver
   sentry-raven
   sidekiq
+  sidekiq_alive (~> 2.0)
   spring
   spring-watcher-listen (~> 2.0.0)
   strong_password (~> 0.0.9)
