@@ -71,5 +71,3 @@ class ResultNotifyJob < ApplicationJob
   end
   
 end
-
-

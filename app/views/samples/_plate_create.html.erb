@@ -1,122 +1,123 @@
 <div class="container table-responsive">
-  <%= form_with(model: @plate, url: step3_sample_bulkprepared_path) do |form| %>
+    <%= form_with(model: @plate, url: step3_sample_bulkprepared_path) do |form| %>
     <% if @plate.errors.any? %>
-      <div id="error_explanation">
+    <div id="error_explanation">
         <h2><%= pluralize(@plate.errors.count, "error") %> prohibited this test from being saved:</h2>
         <ul>
-          <% @plate.errors.full_messages.each do |message| %>
+            <% @plate.errors.full_messages.each do |message| %>
             <li><%= message %></li>
-          <% end %>
+            <% end %>
         </ul>
-      </div>
+    </div>
     <% end %>
     <table class="table table-striped table-bordered">
-      <thead class="thead-dark">
-      <tr>
-        <th></th>
-        <% PlateHelper.columns.each do |col| %>
-          <th><%= col %></th>
-        <% end %>
-      </tr>
-      </thead>
-      <tbody>
-      <% @plate.wells.sort_by{|w| w.row}.group_by {|w| w.row }.each do |row, row_wells| %>
-        <tr>
-          <td class="dark-cell text-center"><%= row %></td>
-          <%= form.fields_for :wells, row_wells.sort_by{|w|w.column} do |builder| %>
-            <% if auto_control?(builder.object.row, builder.object.column) %>
-            <td class="auto-control-cell" data-control="auto">
-            <% elsif control?(builder.object.row, builder.object.column) %>
-            <td class="control-cell" data-control="manual">
-            <% else %>
-            <td>
-            <% end %>
-              <%= builder.hidden_field :row, name: '[sample_well_mapping][mappings][][row]'  %>
-              <%= builder.hidden_field :row  %>
-              <%= builder.hidden_field :column, name: '[sample_well_mapping][mappings][][column]'  %>
-              <%= builder.hidden_field :column  %>
-              <%= builder.fields_for :sample, Sample.new do |sample_builder| %>
+        <thead class="thead-dark">
+            <tr>
+                <th></th>
+                <% PlateHelper.columns.each do |col| %>
+                <th><%= col %></th>
+                <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <% @plate.wells.sort_by{|w| w.row}.group_by {|w| w.row }.each do |row, row_wells| %>
+            <tr>
+                <td class="dark-cell text-center"><%= row %></td>
+                <%= form.fields_for :wells, row_wells.sort_by{|w|w.column} do |builder| %>
                 <% if auto_control?(builder.object.row, builder.object.column) %>
-                <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control", disabled: true, placeholder: 'N/A' %>
-                <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
-                <% elsif control?(builder.object.row, builder.object.column) %>
-                <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control" %>
-                <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
-                <% else %>
-                <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control sample-assign" %>
-                <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: false %>
-                <% end %>                
-              <% end %>
-            </td>
-          <% end %>
-        </tr>
-      <% end  %>
-      </tbody>
+                <td class="auto-control-cell" data-control="auto">
+                    <% elsif control?(builder.object.row, builder.object.column) %>
+                <td class="control-cell" data-control="manual">
+                    <% else %>
+                <td>
+                    <% end %>
+                    <%= builder.hidden_field :row, name: '[sample_well_mapping][mappings][][row]'  %>
+                    <%= builder.hidden_field :row  %>
+                    <%= builder.hidden_field :column, name: '[sample_well_mapping][mappings][][column]'  %>
+                    <%= builder.hidden_field :column  %>
+                    <%= builder.fields_for :sample, Sample.new do |sample_builder| %>
+                    <% if auto_control?(builder.object.row, builder.object.column) %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control", disabled: true, placeholder: 'N/A' %>
+                    <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
+                    <% elsif control?(builder.object.row, builder.object.column) %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control" %>
+                    <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
+                    <% else %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control sample-assign" %>
+                    <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: false %>
+                    <% end %>
+                    <% end %>
+                </td>
+                <% end %>
+            </tr>
+            <% end  %>
+        </tbody>
     </table>
     <div class="actions">
-      <%= form.submit "Create Plate", class: 'btn btn-primary' %>
+        <%= form.submit "Create Plate", class: 'btn btn-primary' %>
     </div>
-  <% end %>
+    <% end %>
 </div>
 <script>
-
-    $(document).on('turbolinks:load', function () {
+    $(document).on('turbolinks:load', function() {
 
         var cell_index = 0
 
         let pending_samples = []
         let set_samples = []
 
-        $(window).keydown(function(event){
-          if(event.keyCode == 13) {
-            event.preventDefault();
-            return false;
-          }
+        $(window).keydown(function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
         });
 
 
-        function setSamples(items, setter){
-            mapped = items.map(item => { return {
-                          label: item.uid,
-                          value: item.id
-                      }});
+        function setSamples(items, setter) {
+            mapped = items.map(item => {
+                return {
+                    label: item.uid,
+                    value: item.id
+                }
+            });
             setter(mapped)
             return Promise.resolve();
         }
 
-        function setAutoComplete(){
-          $( ".sample-assign" ).autocomplete({
+        function setAutoComplete() {
+            $(".sample-assign").autocomplete({
                 autoFocus: true,
-                source: function (request, response) {
-                response(getRemainingSamples());
-              },
-              })
-          return;
+                source: function(request, response) {
+                    response(getRemainingSamples());
+                },
+            })
+            return;
         }
         fetch('/samples/pendingprepare.json')
             .then(res => res.json())
             .then(js => setSamples(js, i => pending_samples = i))
             .then(samples => setAutoComplete())
 
-        function getRemainingSamples(){
-            to_complete =  pending_samples.filter(x => !set_samples.includes(x.value.toString()));
+        function getRemainingSamples() {
+            to_complete = pending_samples.filter(x => !set_samples.includes(x.value.toString()));
             return to_complete;
         }
 
-        function validate_plate(sampleId, success, failure){
-            if(!pending_samples.map(x => x.value.toString()).includes(sampleId)){
+        function validate_plate(sampleId, success, failure) {
+            if (!pending_samples.map(x => x.value.toString()).includes(sampleId)) {
                 const err = 'You cannot process this sample ID ' + sampleId;
                 failure(err)
-            }else{
-                if(set_samples.includes(sampleId)){
+            } else {
+                if (set_samples.includes(sampleId)) {
                     const err = 'Sample has already been assigned to a well';
 
                     failure(err);
-                }else{
+                } else {
                     set_samples.push(sampleId);
-                    if(typeof success === 'function'){
+                    if (typeof success === 'function') {
                         success();
-                    }else{
+                    } else {
                         return
                     }
 
@@ -124,70 +125,87 @@
             }
         }
 
-        function validate_input(sampleId, success, failure){
+        function validate_input(sampleId, success, failure) {
             item = pending_samples.find(p => p.label == sampleId)
             console.log(item);
-            if(!item){
+            if (!item) {
                 const err = 'You cannot process this sample ID ' + sampleId;
                 failure(err)
-            }else{
-                if(set_samples.includes(item.value)){
+            } else {
+                if (set_samples.includes(item.value)) {
                     const err = 'Sample has already been assigned to a well';
 
                     failure(err);
-                }else{
+                } else {
                     set_samples.push(item.value);
-                    if(typeof success === 'function'){
+                    if (typeof success === 'function') {
                         success(item);
-                    }else{
+                    } else {
                         return
                     }
 
                 }
             }
         }
+        
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this,
+                    args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
 
+        function handleInput(event) {
+            console.log("input")
+            console.log(set_samples)
+            const uid = event.currentTarget.value;
 
-        $(".sample-assign").on('input', (event) => {
-          console.log("input")
-          console.log(set_samples)
-          const uid  = event.currentTarget.value;
-
-          if(uid == null || uid == "" ){
-            oldValue = event.currentTarget.getAttribute('data-set-item');
-            if(oldValue){
-              setIndex = set_samples.indexOf(oldValue)
-              if(setIndex == -1){
-                console.log("cannot remove sample not set")
-                return;
-              }
-              set_samples.splice(setIndex,1)
+            if (uid == null || uid == "") {
+                oldValue = event.currentTarget.getAttribute('data-set-item');
+                if (oldValue) {
+                    setIndex = set_samples.indexOf(oldValue)
+                    if (setIndex == -1) {
+                        console.log("cannot remove sample not set")
+                        return;
+                    }
+                    set_samples = set_samples.splice(setIndex, 1)
+                }
+                return
             }
-            return
-          }
-          if(uid.length > 1) {
-            validate_input(uid, (match) => {
-              event.currentTarget.value = match.value
-              event.currentTarget.setAttribute('data-set-item', match.value)
-            }, (err) => {
-              event.currentTarget.value = null;
-              alert(err);
-            }  )
-          }
-          
-        })
+            if (uid.length > 1) {
+                validate_input(uid, (match) => {
+                    event.currentTarget.value = match.value
+                    event.currentTarget.setAttribute('data-set-item', match.value)
+                }, (err) => {
+                    event.currentTarget.value = null;
+                    alert(err);
+                })
+            }
+        }
+  
+        $(".sample-assign").on('input', debounce(handleInput, 1000));
 
-        $(".sample-assign").change(function(evt){
+
+        $(".sample-assign").change(function(evt) {
             const uid = evt.currentTarget.value;
             console.log("input change")
             console.log(uid);
             validate_plate(uid, () => {
-              evt.currentTarget.value = uid
-              evt.currentTarget.setAttribute('data-set-item', uid)
-            }, function(err){
+                evt.currentTarget.value = uid
+                evt.currentTarget.setAttribute('data-set-item', uid)
+            }, function(err) {
                 evt.currentTarget.value = null;
                 alert(err);
             })
-        });       
+        });
     });
 </script>
