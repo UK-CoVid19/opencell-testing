@@ -64,7 +64,7 @@
         var cell_index = 0
 
         let pending_samples = []
-        let set_samples = []
+        let setSamples = []
 
         $(window).keydown(function(event) {
             if (event.keyCode == 13) {
@@ -74,11 +74,11 @@
         });
 
 
-        function setSamples(items, setter) {
+        function mapSamples(items, setter) {
             mapped = items.map(item => {
                 return {
                     label: item.uid,
-                    value: item.id
+                    value: item.id.toString()
                 }
             });
             setter(mapped)
@@ -96,27 +96,27 @@
         }
         fetch('/samples/pendingprepare.json')
             .then(res => res.json())
-            .then(js => setSamples(js, i => pending_samples = i))
+            .then(js => mapSamples(js, i => pending_samples = i))
             .then(samples => setAutoComplete())
 
         function getRemainingSamples() {
-            to_complete = pending_samples.filter(x => !set_samples.includes(x.value.toString()));
+            to_complete = pending_samples.filter(x => !setSamples.includes(x.value.toString()));
             return to_complete;
         }
 
-        function validate_plate(sampleId, success, failure) {
-            if (!pending_samples.map(x => x.value.toString()).includes(sampleId)) {
+        function validateInput(sampleId, success, failure) {
+            item = pending_samples.find(p => p.label == sampleId || p.value == sampleId)
+            if (!item) {
                 const err = 'You cannot process this sample ID ' + sampleId;
                 failure(err)
             } else {
-                if (set_samples.includes(sampleId)) {
+                if (setSamples.includes(item.value)) {
                     const err = 'Sample has already been assigned to a well';
 
                     failure(err);
                 } else {
-                    set_samples.push(sampleId);
                     if (typeof success === 'function') {
-                        success();
+                        success(item);
                     } else {
                         return
                     }
@@ -125,26 +125,20 @@
             }
         }
 
-        function validate_input(sampleId, success, failure) {
-            item = pending_samples.find(p => p.label == sampleId)
-            console.log(item);
-            if (!item) {
-                const err = 'You cannot process this sample ID ' + sampleId;
-                failure(err)
-            } else {
-                if (set_samples.includes(item.value)) {
-                    const err = 'Sample has already been assigned to a well';
-
-                    failure(err);
-                } else {
-                    set_samples.push(item.value);
-                    if (typeof success === 'function') {
-                        success(item);
-                    } else {
-                        return
+         function handleDeletion(event) {
+            const uid = event.currentTarget.value;
+            if (uid == null || uid == "") {
+                oldValue = event.currentTarget.getAttribute('data-set-item');
+                if (oldValue) {
+                    setIndex = setSamples.indexOf(oldValue)
+                    if (setIndex == -1) {
+                        alert("cannot remove sample not set")
+                        return;
                     }
-
+                    setSamples.splice(setIndex, 1)
+                    event.currentTarget.removeAttribute('data-set-item')
                 }
+                return
             }
         }
         
@@ -164,48 +158,32 @@
             };
         };
 
-        function handleInput(event) {
-            console.log("input")
-            console.log(set_samples)
-            const uid = event.currentTarget.value;
-
-            if (uid == null || uid == "") {
-                oldValue = event.currentTarget.getAttribute('data-set-item');
-                if (oldValue) {
-                    setIndex = set_samples.indexOf(oldValue)
-                    if (setIndex == -1) {
-                        console.log("cannot remove sample not set")
-                        return;
-                    }
-                    set_samples = set_samples.splice(setIndex, 1)
-                }
-                return
-            }
+        function handleSet(event, uid){
             if (uid.length > 1) {
-                validate_input(uid, (match) => {
+                validateInput(uid, (match) => {
                     event.currentTarget.value = match.value
                     event.currentTarget.setAttribute('data-set-item', match.value)
+                    setSamples.push(match.value)
                 }, (err) => {
                     event.currentTarget.value = null;
                     alert(err);
                 })
             }
         }
+
+        function handleInput(event) {
+            const uid = event.currentTarget.value;
+            handleDeletion(event);
+            handleSet(event, uid);
+        }
+
+        function handleAutocomplete(event, ui){
+            const uid = ui.item.value;
+            handleSet(event, uid);
+        }
   
-        $(".sample-assign").on('input', debounce(handleInput, 1000));
+        $(".sample-assign").on('input', debounce(handleInput, 500));
 
-
-        $(".sample-assign").change(function(evt) {
-            const uid = evt.currentTarget.value;
-            console.log("input change")
-            console.log(uid);
-            validate_plate(uid, () => {
-                evt.currentTarget.value = uid
-                evt.currentTarget.setAttribute('data-set-item', uid)
-            }, function(err) {
-                evt.currentTarget.value = null;
-                alert(err);
-            })
-        });
+        $(".sample-assign").on('autocompleteselect', handleAutocomplete);
     });
 </script>
