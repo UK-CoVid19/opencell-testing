@@ -10,12 +10,11 @@ class ResultNotifyJob < ApplicationJob
   ]
   queue_as :default
 
-
   retry_on NotifyException
 
   def perform(sample, user)
-    Sample.with_user(user) do
-      send_message(sample)
+    sample.with_user(user) do |s|
+      send_message(s)
     end
   end
 
@@ -25,7 +24,32 @@ class ResultNotifyJob < ApplicationJob
       sample.commcomplete!
       return
     end
+    response = make_request(sample)
+    if [200, 202].include? response.code.to_i
+      sample.commcomplete!
+      return
+    end
 
+    sample.commfailed!
+    raise NotifyException.new(response), "Request failed with code #{response.code} and body #{response.body}"
+  end
+
+  def get_result(result)
+    case TestResult.states.to_hash[result]
+    when TestResult.states[:positive]
+      'Positive'
+    when TestResult.states[:lowpositive]
+      'Positive'
+    when TestResult.states[:negative]
+      'Negative'
+    when TestResult.states[:inhibit]
+      'Inconclusive'
+    end
+  end
+
+  def make_request(sample)
+    
+    puts "making request"
     to_send = {
       'sampleid' => sample.uid,
       'result' => get_result(sample.test_result.state)
@@ -48,26 +72,6 @@ class ResultNotifyJob < ApplicationJob
       Rails.logger.error("Request failed with exception #{e}")
       raise NotifyException.new(e), "Request failed with exception #{e}"
     end
-    if [200, 202].include? response.code.to_i
-      sample.commcomplete!
-      return
-    end
-
-    sample.commfailed!
-    raise NotifyException.new(response), "Request failed with code #{response.code} and body #{response.body}"
+    response
   end
-
-  def get_result(result)
-    case TestResult.states.to_hash[result]
-    when TestResult.states[:positive]
-      'Positive'
-    when TestResult.states[:lowpositive]
-      'Positive'
-    when TestResult.states[:negative]
-      'Negative'
-    when TestResult.states[:inhibit]
-      'Inconclusive'
-    end
-  end
-  
 end

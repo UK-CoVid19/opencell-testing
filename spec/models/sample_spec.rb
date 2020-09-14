@@ -32,6 +32,44 @@ RSpec.describe Sample, type: :model do
       end
     end
 
+    it "should preferentially select a user which is set on the instance rather than the class" do
+      @other_user = create(:user)
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:communicated])
+        @sample.with_user(@other_user) do |s|
+          s.state = Sample.states[:commfailed]
+          expect { s.save! }.to_not raise_error
+          expect(s.records.last.user).to eq @other_user
+        end
+        expect(@sample.records.last.user).to eq @other_user
+      end
+    end
+
+    it "should not require a class user to be set if an instance user is supplied" do
+      @other_user = create(:user)
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:communicated])
+      end
+      Sample.with_user(nil) do
+        @sample.with_user(@other_user) do |s|
+          s.state = Sample.states[:commfailed]
+          expect { s.save! }.to_not raise_error
+        end
+      end
+      expect(@sample.records.last.user).to eq @other_user
+    end
+
+    it "should be invalid if no user has been set" do 
+      @other_user = create(:user)
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:communicated])
+      end
+      Sample.with_user(nil) do
+        @sample.state = Sample.states[:commfailed]
+        expect { @sample.save! }.to raise_error
+      end
+    end
+
     Sample.states.each do |key, value|
       it "should allow any state to transition from #{key} to rejected" do
         Sample.with_user(@user) do

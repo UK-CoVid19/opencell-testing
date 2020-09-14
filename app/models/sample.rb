@@ -43,6 +43,15 @@ class Sample < ApplicationRecord
     end
   end
 
+  def with_user(user, &block)
+    @with_user = user
+    begin
+      yield(self) if block_given?
+    ensure
+      @with_user = nil
+    end
+  end
+
   def self.tested_last_week
     samples = Sample
         .select('date(samples.created_at) as created_date, count(samples.id) as count')
@@ -124,10 +133,12 @@ class Sample < ApplicationRecord
   end
 
   def set_creation_record
-    records << Record.new(user: Sample.block_user, note: nil, state: Sample.states[:requested])
+    record_user = @with_user || Sample.block_user
+    records << Record.new(user: record_user, note: nil, state: Sample.states[:requested])
   end
 
   def set_change_record
-    records << Record.new(user: Sample.block_user, note: nil, state: Sample.states[state])
+    record_user = @with_user || Sample.block_user
+    records << Record.new(user: record_user, note: nil, state: Sample.states[state])
   end
 end
