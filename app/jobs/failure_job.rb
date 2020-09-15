@@ -1,11 +1,7 @@
-require 'net/http'
-
-class ResultNotifyJob < ApplicationJob
-  extend ClientNotifyModule
-
+class FailureJob < ApplicationJob
   queue_as :default
 
-  retry_on NotifyException
+  extend ClientNotifyModule
 
   def perform(sample, user)
     sample.with_user(user) do |s|
@@ -22,7 +18,7 @@ class ResultNotifyJob < ApplicationJob
 
     to_send = {
       'sampleid' => sample.uid,
-      'result' => get_result(sample.test_result.state)
+      'result' => INCONCLUSIVE
     }
     response = make_request(to_send)
     if [200, 202].include? response.code.to_i
@@ -32,18 +28,5 @@ class ResultNotifyJob < ApplicationJob
 
     sample.commfailed!
     raise NotifyException.new(response), "Request failed with code #{response.code} and body #{response.body}"
-  end
-
-  def get_result(result)
-    case TestResult.states.to_hash[result]
-    when TestResult.states[:positive]
-      POSITIVE
-    when TestResult.states[:lowpositive]
-      POSITIVE
-    when TestResult.states[:negative]
-      NEGATIVE
-    when TestResult.states[:inhibit]
-      INCONCLUSIVE
-    end
   end
 end

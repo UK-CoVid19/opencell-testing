@@ -26,7 +26,8 @@ class Sample < ApplicationRecord
   scope :is_analysed, -> { where(state: Sample.states[:analysed]) }
   scope :is_communicated, -> { where(state: Sample.states[:communicated]) }
 
-  after_update :send_notification_after_analysis
+  after_update :send_notification_after_analysis, if: :communicated?
+  after_update :send_failure, if: :failed?
 
   CONTROL_CODE = 1234
 
@@ -110,6 +111,10 @@ class Sample < ApplicationRecord
   
   def send_notification_after_analysis
       ResultNotifyJob.perform_later(self, Sample.block_user) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
+  end
+
+  def send_failure
+    FailureJob.perform_later(self, @with_user)
   end
 
   def set_uid
