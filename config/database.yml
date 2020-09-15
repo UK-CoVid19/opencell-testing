@@ -9,7 +9,7 @@ development: &default
   adapter: postgresql
   encoding: unicode
   database: opencell-dev
-  pool: 5
+  pool: 8
   username: postgres
   password: password
   host: db
