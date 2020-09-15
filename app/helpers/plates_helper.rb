@@ -52,19 +52,19 @@ module PlatesHelper
       if(Sample.states[well.sample.state] == Sample.states[:rejected])
         tag.td class: 'cell rejected-cell'do
           link_to well.sample do
-            get_result_icon(well.sample.test_result)
+            get_result_icon(well.test_result)
           end
         end
       elsif( well.sample.control?)
-        tag.td class: 'cell control-cell'do
+        tag.td class: 'cell control-cell' do
           link_to well.sample do
-            get_result_icon(well.sample.test_result)
+            get_result_icon(well.test_result)
           end
         end
       else
         tag.td class: 'cell marked-cell' do
           link_to well.sample do
-            get_result_icon(well.sample.test_result)
+            get_result_icon(well.test_result)
           end
         end
       end

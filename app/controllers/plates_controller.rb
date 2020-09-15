@@ -50,7 +50,7 @@ class PlatesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_plate
-      @plate = authorize Plate.includes(wells: [:sample, :test_result]).find(params[:id])
+      @plate = authorize Plate.includes(wells: [:test_result, :sample]).find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

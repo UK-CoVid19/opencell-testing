@@ -4,8 +4,9 @@
   <table id="datatable" class="table table-striped table-bordered">
     <thead class="thead-dark">
     <tr>
-      <th>Plate</th>
-      <th>Samples</th>
+      <th>ID</th>
+      <th>UID</th>
+      <th>Status</th>
       <th>Created At</th>
       <th colspan="1"></th>
     </tr>
@@ -15,7 +16,8 @@
     <% @plates.each do |plate| %>
       <tr>
         <td><%= plate.id %></td>
-        <td><%= "#{plate.samples.size} Samples" %></td>
+        <td><%= plate.uid %></td>
+        <td><%= get_plate_badge(plate.state) %></td>
         <td><%= plate.created_at.strftime('%A %-d %b %H:%M') %></td>
         <td class="text-right">
           <%= link_to plate do  %>
