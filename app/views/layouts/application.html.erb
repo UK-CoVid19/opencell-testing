@@ -25,16 +25,9 @@
               <ul class="d-flex navbar-nav text-center justify-content-end">
                 <% if current_user && user_signed_in? && current_user.staff?  %>
                   <li class="nav-item">
-                    <%= link_to step1_pendingdispatch_path, class: 'nav-link' do %>
-                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingdispatch_count } do %>
-                        <span>To Dispatch <%= fa_icon "chevron-right", class: "nav-icon" %></span>
-                      <% end  %>
-                    <% end  %>
-                  </li>
-                  <li class="nav-item">
-                    <%= link_to step2_pendingreceive_path, class: 'nav-link' do %>
-                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingreceive_count } do %>
-                        <span>To Return <%= fa_icon "chevron-right", class: "nav-icon" %></span>
+                    <%= link_to pending_plate_path, class: 'nav-link' do %>
+                      <%= content_tag :div, {"data-toggle":"tooltip", "data-placement": "bottom", title: @pendingprepare_count } do %>
+                        <span>Pending Plating <%= fa_icon "arrows-v", class: "nav-icon" %></span>
                       <% end  %>
                     <% end %>
                   </li>

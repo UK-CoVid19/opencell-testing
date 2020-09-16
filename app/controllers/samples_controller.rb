@@ -21,6 +21,11 @@ class SamplesController < ApplicationController
     authorize Sample
   end
 
+  def pending_plate
+    @samples = policy_scope(Sample.is_received)
+    authorize Sample
+  end
+
   def step3_pendingprepare
     @plate = Plate.build_plate
     @samples = policy_scope(Sample.is_received)
@@ -74,7 +79,7 @@ class SamplesController < ApplicationController
   end
 
   def create
-    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:requested])
+    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:received])
     respond_to do |format|
       if @sample.save
         format.html { redirect_to client_path(@sample.client), notice: 'Sample was successfully created.' }
