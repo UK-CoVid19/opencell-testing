@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   end
 
   get 'samples/pendingdispatch', to: 'samples#step1_pendingdispatch', as: 'step1_pendingdispatch'
+  get 'samples/pendingplate', to: 'samples#pending_plate', as: 'pending_plate'
   get 'samples/pendingreceive', to: 'samples#step2_pendingreceive', as: 'step2_pendingreceive'
   get 'samples/pendingprepare', to: 'samples#step3_pendingprepare', as: 'step3_pendingprepare'
   get 'samples/pendingreadytest', to: 'samples#step4_pendingreadytest', as: 'step4_pendingreadytest'

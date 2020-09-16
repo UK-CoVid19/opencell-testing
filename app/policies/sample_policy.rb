@@ -25,6 +25,10 @@ class SamplePolicy < ApplicationPolicy
     staffmember?
   end
 
+  def pending_plate?
+    staffmember?
+  end
+
   def step4_pendingreadytest?
     staffmember?
   end

@@ -15,7 +15,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: %i[ requested dispatched received preparing prepared tested analysed communicated commcomplete commfailed rejected  ]
+  enum state: { requested: 0, dispatched: 1, received: 2, preparing: 3, prepared:4, tested:5, analysed: 6, communicated: 7, commcomplete: 8, commfailed: 9, rejected: 10  }
 
   scope :is_requested, -> { where(state: Sample.states[:requested]) }
   scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }
@@ -134,7 +134,7 @@ class Sample < ApplicationRecord
 
   def set_creation_record
     record_user = @with_user || Sample.block_user
-    records << Record.new(user: record_user, note: nil, state: Sample.states[:requested])
+    records << Record.new(user: record_user, note: "Sample Created from LIMS", state: Sample.states[state])
   end
 
   def set_change_record
