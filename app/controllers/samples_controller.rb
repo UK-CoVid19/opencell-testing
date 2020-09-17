@@ -2,22 +2,12 @@ class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
   around_action :wrap_in_current_user
-  after_action :verify_policy_scoped, only: [:index, :step1_pendingdispatch, :step2_pendingreceive, :step3_pendingprepare]
+  after_action :verify_policy_scoped, only: [:index, :step3_pendingprepare, :pending_plate]
   after_action :verify_authorized
   # GET /samples
   # GET /samples.json
   def index
     @samples = policy_scope(Sample.all)
-    authorize Sample
-  end
-
-  def step1_pendingdispatch
-    @samples = policy_scope(Sample.is_requested)
-    authorize Sample
-  end
-
-  def step2_pendingreceive
-    @samples = policy_scope(Sample.is_dispatched)
     authorize Sample
   end
 
@@ -79,7 +69,7 @@ class SamplesController < ApplicationController
   end
 
   def create
-    @sample = authorize Sample.new(client_id: params[:sample][:client_id], state: Sample.states[:received])
+    @sample = authorize Sample.new(sample_params.merge!(state: Sample.states[:received]))
     respond_to do |format|
       if @sample.save
         format.html { redirect_to client_path(@sample.client), notice: 'Sample was successfully created.' }
@@ -89,16 +79,6 @@ class SamplesController < ApplicationController
         format.json { render json: @sample.errors, status: :unprocessable_entity }
       end
     end
-  end
-
-  def step1_bulkdispatched
-    authorize Sample
-    bulk_action(Sample.states[:dispatched], step2_pendingreceive_path)
-  end
-
-  def step2_bulkreceived
-    authorize Sample
-    bulk_action(Sample.states[:received], step3_pendingprepare_path)
   end
 
   def step3_bulkprepared
@@ -116,7 +96,6 @@ class SamplesController < ApplicationController
         end
       end
     end
-    
   end
 
   def step4_bulkreadytest
@@ -200,7 +179,7 @@ class SamplesController < ApplicationController
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_to do |format|
-        format.html { render :step1_pendingdispatch, alert: e.message, status: :unprocessable_entity }
+        format.html { redirect request.referrer, alert: e.message, status: :unprocessable_entity }
         format.json { render json: e.errors, status: :unprocessable_entity }
       end
       return
@@ -231,15 +210,16 @@ class SamplesController < ApplicationController
     end
   end
 
-   def get_plates
-     params.permit(:plates).each do |s|
-       s.permit(:id)
-     end
+  def get_plates
+    params.permit(:plates).each do |s|
+      s.permit(:id)
+    end
+    plates = params.dig(:plates)
+    return nil unless plates&.any?
 
-     plates = params.dig(:plates)
-     return nil unless plates&.any?
-     return  plates.map {|plate| Plate.find(plate[:id])}
-   end
+    return plates.map {|plate| Plate.find(plate[:id])}
+
+  end
 
   def get_bulk_plate
     params.require(:plate).permit(wells_attributes:[:id, :row, :column ])

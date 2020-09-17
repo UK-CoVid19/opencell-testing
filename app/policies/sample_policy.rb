@@ -13,14 +13,6 @@ class SamplePolicy < ApplicationPolicy
     staffmember?
   end
 
-  def step1_pendingdispatch?
-    staffmember?
-  end
-
-  def step2_pendingreceive?
-    staffmember?
-  end
-
   def step3_pendingprepare?
     staffmember?
   end
@@ -62,14 +54,6 @@ class SamplePolicy < ApplicationPolicy
   end
 
   def destroy?
-    staffmember?
-  end
-
-  def step1_bulkdispatched?
-    staffmember?
-  end
-
-  def step2_bulkreceived?
     staffmember?
   end
 

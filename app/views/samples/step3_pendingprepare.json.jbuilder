@@ -1,1 +1,1 @@
-json.array! @samples, partial: "samples/sample", as: :sample
+json.array! @samples, partial: "samples/pending_sample", as: :sample
