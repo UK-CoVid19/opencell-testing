@@ -7,15 +7,14 @@
         <table id="datatable" class="table table-striped table-bordered">
           <thead class="thead-dark">
           <tr>
-            <th class="no-sort" width="25"><!-- check_box_tag--></th>
             <th>UID</th>
+            <th>Sample</th>
             <th>Client</th>
           </tr>
           </thead>
           <tbody>
           <% @samples.each do |sample| %>
             <tr>
-              <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'samples[][id]', sample.id %></td>
               <td><%= sample.uid %></td>
               <td class="text-left">
                 <%= link_to sample do  %>
