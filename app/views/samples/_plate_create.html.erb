@@ -1,3 +1,6 @@
+<% content_for :meta do %>
+    <meta name="turbolinks-visit-control" content="reload">
+<% end %>
 <div class="container table-responsive">
     <%= form_with(model: @plate, url: step3_sample_bulkprepared_path) do |form| %>
     <% if @plate.errors.any? %>
@@ -84,7 +87,7 @@
             setter(mapped)
             return Promise.resolve();
         }
-
+       
         fetch('/samples/pendingprepare.json')
             .then(res => res.json())
             .then(js => mapSamples(js, i => pending_samples = i))
@@ -163,12 +166,11 @@
 
         function handleInput(event) {
             const uid = event.currentTarget.value;
-            // deletion should always be immediate
             handleDeletion(event);
-            debounce(handleSet, 500)(event, uid);
+            handleSet(event, uid);
         }
-
-        $(".sample-assign").on('input', handleInput);
+  
+        $(".sample-assign").on('input', debounce(handleInput, 500));
 
     });
 </script>
