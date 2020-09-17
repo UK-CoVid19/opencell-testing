@@ -16,6 +16,16 @@ RSpec.describe Sample, type: :model do
       end
     end
 
+    it "should create a record with the initial state of received" do
+      Sample.with_user(@user) do
+        @sample = Sample.new(client: @client, state: Sample.states[:received])
+        expect { @sample.save! }.to_not raise_error
+        expect(@sample.state).to eq :received.to_s
+        expect(@sample.records.size).to eq 1
+        expect(@sample.records.last.state).to eq Sample.states[:received]
+      end
+    end
+
     it "should  allow the state to transition from commfailed to commcomplete" do
       Sample.with_user(@user) do
         @sample = create(:sample, state: Sample.states[:commfailed])
@@ -59,7 +69,7 @@ RSpec.describe Sample, type: :model do
       expect(@sample.records.last.user).to eq @other_user
     end
 
-    it "should be invalid if no user has been set" do 
+    it "should be invalid if no user has been set" do
       @other_user = create(:user)
       Sample.with_user(@user) do
         @sample = create(:sample, state: Sample.states[:communicated])

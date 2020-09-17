@@ -10,8 +10,6 @@ class ApplicationController < ActionController::Base
   def set_state_quantities
     sample_groups = Sample.group(:state).count
     plate_groups = Plate.group(:state).count
-    @pendingdispatch_count = sample_groups[:requested.to_s] || 0
-    @pendingreceive_count = sample_groups[:dispatched.to_s] || 0
     @pendingprepare_count = sample_groups[:received.to_s] || 0
     @pendingreadytest_count = plate_groups[:preparing.to_s] || 0
     @pendingtest_count = plate_groups[:prepared.to_s] || 0

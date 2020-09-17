@@ -7,6 +7,46 @@ RSpec.describe SamplesController, type: :controller do
       expect(get: "/samples").to route_to("samples#index")
     end
 
+    it "routes to #pending_plate" do
+      expect(get: "/samples/pendingplate").to route_to("samples#pending_plate")
+    end
+
+    it "routes to #pending_prepare" do
+      expect(get: "/samples/pendingprepare").to route_to("samples#step3_pendingprepare")
+    end
+
+    it "routes to #pending_readytest" do
+      expect(get: "/samples/pendingreadytest").to route_to("samples#step4_pendingreadytest")
+    end
+
+    it "routes to #pending_test" do
+      expect(get: "/samples/pendingtest").to route_to("samples#step5_pendingtest")
+    end
+
+    it "routes to #pending_analyze" do
+      expect(get: "/samples/pendinganalyze").to route_to("samples#step6_pendinganalyze")
+    end
+
+    it "routes to samples#dashboard" do
+      expect(get: "/samples/dashboard").to route_to("samples#dashboard")
+    end
+
+    it "routes to samples#prepared" do
+      expect(post: "/samples/prepared").to route_to("samples#step3_bulkprepared")
+    end
+
+    it "routes to samples#readytest" do
+      expect(post: "/samples/readytest").to route_to("samples#step4_bulkreadytest")
+    end
+
+    it "routes to samples#tested" do
+      expect(post: "/samples/tested").to route_to("samples#step5_bulktested")
+    end
+
+    it "routes to samples#analysed" do
+      expect(post: "/samples/analysed").to route_to("samples#step6_bulkanalysed")
+    end
+
     it "routes to #new" do
       expect(get: "/samples/new").to route_to("samples#new")
     end
@@ -43,15 +83,8 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to redirect_to(root_path)
     end
 
-    it "should not let a patient see step1_pendingdispatch" do
-      get :step1_pendingdispatch
-      expect(flash[:alert]).to eq("You are not authorized to perform this action")
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "should not let a patient see step2_pendingreceive" do
-      get :step2_pendingreceive
+    it "should not let a patient see samples pending plating" do
+      get :pending_plate
       expect(flash[:alert]).to eq("You are not authorized to perform this action")
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
@@ -101,20 +134,6 @@ RSpec.describe SamplesController, type: :controller do
 
     it "should not let a patient see edit" do
       get :index
-      expect(flash[:alert]).to eq("You are not authorized to perform this action")
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "should not let a patient post to step1_bulkdispatched" do
-      post :step1_bulkdispatched
-      expect(flash[:alert]).to eq("You are not authorized to perform this action")
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "should not let a patient post to step2_bulkreceived" do
-      post :step2_bulkreceived
       expect(flash[:alert]).to eq("You are not authorized to perform this action")
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
@@ -179,7 +198,6 @@ RSpec.describe SamplesController, type: :controller do
   end
 
   context("signed in as staff member") do
-    
     include_context "create sample login"
 
     it "should let a staff member see samples" do
@@ -190,18 +208,13 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to have_http_status(:success)
     end
 
-    it "should let a staff member see step1_pendingdispatch" do
-      get :step1_pendingdispatch
+    it "should let a staff member see pending plate samples" do
+      Sample.with_user(@user) do
+        create(:sample, state: Sample.states[:received])
+      end
+      get :pending_plate
       samples = assigns(:samples)
       expect(samples.size).to eq(1)
-      expect(flash[:alert]).to be_nil
-      expect(response).to have_http_status(:success)
-    end
-
-    it "should let a staff member see step2_pendingreceive" do
-      get :step2_pendingreceive
-      samples = assigns(:samples)
-      expect(samples.size).to eq(0)
       expect(flash[:alert]).to be_nil
       expect(response).to have_http_status(:success)
     end
@@ -238,97 +251,14 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to have_http_status(:success)
     end
 
-    describe("step1_bulkdispatched") do
-      it "should accept a valid input for bulk updating samples in step1_bulkdispatched" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
-        end
-        post :step1_bulkdispatched, params: {samples: [{id: @this_sample.id, note: "this is a note"}]}
-        expect(Sample.all.size).to eq 2
-        expect(Sample.last).to eq @this_sample
-        expect(Sample.states.to_hash[Sample.last.state]).to eq Sample.states[:dispatched]
-      end
-
-      it "should accept a valid input for bulk updating 2 samples in step1_bulkdispatched" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
-          @this_other_sample = create(:sample, state: Sample.states[:requested], client: @client)
-        end
-        post :step1_bulkdispatched, params: { samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
-        expect(Sample.all.size).to eq 3
-        expect(Sample.second).to eq @this_sample
-        expect(Sample.third).to eq @this_other_sample
-        expect(Sample.states.to_hash[Sample.second.state]).to eq Sample.states[:dispatched]
-        expect(Sample.states.to_hash[Sample.third.state]).to eq Sample.states[:dispatched]
-      end
-
-      it "if 1 valid sample and 1 invalid sample, none of them update step1_bulkdispatched" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
-          @this_other_sample = create(:sample, state: Sample.states[:prepared], client: @client)
-        end
-        post :step1_bulkdispatched, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(Sample.all.size).to eq 3
-        expect(Sample.second).to eq @this_sample
-        expect(Sample.third).to eq @this_other_sample
-        expect(Sample.states.to_hash[Sample.second.state]).to eq Sample.states[:requested]
-        expect(Sample.states.to_hash[Sample.third.state]).to eq Sample.states[:prepared]
-      end
-    end
-
-    describe("step2_bulkreceived") do
-      it "should accept a valid input for bulk receiving samples" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
-        end
-        post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}]}
-        expect(Sample.all.size).to eq 2
-        expect(Sample.last).to eq @this_sample
-        expect(Sample.states.to_hash[Sample.last.state]).to eq Sample.states[:received]
-      end
-
-      it "should accept a valid input for bulk updating 2 samples in step2_bulkreceived" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
-        end
-        post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
-        expect(Sample.all.size).to eq 3
-        expect(Sample.second).to eq @this_sample
-        expect(Sample.third).to eq @this_other_sample
-        expect(Sample.states.to_hash[Sample.second.state]).to eq Sample.states[:received]
-        expect(Sample.states.to_hash[Sample.third.state]).to eq Sample.states[:received]
-      end
-
-      it "if 1 valid sample and 1 invalid sample, none of them update step2_bulkreceived" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:requested], client: @client)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
-        end
-        post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(Sample.all.size).to eq 3
-        expect(Sample.second).to eq @this_sample
-        expect(Sample.third).to eq @this_other_sample
-        expect(Sample.states.to_hash[Sample.second.state]).to eq Sample.states[:requested]
-        expect(Sample.states.to_hash[Sample.third.state]).to eq Sample.states[:dispatched]
-      end
-
-      it "it cannot have an invalid backwards state transition" do
-        Sample.with_user(@user) do
-          @this_sample = create(:sample, state: Sample.states[:prepared], client: @client)
-          @this_other_sample = create(:sample, state: Sample.states[:dispatched], client: @client)
-        end
-        post :step2_bulkreceived, params: {samples: [{id: @this_sample.id, note: "this is a note"}, {id: @this_other_sample.id, note: "blah"}]}
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(Sample.all.size).to eq 3
-        expect(Sample.second).to eq @this_sample
-        expect(Sample.third).to eq @this_other_sample
-        expect(Sample.states.to_hash[Sample.second.state]).to eq Sample.states[:prepared]
-        expect(Sample.states.to_hash[Sample.third.state]).to eq Sample.states[:dispatched]
-      end
-    end
+    it "should let a staff member create a sample with the correct defaults" do
+      before = Sample.all.size
+      post :create, params: {sample: {client_id: @client.id }}
+      expect(flash[:alert]).to be_nil
+      expect(response).to redirect_to client_path(@client)
+      expect(Sample.all.size).to eq before + 1
+      expect(Sample.last.state).to eq :received.to_s
+    end 
 
     describe "step3_bulkprepare" do
       # note that samples should not be in the permanent control wells
@@ -429,7 +359,7 @@ RSpec.describe SamplesController, type: :controller do
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
         current_samples = Sample.all.size
-        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 6, id: @this_sample.id}, {row:'A', column: 1, id: nil, control: true, control_code: Sample::CONTROL_CODE}]}}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 6, id: @this_sample.id}, {row:'A', column: 1, id: nil, control: true, control_code: Sample::CONTROL_CODE}]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
         expect(Sample.all.size).to eq current_samples + 1

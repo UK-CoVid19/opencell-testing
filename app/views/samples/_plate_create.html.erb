@@ -85,19 +85,9 @@
             return Promise.resolve();
         }
 
-        function setAutoComplete() {
-            $(".sample-assign").autocomplete({
-                autoFocus: true,
-                source: function(request, response) {
-                    response(getRemainingSamples());
-                },
-            })
-            return;
-        }
         fetch('/samples/pendingprepare.json')
             .then(res => res.json())
             .then(js => mapSamples(js, i => pending_samples = i))
-            .then(samples => setAutoComplete())
 
         function getRemainingSamples() {
             to_complete = pending_samples.filter(x => !setSamples.includes(x.value.toString()));
@@ -173,17 +163,12 @@
 
         function handleInput(event) {
             const uid = event.currentTarget.value;
+            // deletion should always be immediate
             handleDeletion(event);
-            handleSet(event, uid);
+            debounce(handleSet, 500)(event, uid);
         }
 
-        function handleAutocomplete(event, ui){
-            const uid = ui.item.value;
-            handleSet(event, uid);
-        }
-  
-        $(".sample-assign").on('input', debounce(handleInput, 500));
+        $(".sample-assign").on('input', handleInput);
 
-        $(".sample-assign").on('autocompleteselect', handleAutocomplete);
     });
 </script>
