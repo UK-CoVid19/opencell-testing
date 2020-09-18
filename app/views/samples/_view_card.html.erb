@@ -6,18 +6,18 @@
       <% if stat1 > stat2 %>
       <span class="ml-auto outline-viewcard outline-viewcard-success">
         <span class=" ml-1 "><%= fa_icon "arrow-up", class: 'fa-fw text-success' %></span>
-        <span class="pr-2" style="font-weight: 500"> <%= stat1 - stat2 %></span>
+        <span class="pr-2" style="font-weight: 500"> <%= (stat1 - stat2).round(2) %></span>
       </span>
       <% elsif stat2 > stat1 %>
       <span class="ml-auto outline-viewcard outline-viewcard-danger">
         <span class=" ml-1 "><%= fa_icon "arrow-down", class: 'fa-fw text-danger' %></span>
-        <span class="pr-2" style="font-weight: 500"> <%= stat1 - stat2 %></span>
+        <span class="pr-2" style="font-weight: 500"> <%= (stat1 - stat2).round(2) %></span>
       </span>
       <% end  %>
     </span>
   </div>
   <div class="d-inline-flex align-items-baseline mb-1" style="width: 100%">
-      <span style="font-size: 1.5rem; font-weight: 700" class="pl-1"><%= stat1 %></span>
+      <span style="font-size: 1.5rem; font-weight: 700" class="pl-1"><%= stat1.round(2) %></span>
     </div>
     <div class="pb-1" style="height: 2.5rem;">
       <canvas id="<%= key %>" width="200" height="90"></canvas>

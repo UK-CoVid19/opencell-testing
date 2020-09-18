@@ -1,7 +1,9 @@
-class FailureJob < ApplicationJob
+class RejectionJob < ApplicationJob
   queue_as :default
 
-  extend ClientNotifyModule
+  include ClientNotifyModule
+
+  retry_on NotifyException
 
   def perform(sample, user)
     sample.with_user(user) do |s|
@@ -14,6 +16,10 @@ class FailureJob < ApplicationJob
     unless sample.client.notify
       sample.commcomplete!
       return
+    end
+
+    unless sample.rejected?
+      raise "Invalid state to send rejection"
     end
 
     to_send = {

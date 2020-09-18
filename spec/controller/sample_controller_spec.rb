@@ -59,6 +59,10 @@ RSpec.describe SamplesController, type: :controller do
       expect(post: "/samples").to route_to("samples#create")
     end
 
+    it "routes to #reject" do
+      expect(patch: "/samples/1/reject").to route_to("samples#reject", id: "1")
+    end
+
     it "routes to #destroy" do
       expect(delete: "/samples/1").to route_to("samples#destroy", id: "1")
     end
@@ -195,6 +199,14 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
     end
+      
+    it "should not let a patient reject a sample " do
+      patch :reject, params: {id: @sample.id}
+      expect(flash[:alert]).to eq("You are not authorized to perform this action")
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(root_path)
+    
+    end
   end
 
   context("signed in as staff member") do
@@ -258,7 +270,15 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to redirect_to client_path(@client)
       expect(Sample.all.size).to eq before + 1
       expect(Sample.last.state).to eq :received.to_s
-    end 
+    end
+
+    it "should let a staff member reject a sample " do
+      patch :reject, params: { id: @sample.id }
+      expect(flash[:alert]).to be_nil
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(pending_plate_path)
+      expect(Sample.find(@sample.id).state).to eq :rejected.to_s
+    end
 
     describe "step3_bulkprepare" do
       # note that samples should not be in the permanent control wells
