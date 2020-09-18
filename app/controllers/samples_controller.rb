@@ -1,6 +1,6 @@
 class SamplesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze]
+  before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze, :reject]
   around_action :wrap_in_current_user
   after_action :verify_policy_scoped, only: [:index, :step3_pendingprepare, :pending_plate]
   after_action :verify_authorized
@@ -46,6 +46,14 @@ class SamplesController < ApplicationController
   def new
     @sample = Sample.new
     authorize @sample
+  end
+
+  def reject
+    @sample.with_user(current_user, &:rejected!)
+    respond_to do |format|
+      format.html { redirect_to pending_plate_url, notice: 'Sample was successfully rejected.' }
+      format.json { head :accepted }
+    end
   end
 
   def dashboard

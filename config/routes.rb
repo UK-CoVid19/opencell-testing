@@ -34,9 +34,11 @@ Rails.application.routes.draw do
   end
   get '/tests/complete', to: 'tests#complete'
   get '/tests/done', to: 'tests#done'
-  resources :samples, except: [:update, :edit]
-
-  
+  resources :samples, except: [:update, :edit] do
+    member do
+      patch 'reject'
+    end
+  end
 
   devise_for :users
   resources :users, except: [:edit, :update]

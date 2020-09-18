@@ -1,7 +1,7 @@
 require 'net/http'
 
 class ResultNotifyJob < ApplicationJob
-  extend ClientNotifyModule
+  include ClientNotifyModule
 
   queue_as :default
 

@@ -10,6 +10,7 @@
             <th>UID</th>
             <th>Sample</th>
             <th>Client</th>
+            <th colspan="1">Actions</th>
           </tr>
           </thead>
           <tbody>
@@ -27,6 +28,13 @@
                 <%= link_to sample.client do  %>
                   <%= tag.button class: 'btn btn-sm btn-outline-primary' do %>
                     <%= sample.client.name %>
+                  <% end  %>
+                <% end  %>
+              </td>
+              <td>
+                <%= link_to reject_sample_path(sample), method: :patch, data: {confirm: "Reject sample #{sample.uid} and request reswab?"} do  %>
+                  <%= tag.button class: 'btn btn-sm btn-danger' do %>
+                    Reject <%= fa_icon "warning" %>
                   <% end  %>
                 <% end  %>
               </td>

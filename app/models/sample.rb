@@ -15,7 +15,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: { requested: 0, dispatched: 1, received: 2, preparing: 3, prepared:4, tested:5, analysed: 6, communicated: 7, commcomplete: 8, commfailed: 9, rejected: 10  }
+  enum state: { requested: 0, dispatched: 1, received: 2, preparing: 3, prepared: 4, tested: 5, analysed: 6, communicated: 7, commcomplete: 8, commfailed: 9, rejected: 10  }
 
   scope :is_requested, -> { where(state: Sample.states[:requested]) }
   scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }
@@ -27,7 +27,7 @@ class Sample < ApplicationRecord
   scope :is_communicated, -> { where(state: Sample.states[:communicated]) }
 
   after_update :send_notification_after_analysis, if: :communicated?
-  after_update :send_failure, if: :failed?
+  after_update :send_rejection, if: :rejected?
 
   CONTROL_CODE = 1234
 
@@ -110,11 +110,11 @@ class Sample < ApplicationRecord
   end
   
   def send_notification_after_analysis
-      ResultNotifyJob.perform_later(self, Sample.block_user) if(self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
+      ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
   end
 
-  def send_failure
-    FailureJob.perform_later(self, @with_user)
+  def send_rejection
+    RejectionJob.perform_later(self, @with_user) if ( self.saved_change_to_state? && Rails.application.config.send_test_results)
   end
 
   def set_uid
@@ -132,6 +132,8 @@ class Sample < ApplicationRecord
     return true if Sample.states.to_hash[state] == Sample.states[:rejected]
     return true if Sample.states.to_hash[state] == Sample.states[:commfailed] && Sample.states[previous_state] == Sample.states[:communicated]
     return true if Sample.states.to_hash[state] == Sample.states[:commcomplete] && Sample.states[previous_state] == Sample.states[:commfailed]
+    return true if Sample.states.to_hash[state] == Sample.states[:commcomplete] && Sample.states[previous_state] == Sample.states[:rejected]
+    return true if Sample.states.to_hash[state] == Sample.states[:commfailed] && Sample.states[previous_state] == Sample.states[:rejected]
 
     state_value = Sample.states[previous_state]
     (Sample.states[state] - state_value) == 1

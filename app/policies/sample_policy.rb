@@ -56,6 +56,10 @@ class SamplePolicy < ApplicationPolicy
   def destroy?
     staffmember?
   end
+  
+  def reject?
+    staffmember?
+  end
 
   def step3_bulkprepared?
     staffmember?

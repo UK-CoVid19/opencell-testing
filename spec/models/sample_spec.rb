@@ -76,7 +76,7 @@ RSpec.describe Sample, type: :model do
       end
       Sample.with_user(nil) do
         @sample.state = Sample.states[:commfailed]
-        expect { @sample.save! }.to raise_error
+        expect { @sample.save! }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
@@ -85,6 +85,32 @@ RSpec.describe Sample, type: :model do
         Sample.with_user(@user) do
           @sample = create(:sample, state: value)
           @sample.state = Sample.states[:rejected]
+          expect { @sample.save! }.to_not raise_error
+        end
+      end
+    end
+
+    it "should enqueue a rejection job on rejection" do
+      Rails.application.config.send_test_results = true
+      Sample.with_user(@user) do
+        @sample = create(:sample)
+        expect { @sample.rejected! }.to have_enqueued_job(RejectionJob)
+      end
+    end
+
+    it "should not enqueue a rejection job on rejection if sending disabled" do
+      Rails.application.config.send_test_results = false
+      Sample.with_user(@user) do
+        @sample = create(:sample)
+        expect { @sample.rejected! }.to_not have_enqueued_job(RejectionJob)
+      end
+    end
+
+    [:commcomplete, :commfailed].each do |state|
+      it "should allow a rejected sample to transition to communication states" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :rejected)
+          @sample.state = Sample.states[state]
           expect { @sample.save! }.to_not raise_error
         end
       end
