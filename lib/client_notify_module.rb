@@ -12,7 +12,7 @@ module ClientNotifyModule
   ].freeze
 
   def make_request(to_send)
-    
+
     url = URI.parse(ENV['NOTIFY_URL'])
     authorization = ActionController::HttpAuthentication::Basic.encode_credentials(ENV['NOTIFY_USERNAME'], ENV['NOTIFY_PASSWORD'])
     http = Net::HTTP.new(url.host, url.port)
@@ -27,7 +27,6 @@ module ClientNotifyModule
     begin
       response = http.request(request)
     rescue *ALL_NET_HTTP_ERRORS => e
-      sample.commfailed!
       Rails.logger.error("Request failed with exception #{e}")
       raise NotifyException.new(e), "Request failed with exception #{e}"
     end

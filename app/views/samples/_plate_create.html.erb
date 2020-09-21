@@ -67,7 +67,14 @@
         var cell_index = 0
 
         let pending_samples = []
-        let setSamples = []
+
+        function setSamples(){
+            let items =  Array.from($('[data-set-item]')).map(i => {
+                return i.getAttribute("data-set-item");
+            });
+
+            return Array.from(items);
+        };
 
         $(window).keydown(function(event) {
             if (event.keyCode == 13) {
@@ -76,7 +83,7 @@
             }
         });
 
-
+        
         function mapSamples(items, setter) {
             mapped = items.map(item => {
                 return {
@@ -92,28 +99,16 @@
             .then(res => res.json())
             .then(js => mapSamples(js, i => pending_samples = i))
 
-        function getRemainingSamples() {
-            to_complete = pending_samples.filter(x => !setSamples.includes(x.value.toString()));
-            return to_complete;
-        }
 
-        function validateInput(sampleId, success, failure) {
-            item = pending_samples.find(p => p.label == sampleId || p.value == sampleId)
-            if (!item) {
-                const err = 'You cannot process this sample ID ' + sampleId;
-                failure(err)
+        function validateInput(item, success, failure) {
+            if (setSamples().includes(item.value)) {
+                const err = 'Sample has already been assigned to a well';
+                failure(err);
             } else {
-                if (setSamples.includes(item.value)) {
-                    const err = 'Sample has already been assigned to a well';
-
-                    failure(err);
+                if (typeof success === 'function') {
+                    success(item);
                 } else {
-                    if (typeof success === 'function') {
-                        success(item);
-                    } else {
-                        return
-                    }
-
+                    return
                 }
             }
         }
@@ -123,12 +118,11 @@
             if (uid == null || uid == "") {
                 oldValue = event.currentTarget.getAttribute('data-set-item');
                 if (oldValue) {
-                    setIndex = setSamples.indexOf(oldValue)
+                    setIndex = setSamples().indexOf(oldValue)
                     if (setIndex == -1) {
                         alert("cannot remove sample not set")
                         return;
                     }
-                    setSamples.splice(setIndex, 1)
                     event.currentTarget.removeAttribute('data-set-item')
                 }
                 return
@@ -151,26 +145,30 @@
             };
         };
 
-        function handleSet(event, uid){
-            if (uid.length > 1) {
-                validateInput(uid, (match) => {
+        function handleSet(event){
+            const uid = event.currentTarget.value
+            if (uid.length > 0) {
+                item = pending_samples.find(p => p.label == uid || p.value == uid)
+                if(item && item.value == event.currentTarget.getAttribute('data-set-item')){
+                    event.currentTarget.value = item.value
+                    return
+                }
+                if(!item){
+                    event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
+                    alert("Cannot set sample ID " + uid);
+                    return 
+                }
+                validateInput(item, (match) => {
                     event.currentTarget.value = match.value
                     event.currentTarget.setAttribute('data-set-item', match.value)
-                    setSamples.push(match.value)
                 }, (err) => {
-                    event.currentTarget.value = null;
+                    event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
                     alert(err);
                 })
             }
         }
-
-        function handleInput(event) {
-            const uid = event.currentTarget.value;
-            handleDeletion(event);
-            handleSet(event, uid);
-        }
-  
-        $(".sample-assign").on('input', debounce(handleInput, 500));
-
+        
+        $(".sample-assign").on('input', handleDeletion);
+        $(".sample-assign").on('input', debounce(handleSet, 500));
     });
 </script>
