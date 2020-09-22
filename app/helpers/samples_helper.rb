@@ -81,4 +81,17 @@ module SamplesHelper
       fa_icon "question-circle", class: 'fa-fw'
     end
   end
+
+
+  def get_focus_index(well)
+    # the index is the letter index plus the number index times the letter index
+    row_index = PlateHelper.rows.find_index(well.row)
+    raise "row out of range #{well.row}" unless row_index
+
+    col_index = PlateHelper.columns.find_index(well.column)
+    raise "column out of range #{well.column}" unless col_index
+    
+    rows_a = PlateHelper.rows.to_a
+    (row_index + 1) + (rows_a.size * col_index)
+  end
 end

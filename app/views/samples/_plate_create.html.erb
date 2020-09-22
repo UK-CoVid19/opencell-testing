@@ -40,13 +40,13 @@
                     <%= builder.hidden_field :column  %>
                     <%= builder.fields_for :sample, Sample.new do |sample_builder| %>
                     <% if auto_control?(builder.object.row, builder.object.column) %>
-                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control", disabled: true, placeholder: 'N/A' %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control control-well", disabled: true, placeholder: 'N/A', tabindex: get_focus_index(builder.object) %>
                     <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
                     <% elsif control?(builder.object.row, builder.object.column) %>
-                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control" %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control control-well", tabindex: get_focus_index(builder.object) %>
                     <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
                     <% else %>
-                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control sample-assign" %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control sample-assign", tabindex: get_focus_index(builder.object) %>
                     <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: false %>
                     <% end %>
                     <% end %>
@@ -83,7 +83,6 @@
             }
         });
 
-        
         function mapSamples(items, setter) {
             mapped = items.map(item => {
                 return {
@@ -128,7 +127,7 @@
                 return
             }
         }
-        
+
         function debounce(func, wait, immediate) {
             var timeout;
             return function() {
@@ -144,6 +143,12 @@
                 if (callNow) func.apply(context, args);
             };
         };
+
+        function tabNext(event){
+            const currentTabIndex = Number(event.currentTarget.getAttribute('tabindex'))
+            const selector = `[tabindex=${currentTabIndex +1}]`
+            $(selector).focus()
+        }
 
         function handleSet(event){
             const uid = event.currentTarget.value
@@ -161,13 +166,26 @@
                 validateInput(item, (match) => {
                     event.currentTarget.value = match.value
                     event.currentTarget.setAttribute('data-set-item', match.value)
+                    tabNext(event);
                 }, (err) => {
                     event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
                     alert(err);
                 })
             }
         }
-        
+
+
+        function handleControl(event){
+            if(event.currentTarget.value != <%= Sample::CONTROL_CODE %>){
+                event.currentTarget.value = null;
+                alert('invalid control code')
+                return;
+            }
+            
+            tabNext(event);
+        }
+
+        $(".control-well").on('input', debounce(handleControl, 500));
         $(".sample-assign").on('input', handleDeletion);
         $(".sample-assign").on('input', debounce(handleSet, 500));
     });
