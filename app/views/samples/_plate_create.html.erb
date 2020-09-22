@@ -164,6 +164,14 @@
                     return 
                 }
                 validateInput(item, (match) => {
+                    const setValue = event.currentTarget.getAttribute('data-set-item')
+                    if(setValue){
+                        const canWrite = confirm(`Overwrite ${setValue} ?`)
+                        if(!canWrite){
+                            event.currentTarget.value = setValue
+                            return 
+                        }
+                    }
                     event.currentTarget.value = match.value
                     event.currentTarget.setAttribute('data-set-item', match.value)
                     tabNext(event);
