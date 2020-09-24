@@ -61,6 +61,14 @@ class SamplePolicy < ApplicationPolicy
     staffmember?
   end
 
+  def retestpositive?
+    staffmember?
+  end
+
+  def retestinconclusive?
+    staffmember?
+  end
+
   def step3_bulkprepared?
     staffmember?
   end

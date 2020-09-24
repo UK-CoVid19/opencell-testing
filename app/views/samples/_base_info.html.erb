@@ -55,8 +55,30 @@
                     <span><%= @sample.test_result.state.capitalize %></span>
                 </span>
             </div>
-
             <% end  %>
+            <% if @sample.retest? %>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "arrow-right", class: 'fa-fw' %>
+                </span>
+                <%= link_to sample_path(@sample.retest) do %>
+                    <%= tag.button class: 'btn btn-warning' do %>
+                        Retest
+                    <% end %>
+                <% end %>
+            </div>
+            <% elsif @sample.rerun_for? %>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "arrow-left", class: 'fa-fw' %>
+                </span>
+                <%= link_to sample_path(@sample.rerun_for.source_sample) do %>
+                    <%= tag.button class: 'btn btn-warning' do %>
+                        Retesting
+                    <% end %>
+                <% end %>
+            </div>
+            <% end %>
         </div>
     </div>
     <div class="card-footer">

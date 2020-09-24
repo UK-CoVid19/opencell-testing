@@ -5,6 +5,10 @@ class Sample < ApplicationRecord
   belongs_to :client
   has_many :records, dependent: :destroy
   has_one :well, dependent: :nullify
+  has_one :rerun
+  has_one :rerun_for, class_name: "Rerun", foreign_key: :retest
+  has_one :source_sample, through: :rerun, class_name: "Sample"
+  has_one :retest, through: :rerun, class_name: "Sample", foreign_key: :retest
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
@@ -15,7 +19,7 @@ class Sample < ApplicationRecord
   before_create :set_creation_record
   before_update :set_change_record, if: :state_changed?
 
-  enum state: { requested: 0, dispatched: 1, received: 2, preparing: 3, prepared: 4, tested: 5, analysed: 6, communicated: 7, commcomplete: 8, commfailed: 9, rejected: 10  }
+  enum state: { requested: 0, dispatched: 1, received: 2, preparing: 3, prepared: 4, tested: 5, analysed: 6, communicated: 7, commcomplete: 8, commfailed: 9, rejected: 10, retest: 11  }
 
   scope :is_requested, -> { where(state: Sample.states[:requested]) }
   scope :is_dispatched, -> { where(state: Sample.states[:dispatched]) }
@@ -51,6 +55,20 @@ class Sample < ApplicationRecord
     ensure
       @with_user = nil
     end
+  end
+
+  def rerun_for?
+    rerun_for.present?
+  end
+
+  def create_retest(reason)
+    self.transaction do
+      attribs = attributes.merge!(state: Sample.states[:received]).except!("id")
+      update(uid: uid + '-r', state: Sample.states[:retest])
+      Rerun.create(source_sample: self, retest_attributes: attribs, reason: reason)
+      save!
+    end
+    retest
   end
 
   def self.tested_last_week
@@ -129,7 +147,7 @@ class Sample < ApplicationRecord
   end
 
   def valid_transition? previous_state
-    return true if Sample.states.to_hash[state] == Sample.states[:rejected]
+    return true if Sample.states.to_hash[state] == Sample.states[:rejected] || Sample.states.to_hash[state] == Sample.states[:retest]
     return true if Sample.states.to_hash[state] == Sample.states[:commfailed] && Sample.states[previous_state] == Sample.states[:communicated]
     return true if Sample.states.to_hash[state] == Sample.states[:commcomplete] && Sample.states[previous_state] == Sample.states[:commfailed]
     return true if Sample.states.to_hash[state] == Sample.states[:commcomplete] && Sample.states[previous_state] == Sample.states[:rejected]

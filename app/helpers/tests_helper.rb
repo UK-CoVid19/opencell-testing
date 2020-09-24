@@ -13,4 +13,15 @@ module TestsHelper
       "Nothing here"
     end
   end
+
+  def retest_disabled?(well)
+    if well.sample.retest?
+      return true
+    end
+
+    if well.sample.rerun_for?
+      return true
+    end
+    false
+  end
 end

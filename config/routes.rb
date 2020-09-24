@@ -37,6 +37,8 @@ Rails.application.routes.draw do
   resources :samples, except: [:update, :edit] do
     member do
       patch 'reject'
+      post 'retestpositive'
+      post 'retestinconclusive'
     end
   end
 

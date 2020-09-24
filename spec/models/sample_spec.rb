@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe Sample, type: :model do
   describe "update model" do
-
     before :each do
       @user = create(:user)
       @client = create(:client)
@@ -13,6 +12,33 @@ RSpec.describe Sample, type: :model do
         @sample = create(:sample, state: Sample.states[:requested])
         @sample.state = Sample.states[:prepared]
         expect { @sample.save! }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    it "should create a valid retest" do
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:tested])
+        uid = @sample.uid
+        @retest = @sample.create_retest(Rerun::INCONCLUSIVE)
+        expect(@sample.state).to eq "retest"
+        expect(@retest.state).to eq "received"
+        expect(@sample.retest).to eq @retest
+        expect(@retest.persisted?).to eq true
+        expect(@sample.uid).to eq "#{uid}-r"
+        expect(@retest.uid).to eq uid
+        expect(@sample.client).to eq @retest.client
+      end
+    end
+
+    it "should create a rerun with the correct directional associations" do
+      Sample.with_user(@user) do
+        @sample_s = create(:sample, state: Sample.states[:tested])
+        @retest = @sample_s.create_retest(Rerun::INCONCLUSIVE)
+        expect(@retest).to_not be nil
+        expect(@sample_s.retest).to eq @retest
+        expect(@sample_s.retest?).to eq true
+        expect(@retest.source_sample).to eq @sample
+        expect(@sample_s.rerun.reason).to eq Rerun::INCONCLUSIVE
       end
     end
 
@@ -137,26 +163,27 @@ RSpec.describe Sample, type: :model do
         new_sample = Sample.create(client: @client)
         other_sample = Sample.create(client: @client)
         expect(other_sample.uid).to_not eq new_sample.uid
-      end 
+      end
 
       it "should validate that the sample can only be one well on the same plate" do
         # this is hacky because we don't validate the changes to be added on the wells, rather make an assocation on the plate. This is brittle and relies on the awful method in the controller
-        plate = build(:plate, wells: 96.times.map {|t| build(:well)})
+        plate = build(:plate, wells: 96.times.map { |t| build(:well) })
         plate.save
         @sample = nil
         Sample.with_user(@user) do
-           @sample = create(:sample)
+          @sample = create(:sample)
         end
-        func = -> {Plate.transaction do
-          @sample.plate = plate
-          plate.samples << @sample
-          plate.wells.first.sample = @sample
-          plate.wells.second.sample = @sample
-          plate.save!
-        end}
+        func = lambda {
+          Plate.transaction do
+            @sample.plate = plate
+            plate.samples << @sample
+            plate.wells.first.sample = @sample
+            plate.wells.second.sample = @sample
+            plate.save!
+          end
+        }
 
         expect { func.call }.to raise_error(ActiveRecord::RecordInvalid)
-
       end
     end
   end
