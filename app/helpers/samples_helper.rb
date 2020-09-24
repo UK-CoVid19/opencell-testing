@@ -20,6 +20,10 @@ module SamplesHelper
       return tag.span class: 'badge badge-pill badge-danger' do
         status.capitalize
       end
+    when Sample.states[:retest]
+      return tag.span class: 'badge badge-pill badge-warning' do
+        status.capitalize
+      end
     else
       raise
     end
@@ -54,7 +58,7 @@ module SamplesHelper
       return 75
     when Sample.states[:communicated], Sample.states[:commcomplete]
       return 100
-    when Sample.states[:rejected], Sample.states[:commfailed]
+    when Sample.states[:rejected], Sample.states[:commfailed], Sample.states[:retest]
       return 100
     else
       raise
