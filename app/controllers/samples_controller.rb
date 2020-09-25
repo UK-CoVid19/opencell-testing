@@ -12,7 +12,7 @@ class SamplesController < ApplicationController
   end
 
   def pending_plate
-    @samples = policy_scope(Sample.includes(:client).includes(:rerun_for).is_received)
+    @samples = policy_scope(Sample.is_received.includes(:client).includes(rerun_for: [:source_sample]))
     authorize Sample
   end
 
