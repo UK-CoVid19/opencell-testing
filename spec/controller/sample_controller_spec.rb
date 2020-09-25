@@ -66,6 +66,14 @@ RSpec.describe SamplesController, type: :controller do
     it "routes to #destroy" do
       expect(delete: "/samples/1").to route_to("samples#destroy", id: "1")
     end
+
+    it "routes to #retestpositive" do
+      expect(post: "/samples/1/retestpositive").to route_to("samples#retestpositive", id: "1")
+    end
+
+    it "routes to #retestinconclusive" do
+      expect(post: "/samples/1/retestinconclusive").to route_to("samples#retestinconclusive", id: "1")
+    end
   end
 
   context("signed in as patient") do
@@ -383,6 +391,53 @@ RSpec.describe SamplesController, type: :controller do
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
         expect(Sample.all.size).to eq current_samples + 1
+      end
+     
+    end
+
+    describe "set reruns" do
+      it "should create a incon. rerun for a sample if it does not have a rerun already" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:tested], client: @client)
+        end
+        post :retestinconclusive, params: {id: @this_sample.id }
+        expect(response).to have_http_status(:accepted)
+        s = Sample.find(@this_sample.id)
+        expect(s.state).to eq "retest"
+        expect(s.rerun.present?).to eq true
+        expect(s.rerun.reason).to eq Rerun::INCONCLUSIVE
+        expect(s.retest.uid).to eq @this_sample.uid
+      end
+
+      it "should create a positive rerun for a sample if it does not have a rerun already" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:tested], client: @client)
+        end
+        post :retestpositive, params: {id: @this_sample.id }
+        expect(response).to have_http_status(:accepted)
+        s = Sample.find(@this_sample.id)
+        expect(s.state).to eq "retest"
+        expect(s.rerun.present?).to eq true
+        expect(s.rerun.reason).to eq Rerun::POSITIVE
+        expect(s.retest.uid).to eq @this_sample.uid
+      end
+
+      it "should not create a rerun and fail if trying to create a rerun where one already exists" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:tested], client: @client)
+          @this_sample.create_retest(Rerun::INCONCLUSIVE)
+        end
+        post :retestinconclusive, params: {id: @this_sample.id }
+        expect(response).to have_http_status(:bad_request)
+      end
+
+      it "should not create a rerun and fail if trying to create a rerun where one already exists" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:tested], client: @client)
+          @this_sample.create_retest(Rerun::POSITIVE)
+        end
+        post :retestpositive, params: {id: @this_sample.id }
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end

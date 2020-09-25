@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_23_150750) do
+ActiveRecord::Schema.define(version: 2020_09_25_095412) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,10 +110,12 @@ ActiveRecord::Schema.define(version: 2020_09_23_150750) do
     t.string "uid"
     t.bigint "client_id"
     t.boolean "control", default: false
+    t.boolean "is_retest", default: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"
-    t.index ["uid"], name: "index_samples_on_uid", unique: true
+    t.index ["uid", "is_retest"], name: "index_samples_on_uid_and_is_retest", unique: true
+    t.index ["uid"], name: "index_samples_on_uid"
   end
 
   create_table "security_questions", force: :cascade do |t|

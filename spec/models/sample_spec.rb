@@ -24,9 +24,28 @@ RSpec.describe Sample, type: :model do
         expect(@retest.state).to eq "received"
         expect(@sample.retest).to eq @retest
         expect(@retest.persisted?).to eq true
-        expect(@sample.uid).to eq "#{uid}-r"
+        expect(@sample.uid).to eq @retest.uid
         expect(@retest.uid).to eq uid
         expect(@sample.client).to eq @retest.client
+        expect(@sample.is_retest).to eq false
+        expect(@retest.is_retest).to eq true
+      end
+    end
+
+    it "should not let a sample have more than one retest" do
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:tested])
+        @retest = @sample.create_retest(Rerun::INCONCLUSIVE)
+        @sample.reload
+        expect { @sample.create_retest(Rerun::INCONCLUSIVE) }.to raise_error "Retest already exists"
+      end
+    end
+
+    it "should not let a retest be retested" do
+      Sample.with_user(@user) do
+        @sample = create(:sample, state: Sample.states[:tested])
+        @retest = @sample.create_retest(Rerun::INCONCLUSIVE)
+        expect { @retest.create_retest(Rerun::INCONCLUSIVE) }.to raise_error "Sample is a rerun"
       end
     end
 
@@ -34,11 +53,32 @@ RSpec.describe Sample, type: :model do
       Sample.with_user(@user) do
         @sample_s = create(:sample, state: Sample.states[:tested])
         @retest = @sample_s.create_retest(Rerun::INCONCLUSIVE)
+        @sample_s.reload
         expect(@retest).to_not be nil
         expect(@sample_s.retest).to eq @retest
         expect(@sample_s.retest?).to eq true
         expect(@retest.source_sample).to eq @sample
         expect(@sample_s.rerun.reason).to eq Rerun::INCONCLUSIVE
+      end
+    end
+
+    [[false,true], [true,false]].each do |a, b|
+      it "should allow the same UID if the retest flag is different" do
+        Sample.with_user(@user) do
+          @sample_a = create(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: a)
+          @sample_b_attribs = build(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b).attributes
+          expect { Sample.create!(@sample_b_attribs) }.to_not raise_error
+        end
+      end
+    end
+
+    [false, true].each do |b|
+      it "should not allow the same UID if the retest flag is the same" do
+        Sample.with_user(@user) do
+          @sample_a = create(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b)
+          @sample_b_attribs = build(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b).attributes
+          expect { Sample.create!(@sample_b_attribs) }.to raise_error ActiveRecord::RecordInvalid
+        end
       end
     end
 

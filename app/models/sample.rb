@@ -12,7 +12,7 @@ class Sample < ApplicationRecord
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
-  validates_uniqueness_of :uid, uniqueness: true
+  validates_uniqueness_of :uid, scope: :is_retest
   has_one :test_result, through: :well
 
   before_create :set_uid, unless: :uid?
@@ -62,9 +62,12 @@ class Sample < ApplicationRecord
   end
 
   def create_retest(reason)
+    raise "Retest already exists" if rerun.present?
+    raise "Sample is a rerun" if is_retest
+
     self.transaction do
-      attribs = attributes.merge!(state: Sample.states[:received]).except!("id")
-      update(uid: uid + '-r', state: Sample.states[:retest])
+      attribs = attributes.merge!(state: Sample.states[:received], is_retest: true).except!("id")
+      update(state: Sample.states[:retest])
       Rerun.create(source_sample: self, retest_attributes: attribs, reason: reason)
       save!
     end
@@ -126,7 +129,7 @@ class Sample < ApplicationRecord
   def self.dummy
     [{ count: 0 }, { count: 0 }]
   end
-  
+
   def send_notification_after_analysis
       ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
   end

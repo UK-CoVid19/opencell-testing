@@ -6,5 +6,6 @@ FactoryBot.define do
     client { create(:client) }
     uid { generate(:uid) }
     created_at { DateTime.now }
+    is_retest { false }
   end
 end

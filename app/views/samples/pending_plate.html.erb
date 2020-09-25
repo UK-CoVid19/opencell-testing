@@ -10,6 +10,8 @@
             <th>UID</th>
             <th>Sample</th>
             <th>Client</th>
+            <th width="25">Rerun</th>
+            <th>Elapsed</th>
             <th colspan="1">Actions</th>
           </tr>
           </thead>
@@ -30,6 +32,18 @@
                     <%= sample.client.name %>
                   <% end  %>
                 <% end  %>
+              </td>
+              <td>
+                <% if sample.is_retest %>
+                  <%= fa_icon "check" %>
+                  <p hidden>true</p>
+                <% else %>
+                  <%= fa_icon "times" %>
+                  <p hidden>false</p>
+                <% end %>
+              </td>
+              <td>
+                <%= "#{get_elapsed_hours(sample)} Hours" %>
               </td>
               <td>
                 <%= link_to reject_sample_path(sample), method: :patch, data: {confirm: "Reject sample #{sample.uid} and request reswab?"} do  %>
