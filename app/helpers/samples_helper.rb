@@ -65,6 +65,17 @@ module SamplesHelper
     end
   end
 
+
+  def get_elapsed_hours(sample)
+    rerun = sample.rerun_for?
+    if rerun
+      t = sample.rerun_for.source_sample.created_at
+    else
+      t = sample.created_at
+    end
+    ((Time.now - t) / 3600).round
+  end
+
   def control?(row, col)
     PlateHelper.control_positions.include?(row: row, col: col)
   end

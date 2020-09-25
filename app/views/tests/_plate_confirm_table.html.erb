@@ -24,8 +24,8 @@
                 <%= result_builder.hidden_field :id %>
                 <%= result_builder.text_field :comment, class: 'form-control m-2' %>
                 <%= result_builder.select :state, TestResult.states.map {|key, val| [key.humanize, key]},{}, {class: 'form-control m-2'} %>
-                <% unless control?(rw.row, rw.column) %>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-sample-id=<%= rw.sample.id %> <%= retest_disabled?(rw) ? 'disabled' : '' %>>Retest</button>
+                <% unless control?(rw.row, rw.column) || retest_disabled?(rw) %>
+                <button type="button" id="retestbutton" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-sample-uid=<%= rw.sample.uid %> data-sample-id=<%= rw.sample.id %>>Retest</button>
                 <% end %>
                 <% end %>
                 <% else %>
@@ -48,7 +48,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Retesting will stop notification of test results and create a new test </p>
+        <p>Retesting will <strong>STOP</strong> notification of test results and create a new test </p>
         <input name="sample-id" id="sampleid" type="text" hidden>
       </div>
       <div class="modal-footer">
@@ -65,10 +65,11 @@ $(document).on('turbolinks:load', function() {
   $('#exampleModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     var sampleId = button.data('sample-id') // Extract info from data-* attributes
+    var uid = button.data('sample-uid')
     // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
     var modal = $(this)
-    modal.find('.modal-title').text('Retest Sample ' + sampleId)
+    modal.find('.modal-title').text('Retest Sample ' + sampleId + ': ' + uid)
     modal.find('.modal-body input').val(sampleId)
   })
 
@@ -76,14 +77,14 @@ $(document).on('turbolinks:load', function() {
   function retestPositive(){
     sendRequest('retestpositive').then(() => {
       // set positive to disable
-      document.getElementById('positiveClick').disabled = true;
+      document.getElementById('retestbutton').disabled = true;
     })
   }
 
 
   function retestInconclusive(){
     sendRequest('retestinconclusive').then(() => {
-      document.getElementById('inconclusiveClick').disabled = true;
+      document.getElementById('retestbutton').disabled = true;
     })
   }
 
@@ -91,18 +92,24 @@ $(document).on('turbolinks:load', function() {
     const sampleId = document.getElementById('sampleid').value
     const token = document.querySelector('meta[name="csrf-token"]').content
     const url =  `/samples/${sampleId}/${endpoint}`
-    fetch(url, {method: 'POST', redirect: 'follow', headers: {'X-CSRF-TOKEN': token}})
-    .then(resp => {
-      if(!resp.ok){
-        throw Error(response.statusText)
+
+    return new Promise((resolve, reject) => {
+      fetch(url, {method: 'POST', redirect: 'follow', headers: {'X-CSRF-TOKEN': token}})
+      .then(resp => {
+        if(!resp.ok){
+          throw Error(response.statusText)
+        }
+        $('#exampleModal').modal('toggle');
+        resolve();
+        }
+      ).catch(err => {
+        alert('Could not complete request')
+        reject();
+        })
       }
-      $('#exampleModal').modal('toggle');
-      return Promise.resolve();
-    })
-    .catch(err => 
-      alert('Could Not Set Retest')
     )
   }
+    
 
   document.getElementById ("positiveClick").addEventListener ("click", retestPositive);
   document.getElementById ("inconclusiveClick").addEventListener ("click", retestInconclusive);

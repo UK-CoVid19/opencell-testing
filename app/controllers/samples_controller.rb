@@ -12,7 +12,7 @@ class SamplesController < ApplicationController
   end
 
   def pending_plate
-    @samples = policy_scope(Sample.is_received)
+    @samples = policy_scope(Sample.includes(:client).includes(:rerun_for).is_received)
     authorize Sample
   end
 
@@ -57,13 +57,21 @@ class SamplesController < ApplicationController
   end
 
   def retestpositive
-    @retest = @sample.create_retest(Rerun::POSITIVE)
-    head :accepted
+    begin
+      @retest = @sample.create_retest(Rerun::POSITIVE)
+      head :accepted
+    rescue
+      head :bad_request
+    end
   end
 
   def retestinconclusive
-    @retest = @sample.create_retest(Rerun::INCONCLUSIVE)
-    head :accepted
+    begin
+      @retest = @sample.create_retest(Rerun::INCONCLUSIVE)
+      head :accepted
+    rescue
+      head :bad_request
+    end
   end
 
   def dashboard
