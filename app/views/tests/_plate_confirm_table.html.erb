@@ -25,7 +25,7 @@
                 <%= result_builder.text_field :comment, class: 'form-control m-2' %>
                 <%= result_builder.select :state, TestResult.states.map {|key, val| [key.humanize, key]},{}, {class: 'form-control m-2'} %>
                 <% unless control?(rw.row, rw.column) || retest_disabled?(rw) %>
-                <button type="button" id="retestbutton" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-sample-uid=<%= rw.sample.uid %> data-sample-id=<%= rw.sample.id %>>Retest</button>
+                <button type="button" class="btn btn-primary retestbutton" data-toggle="modal" data-target="#exampleModal" data-sample-uid=<%= rw.sample.uid %> data-sample-id=<%= rw.sample.id %>>Retest</button>
                 <% end %>
                 <% end %>
                 <% else %>
@@ -71,20 +71,23 @@ $(document).on('turbolinks:load', function() {
     var modal = $(this)
     modal.find('.modal-title').text('Retest Sample ' + sampleId + ': ' + uid)
     modal.find('.modal-body input').val(sampleId)
+    modal.find('#positiveClick').data('sample', sampleId)
+    modal.find('#inconclusiveClick').data('sample', sampleId)
   })
 
 
-  function retestPositive(){
+  function retestPositive(event){
     sendRequest('retestpositive').then(() => {
       // set positive to disable
-      document.getElementById('retestbutton').disabled = true;
+      const sampleId = $(event.target).data('sample')
+      $(`.retestbutton[data-sample-id=${sampleId}]`).prop('disabled', true)
     })
   }
 
-
-  function retestInconclusive(){
+  function retestInconclusive(event){
     sendRequest('retestinconclusive').then(() => {
-      document.getElementById('retestbutton').disabled = true;
+      const sampleId = $(event.target).data('sample')
+      $(`.retestbutton[data-sample-id=${sampleId}]`).prop('disabled', true)
     })
   }
 

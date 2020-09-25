@@ -6,7 +6,7 @@ class Sample < ApplicationRecord
   has_many :records, dependent: :destroy
   has_one :well, dependent: :nullify
   has_one :rerun
-  has_one :rerun_for, class_name: "Rerun", foreign_key: :retest
+  has_one :rerun_for, class_name: "Rerun", foreign_key: :retest_id
   has_one :source_sample, through: :rerun, class_name: "Sample"
   has_one :retest, through: :rerun, class_name: "Sample", foreign_key: :retest
   belongs_to :plate, optional: true
