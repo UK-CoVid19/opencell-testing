@@ -192,6 +192,67 @@ RSpec.describe Sample, type: :model do
       end
     end
 
+    describe "stats" do
+      it "should generate valid stats when samples are created straight at commcomplete stage" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :commcomplete, client: @client)
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 1
+          expect(@stats.first.requested).to eq 0
+          expect(@stats.first.retests).to eq 0
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
+      end
+
+      it "should record the request and communication of a sample" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          @sample.preparing!
+          @sample.prepared!
+          @sample.prepared!
+          @sample.tested!
+          @sample.analysed!
+          @sample.communicated!
+          @sample.commcomplete!
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 1
+          expect(@stats.first.requested).to eq 1
+          expect(@stats.first.retests).to eq 0
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
+      end
+
+      it "should record the request and rejection of a sample" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          @sample.preparing!
+          @sample.rejected!
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 0
+          expect(@stats.first.requested).to eq 1
+          expect(@stats.first.retests).to eq 0
+          expect(@stats.first.rejects).to eq 1
+          expect(@stats.size).to eq 1
+        end
+      end
+
+      it "should record the request and rerun of a sample" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          @sample.preparing!
+          @sample.retest!
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 0
+          expect(@stats.first.requested).to eq 1
+          expect(@stats.first.retests).to eq 1
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
+      end
+    end
+
     describe "validations" do
       it "should not allow duplicate ID" do
         new_sample = Sample.create(client: @client, uid: "abc")

@@ -22,6 +22,10 @@ RSpec.describe ClientsController, type: :controller do
     it "routes to #destroy" do
       expect(delete: "/clients/1").to route_to("clients#destroy", id: "1")
     end
+
+    it "routes to #stats" do
+      expect(get: "/clients/1/stats").to route_to("clients#stats", id: "1")
+    end
   end
 
   describe("Signed in") do
@@ -33,6 +37,27 @@ RSpec.describe ClientsController, type: :controller do
 
     it "should view the index page" do
       get :index
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:success)
+    end
+
+    it "should view the stats page as html" do
+      @client = create(:client)
+      get :stats, params: { id: @client.id }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:success)
+    end
+
+    it "should view the stats page as json" do
+      @client = create(:client)
+      get :stats, params: { id: @client.id }, format: :json
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:success)
+    end
+
+    it "should view the stats page as csv" do
+      @client = create(:client)
+      get :stats, params: { id: @client.id }, format: :csv
       expect(flash[:alert]).to_not be_present
       expect(response).to have_http_status(:success)
     end
@@ -59,19 +84,19 @@ RSpec.describe ClientsController, type: :controller do
       expect(Client.last.name).to eq "test name"
     end
 
-    it "should update a client" do 
+    it "should update a client" do
       @client = create(:client, notify: true, name: "test name")
-      put :update, params: { id: @client.id, client: {id: @client.id, name: "edited name" } }
+      put :update, params: { id: @client.id, client: { id: @client.id, name: "edited name" } }
       expect(flash[:alert]).to_not be_present
       expect(response).to have_http_status(:redirect)
       expect(Client.last.notify).to eq true
       expect(Client.last.name).to eq "edited name"
       expect(response).to redirect_to(client_path(@client))
-    end 
+    end
 
     it "should let a user delete themselves from the users controller" do
       @client = create(:client)
-      delete :destroy, params: {id: @client.id}
+      delete :destroy, params: { id: @client.id }
       expect(flash[:notice]).to be_present
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(clients_path)
@@ -79,9 +104,16 @@ RSpec.describe ClientsController, type: :controller do
   end
 
   describe("not signed in") do
-
     it "should be signed into see clients " do
       get :index
+      expect(flash[:alert]).to be_present
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "should be signed into see stats " do
+      @client = create(:client)
+      get :stats, params: { id: @client.id }
       expect(flash[:alert]).to be_present
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)
@@ -112,15 +144,15 @@ RSpec.describe ClientsController, type: :controller do
 
     it "should be signed in to update a client" do 
       @client = create(:client, notify: true, name: "test name")
-      put :update, params: { id: @client.id, client: {id: @client.id, name: "edited name" } }
+      put :update, params: { id: @client.id, client: { id: @client.id, name: "edited name" } }
       expect(flash[:alert]).to be_present
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)
-    end 
+    end
 
     it "should not allow deletion" do
       @client = create(:client)
-      delete :destroy, params: {id: @client.id}
+      delete :destroy, params: { id: @client.id }
       expect(flash[:alert]).to be_present
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)

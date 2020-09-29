@@ -1,6 +1,10 @@
 require 'sidekiq/web'
 Rails.application.routes.draw do
-  resources :clients
+  resources :clients do
+    member do
+      get 'stats'
+    end
+  end
   get 'home/index', as: 'home'
   devise_for :admin_users, ActiveAdmin::Devise.config
 

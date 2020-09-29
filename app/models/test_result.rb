@@ -10,5 +10,4 @@ class TestResult < ApplicationRecord
     well.sample.analysed!
     well.sample.save!
   end
-
 end

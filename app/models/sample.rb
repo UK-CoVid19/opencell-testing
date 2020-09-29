@@ -115,6 +115,23 @@ class Sample < ApplicationRecord
     samples
   end
 
+  def self.stats_for(client)
+    joins(:records)
+    .select(
+      'date(records.updated_at) as date',
+      "count(case when records.state = #{Sample.states[:received]} then 1 else null end) as requested",
+      "count(case when records.state = #{Sample.states[:commcomplete]} then 1 else null end) as communicated",
+      "count(case when records.state = #{Sample.states[:retest]} then 1 else null end) as retests",
+      "count(case when records.state = #{Sample.states[:rejected]} then 1 else null end) as rejects"
+    )
+    .where(client: client)
+    .where(control: false)
+    .where(records: { state: [Sample.states[:received], Sample.states[:commcomplete], Sample.states[:retest], Sample.states[:rejected]] })
+    .group('date(records.updated_at)')
+    .order(date: :desc)
+    .map { |i| Stat.new(i) }
+  end
+
   private
 
   def unique_well_in_plate?
@@ -168,5 +185,15 @@ class Sample < ApplicationRecord
   def set_change_record
     record_user = @with_user || Sample.block_user
     records << Record.new(user: record_user, note: nil, state: Sample.states[state])
+  end
+  class Stat
+    attr_reader :requested, :communicated, :retests, :rejects, :date
+    def initialize(args)
+      @requested = args.requested
+      @communicated = args.communicated
+      @retests = args.retests
+      @rejects = args.rejects
+      @date = args.date
+    end
   end
 end

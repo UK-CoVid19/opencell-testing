@@ -1,0 +1,30 @@
+<div class="container">
+  <%= tag.h1 "Stats for Client #{resource.id}" %>
+  <table id="datatable" class="table table-striped table-bordered">
+    <thead class="thead-dark">
+    <tr>
+        <th>Date</th>
+        <th>Requested</th>
+        <th>Communicated</th>
+        <th>Retests</th>
+        <th>Rejected</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @stats.each do |stat| %>
+      <tr>
+        <td ><%= stat.date %></td>
+        <td><%= stat.requested %></td>
+        <td><%= stat.communicated %></td>
+        <td><%= stat.retests %></td>
+        <td><%= stat.rejects %></td>        
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <%= link_to "Download CSV", stats_client_path(resource, format: :csv), {'data-turbolinks': false}  %>
+  <br/>
+  <%= link_to "Download JSON", stats_client_path(resource, format: :json), {'data-turbolinks': false}  %>
+  <br/>
+  <%= link_to 'Back', client_path(resource) %>
+</div>

@@ -17,9 +17,28 @@ class ClientsController < InheritedResources::Base
     end
   end
 
+  def stats
+    @stats = Sample.stats_for(resource)
+    respond_to do |format|
+      format.html
+      format.csv { send_data create_stats_csv(@stats.to_a), filename: "stats-client-#{resource.id}.csv" }
+      format.json
+    end
+  end
+
   private
 
   def client_params
     params.require(:client).permit(:name, :notify)
+  end
+
+  def create_stats_csv(stats)
+    headers = %w{date requested tested rerun rejected}
+    CSV.generate(headers: true) do |csv|
+      csv << headers
+      stats.each do | stat |
+        csv << [stat.date, stat.requested, stat.communicated, stat.reruns, stat.rejects]
+      end
+    end
   end
 end
