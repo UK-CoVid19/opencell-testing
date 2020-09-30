@@ -1,3 +1,4 @@
+require 'ostruct'
 class Sample < ApplicationRecord
   extend BarcodeModule
 
@@ -116,20 +117,27 @@ class Sample < ApplicationRecord
   end
 
   def self.stats_for(client)
-    joins(:records)
-    .select(
-      'date(records.updated_at) as date',
-      "count(case when records.state = #{Sample.states[:received]} then 1 else null end) as requested",
-      "count(case when records.state = #{Sample.states[:commcomplete]} then 1 else null end) as communicated",
-      "count(case when records.state = #{Sample.states[:retest]} then 1 else null end) as retests",
-      "count(case when records.state = #{Sample.states[:rejected]} then 1 else null end) as rejects"
-    )
-    .where(client: client)
-    .where(control: false)
-    .where(records: { state: [Sample.states[:received], Sample.states[:commcomplete], Sample.states[:retest], Sample.states[:rejected]] })
-    .group('date(records.updated_at)')
-    .order(date: :desc)
-    .map { |i| Stat.new(i) }
+
+    query = <<-SQL
+      select
+      foo.date,
+      count(case when foo.states @> ARRAY[2] and foo.notes @> array['Created from API']::varchar[] then 1 else null end) as requested,
+      count(case when foo.states @> ARRAY[8] and not foo.states @> ARRAY[10] then 1 else null end) as communicated,
+      count(case when foo.states @> ARRAY[10] then 1 else null end) as rejects,
+      count(case when foo.states @> ARRAY[11] then 1 else null end) as retests
+      from (
+        select date(r.updated_at) as date, r.sample_id as sample_id, array_agg(r.state) as states, array_agg(r.note) as notes
+        from public.records r
+        inner join public.samples s on sample_id = s.id
+        where s.client_id = #{client.id}
+        and r.state in(2,8,11,10)
+        and s.control = false
+        group by date(r.updated_at), r.sample_id ) as foo
+      group by foo.date
+      order by foo.date desc
+    SQL
+    results = ActiveRecord::Base.connection.execute(query)
+    results.map { |r| OpenStruct.new(r) }.map { |i| Stat.new(i) }
   end
 
   private

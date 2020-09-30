@@ -208,6 +208,9 @@ RSpec.describe Sample, type: :model do
       it "should record the request and communication of a sample" do
         Sample.with_user(@user) do
           @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Created from API'
+          r.save!
           @sample.preparing!
           @sample.prepared!
           @sample.prepared!
@@ -227,6 +230,9 @@ RSpec.describe Sample, type: :model do
       it "should record the request and rejection of a sample" do
         Sample.with_user(@user) do
           @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Created from API'
+          r.save!
           @sample.preparing!
           @sample.rejected!
           @stats = Sample.stats_for(@client)
@@ -241,10 +247,53 @@ RSpec.describe Sample, type: :model do
       it "should record the request and rerun of a sample" do
         Sample.with_user(@user) do
           @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Created from API'
+          r.save!
           @sample.preparing!
           @sample.retest!
           @stats = Sample.stats_for(@client)
           expect(@stats.first.communicated).to eq 0
+          expect(@stats.first.requested).to eq 1
+          expect(@stats.first.retests).to eq 1
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
+      end
+
+      it "should not record samples that are not created from the API" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Not Created from API'
+          r.save!
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 0
+          expect(@stats.first.requested).to eq 0
+          expect(@stats.first.retests).to eq 0
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
+      end
+
+      it "should record the communication of a retest" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Created from API'
+          r.save!
+          @sample.preparing!
+          @retest = @sample.create_retest(Rerun::POSITIVE)
+          @rerun = @retest
+          @rerun.preparing!
+          @rerun.prepared!
+          @rerun.prepared!
+          @rerun.tested!
+          @rerun.analysed!
+          @rerun.communicated!
+          @rerun.commcomplete!
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 1
           expect(@stats.first.requested).to eq 1
           expect(@stats.first.retests).to eq 1
           expect(@stats.first.rejects).to eq 0
