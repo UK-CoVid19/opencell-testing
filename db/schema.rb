@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(version: 2020_09_25_095412) do
     t.string "uid"
     t.bigint "client_id"
     t.boolean "control", default: false
-    t.boolean "is_retest", default: false
+    t.boolean "is_retest", default: false, null: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"

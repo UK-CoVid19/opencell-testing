@@ -63,11 +63,29 @@ class Sample < ApplicationRecord
   end
 
   def create_retest(reason)
-    raise "Retest already exists" if rerun.present?
-    raise "Sample is a rerun" if is_retest
+    raise "Retest already exists".freeze if rerun.present?
+    raise "Sample is a rerun".freeze if is_retest
 
     self.transaction do
       attribs = attributes.merge!(state: Sample.states[:received], is_retest: true).except!("id")
+      update(state: Sample.states[:retest])
+      Rerun.create(source_sample: self, retest_attributes: attribs, reason: reason)
+      save!
+    end
+    retest
+  end
+
+  def create_posthoc_retest(reason)
+    # what conditions can we not create a retest?
+    # sample should be commcomplete already, should the client be selected here.. the client is a retest client and the reason determines why.. 
+    raise "Retest already exists".freeze if rerun.present?
+    raise "Sample is a rerun".freeze if is_retest
+    raise "Sample cannot be retested unless communicated" unless commcomplete?
+    
+    retest_client = Client.create_or_find_by(name: Client::INTERNAL_RERUN_NAME, notify: false, api_key: 'NOTHING')
+    
+    self.transaction do
+      attribs = attributes.merge!(state: Sample.states[:received], is_retest: true, client_id: retest_client.id).except!("id")
       update(state: Sample.states[:retest])
       Rerun.create(source_sample: self, retest_attributes: attribs, reason: reason)
       save!
@@ -124,7 +142,7 @@ class Sample < ApplicationRecord
       count(case when foo.states @> ARRAY[2] and foo.notes @> array['Created from API']::varchar[] then 1 else null end) as requested,
       count(case when foo.states @> ARRAY[8] and not foo.states @> ARRAY[10] then 1 else null end) as communicated,
       count(case when foo.states @> ARRAY[10] then 1 else null end) as rejects,
-      count(case when foo.states @> ARRAY[11] then 1 else null end) as retests
+      count(case when foo.states @> ARRAY[11] and not foo.states @> ARRAY[10] then 1 else null end) as retests
       from (
         select date(r.updated_at) as date, r.sample_id as sample_id, array_agg(r.state) as states, array_agg(r.note) as notes
         from public.records r

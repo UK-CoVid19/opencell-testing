@@ -74,6 +74,27 @@ class SamplesController < ApplicationController
     end
   end
 
+  def new_retest
+    authorize Sample
+    @retest_samples = Sample.all.where(state: Sample.states[:commcomplete]).where(is_retest: false).where("samples.updated_at >= ?", 2.days.ago.beginning_of_day)
+    @reasons = Rerun::REASONS
+  end
+
+  def retest_after
+    authorize Sample
+    begin
+      @sample = Sample.find(retest_params[:id])
+      @retest = @sample.create_posthoc_retest(retest_params[:reason])
+      respond_to do |format|
+        format.html {redirect_to sample_url(@retest), notice: 'Retest successfully created'}
+      end
+    rescue => exception
+      respond_to do |format|
+        format.html {redirect_to new_retest_url, alert: 'Retest could not be created'}
+      end
+    end
+  end
+
   def dashboard
     authorize Sample
     @samples = Sample.includes(:client).all
@@ -224,6 +245,10 @@ class SamplesController < ApplicationController
     params.require(:sample).permit(:client_id, :state)
   end
 
+  def retest_params
+    params.require(:sample).permit(:reason, :id)
+  end
+
   def get_samples
     params.permit(:samples).each do |s|
       s.permit(:id)
@@ -253,5 +278,7 @@ class SamplesController < ApplicationController
   def get_mappings
     params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column, :control, :control_code])[:mappings]
   end
+
+
 
 end

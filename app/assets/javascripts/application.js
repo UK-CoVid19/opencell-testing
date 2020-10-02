@@ -14,6 +14,7 @@
 //= require jsqr/dist/jsQR.js
 //= require jquery/dist/jquery.min.js
 //= require jquery-ui-dist/jquery-ui.min.js
+//= require bootstrap-select/dist/js/bootstrap-select.min.js
 //= require popper
 //= require bootstrap-sprockets
 //= require rails-ujs

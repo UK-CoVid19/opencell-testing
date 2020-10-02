@@ -12,6 +12,7 @@ class Client < ApplicationRecord
   end
 
   CONTROL_NAME = "control"
+  INTERNAL_RERUN_NAME = 'Posthoc Retest'
 
   def hash_api_key
     raise if api_key.blank?

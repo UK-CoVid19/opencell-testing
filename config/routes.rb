@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'samples/pendingtest', to: 'samples#step5_pendingtest', as: 'step5_pendingtest'
   get 'samples/pendinganalyze', to: 'samples#step6_pendinganalyze', as: 'step6_pendinganalyze'
   get 'samples/dashboard', to: 'samples#dashboard', as: 'staff_dashboard'
+  get 'samples/new_retest', to: 'samples#new_retest', as: 'new_retest'
+  post 'samples/new_retest', to: 'samples#retest_after', as: 'retest_after'
   post 'samples/prepared', to: 'samples#step3_bulkprepared', as: 'step3_sample_bulkprepared'
   post 'samples/readytest', to: 'samples#step4_bulkreadytest', as: 'step4_sample_bulk_ready_test'
   post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
