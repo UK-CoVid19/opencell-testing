@@ -22,7 +22,6 @@
                 <%= result_builder.hidden_field :well_id %>
                 <%= result_builder.hidden_field :test_id %>
                 <%= result_builder.hidden_field :id %>
-                <%= result_builder.text_field :comment, class: 'form-control m-2' %>
                 <%= result_builder.select :state, TestResult.states.map {|key, val| [key.humanize, key]},{}, {class: 'form-control m-2'} %>
                 <% unless control?(rw.row, rw.column) || retest_disabled?(rw) %>
                 <button type="button" class="btn btn-primary retestbutton" data-toggle="modal" data-target="#exampleModal" data-sample-uid=<%= rw.sample.uid %> data-sample-id=<%= rw.sample.id %>>Retest</button>

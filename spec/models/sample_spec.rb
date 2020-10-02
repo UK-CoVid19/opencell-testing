@@ -302,6 +302,43 @@ RSpec.describe Sample, type: :model do
       end
     end
 
+    describe "posthoc retests" do
+      it "should create a retest of a valid communicated sample" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          @sample.preparing!
+          @sample.preparing!
+          @sample.prepared!
+          @sample.tested!
+          @sample.analysed!
+          @sample.communicated!
+          @sample.commcomplete!
+
+          @retest =  @sample.create_posthoc_retest(Rerun::POSITIVE)
+        end
+
+        expect(@retest.uid).to eq @sample.uid
+        expect(@retest.state).to eq "received"
+        expect(@sample.state).to eq "retest"
+        expect(@retest.source_sample).to eq @sample
+      end
+
+      it "should not create a rerun of a sample that has not been communicated already" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          @rerun = @sample.create_retest(Rerun::POSITIVE)
+          expect { @rerun.create_posthoc_retest(Rerun::POSITIVE) }.to raise_error
+        end
+      end
+
+      it "should not allow an internal rerun of a rerun" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          expect {@sample.create_posthoc_retest(Rerun::POSITIVE)}.to raise_error
+        end
+      end
+    end
+
     describe "validations" do
       it "should not allow duplicate ID" do
         new_sample = Sample.create(client: @client, uid: "abc")

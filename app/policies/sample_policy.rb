@@ -41,6 +41,13 @@ class SamplePolicy < ApplicationPolicy
     staffmember?
   end
 
+  def new_retest?
+    staffmember?
+  end
+  
+  def retest_after?
+    staffmember?
+  end
   def edit?
     staffmember?
   end
