@@ -6,9 +6,9 @@ class Sample < ApplicationRecord
   belongs_to :client
   has_many :records, dependent: :destroy
   has_one :well, dependent: :nullify
-  has_one :rerun
+  has_one :rerun, class_name: "Rerun", foreign_key: :sample_id
   has_one :rerun_for, class_name: "Rerun", foreign_key: :retest_id
-  has_one :source_sample, through: :rerun, class_name: "Sample"
+  has_one :source_sample, through: :rerun_for, class_name: "Sample"
   has_one :retest, through: :rerun, class_name: "Sample", foreign_key: :retest
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
@@ -81,13 +81,17 @@ class Sample < ApplicationRecord
     raise "Retest already exists".freeze if rerun.present?
     raise "Sample is a rerun".freeze if is_retest
     raise "Sample cannot be retested unless communicated" unless commcomplete?
-    
-    retest_client = Client.create_or_find_by(name: Client::INTERNAL_RERUN_NAME, notify: false, api_key: 'NOTHING')
-    
+
+    retest_client = Client.find_by(name: Client::INTERNAL_RERUN_NAME)
+
+    if(retest_client.nil?)
+      retest_client = Client.create!(name: Client::INTERNAL_RERUN_NAME, api_key: SecureRandom.base64(16), notify: false)
+    end
+
     self.transaction do
       attribs = attributes.merge!(state: Sample.states[:received], is_retest: true, client_id: retest_client.id).except!("id")
       update(state: Sample.states[:retest])
-      Rerun.create(source_sample: self, retest_attributes: attribs, reason: reason)
+      r = Rerun.create(source_sample: self, retest_attributes: attribs, reason: reason)
       save!
     end
     retest
@@ -135,25 +139,31 @@ class Sample < ApplicationRecord
   end
 
   def self.stats_for(client)
+    received = Sample.states[:received]
+    commcomplete = Sample.states[:commcomplete]
+    retest = Sample.states[:retest]
+    reject = Sample.states[:rejected]
 
     query = <<-SQL
       select
       foo.date,
-      count(case when foo.states @> ARRAY[2] and foo.notes @> array['Created from API']::varchar[] then 1 else null end) as requested,
-      count(case when foo.states @> ARRAY[8] and not foo.states @> ARRAY[10] then 1 else null end) as communicated,
-      count(case when foo.states @> ARRAY[10] then 1 else null end) as rejects,
-      count(case when foo.states @> ARRAY[11] and not foo.states @> ARRAY[10] then 1 else null end) as retests
+      count(case when foo.states @> ARRAY[#{received}] and foo.notes @> array['Created from API']::varchar[] then 1 else null end) as requested,
+      count(case when foo.states @> ARRAY[#{commcomplete}] and not foo.states @> ARRAY[#{reject}] then 1 else null end) as communicated,
+      count(case when foo.states @> ARRAY[#{reject}] then 1 else null end) as rejects,
+      count(case when foo.states @> ARRAY[#{retest}] and not foo.states @> ARRAY[#{[reject]}] and not foo.states @> ARRAY[#{[commcomplete]}] then 1 else null end) as retests,
+      count(case when foo.states @> ARRAY[#{retest}] and not foo.states @> ARRAY[#{reject}] and foo.states @> ARRAY[#{[commcomplete, retest].join(',')}] then 1 else null end) as internalchecks
       from (
         select date(r.updated_at) as date, r.sample_id as sample_id, array_agg(r.state) as states, array_agg(r.note) as notes
         from public.records r
         inner join public.samples s on sample_id = s.id
         where s.client_id = #{client.id}
-        and r.state in(2,8,11,10)
+        and r.state in(#{[received, commcomplete, retest, reject].join(',')})
         and s.control = false
         group by date(r.updated_at), r.sample_id ) as foo
       group by foo.date
       order by foo.date desc
     SQL
+
     results = ActiveRecord::Base.connection.execute(query)
     results.map { |r| OpenStruct.new(r) }.map { |i| Stat.new(i) }
   end
@@ -174,7 +184,7 @@ class Sample < ApplicationRecord
   end
 
   def send_notification_after_analysis
-      ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
+    ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
   end
 
   def send_rejection
@@ -213,12 +223,13 @@ class Sample < ApplicationRecord
     records << Record.new(user: record_user, note: nil, state: Sample.states[state])
   end
   class Stat
-    attr_reader :requested, :communicated, :retests, :rejects, :date
+    attr_reader :requested, :communicated, :retests, :rejects, :date, :internalchecks
     def initialize(args)
       @requested = args.requested
       @communicated = args.communicated
       @retests = args.retests
       @rejects = args.rejects
+      @internalchecks = args.internalchecks
       @date = args.date
     end
   end

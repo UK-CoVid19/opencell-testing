@@ -1,1 +1,1 @@
-json.extract! stat, :date, :requested, :communicated, :retests, :rejects
+json.extract! stat, :date, :requested, :communicated, :retests, :rejects, :internalchecks

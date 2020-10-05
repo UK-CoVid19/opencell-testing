@@ -2,7 +2,7 @@ module PlatesHelper
 
   def generate_well_cell(well)
     unless well.sample.nil?
-      if(Sample.states[well.sample.state] == Sample.states[:rejected])
+      if(Sample.states[well.sample.state] == Sample.states[:retest])
         tag.td class: 'cell rejected-cell'do
           link_to"#{well.row}#{well.column}", well.sample
         end
@@ -49,7 +49,7 @@ module PlatesHelper
 
   def generate_test_cell(well)
     if test_result_exists?(well)
-      if(Sample.states[well.sample.state] == Sample.states[:rejected])
+      if(Sample.states[well.sample.state] == Sample.states[:retest])
         tag.td class: 'cell rejected-cell'do
           link_to well.sample do
             get_result_icon(well.test_result)

@@ -86,11 +86,11 @@ class SamplesController < ApplicationController
       @sample = Sample.find(retest_params[:id])
       @retest = @sample.create_posthoc_retest(retest_params[:reason])
       respond_to do |format|
-        format.html {redirect_to sample_url(@retest), notice: 'Retest successfully created'}
+        format.html { redirect_to sample_url(@retest.id), notice: 'Retest successfully created' }
       end
     rescue => exception
       respond_to do |format|
-        format.html {redirect_to new_retest_url, alert: 'Retest could not be created'}
+        format.html { redirect_to new_retest_url, alert: 'Retest could not be created' }
       end
     end
   end
