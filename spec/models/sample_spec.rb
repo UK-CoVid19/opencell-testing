@@ -57,7 +57,7 @@ RSpec.describe Sample, type: :model do
         expect(@retest).to_not be nil
         expect(@sample_s.retest).to eq @retest
         expect(@sample_s.retest?).to eq true
-        expect(@retest.source_sample).to eq @sample
+        expect(@retest.source_sample).to eq @sample_s
         expect(@sample_s.rerun.reason).to eq Rerun::INCONCLUSIVE
       end
     end
@@ -201,6 +201,7 @@ RSpec.describe Sample, type: :model do
           expect(@stats.first.requested).to eq 0
           expect(@stats.first.retests).to eq 0
           expect(@stats.first.rejects).to eq 0
+          expect(@stats.first.internalchecks).to eq 0
           expect(@stats.size).to eq 1
         end
       end
@@ -223,6 +224,7 @@ RSpec.describe Sample, type: :model do
           expect(@stats.first.requested).to eq 1
           expect(@stats.first.retests).to eq 0
           expect(@stats.first.rejects).to eq 0
+          expect(@stats.first.internalchecks).to eq 0
           expect(@stats.size).to eq 1
         end
       end
@@ -240,6 +242,7 @@ RSpec.describe Sample, type: :model do
           expect(@stats.first.requested).to eq 1
           expect(@stats.first.retests).to eq 0
           expect(@stats.first.rejects).to eq 1
+          expect(@stats.first.internalchecks).to eq 0
           expect(@stats.size).to eq 1
         end
       end
@@ -257,6 +260,7 @@ RSpec.describe Sample, type: :model do
           expect(@stats.first.requested).to eq 1
           expect(@stats.first.retests).to eq 1
           expect(@stats.first.rejects).to eq 0
+          expect(@stats.first.internalchecks).to eq 0
           expect(@stats.size).to eq 1
         end
       end
@@ -272,6 +276,7 @@ RSpec.describe Sample, type: :model do
           expect(@stats.first.requested).to eq 0
           expect(@stats.first.retests).to eq 0
           expect(@stats.first.rejects).to eq 0
+          expect(@stats.first.internalchecks).to eq 0
           expect(@stats.size).to eq 1
         end
       end
@@ -297,6 +302,7 @@ RSpec.describe Sample, type: :model do
           expect(@stats.first.requested).to eq 1
           expect(@stats.first.retests).to eq 1
           expect(@stats.first.rejects).to eq 0
+          expect(@stats.first.internalchecks).to eq 0
           expect(@stats.size).to eq 1
         end
       end
@@ -314,27 +320,94 @@ RSpec.describe Sample, type: :model do
           @sample.communicated!
           @sample.commcomplete!
 
-          @retest =  @sample.create_posthoc_retest(Rerun::POSITIVE)
+          @retest = @sample.create_posthoc_retest(Rerun::POSITIVE)
         end
-
         expect(@retest.uid).to eq @sample.uid
         expect(@retest.state).to eq "received"
         expect(@sample.state).to eq "retest"
         expect(@retest.source_sample).to eq @sample
+        expect(@retest.rerun_for.source_sample).to eq @sample
+      end
+
+      it "should count a posthoc retest as a communicated sample, however the retest count should differentiate communicating and noncommunicating retests" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Created from API'
+          r.save!
+          @sample.preparing!
+          @sample.prepared!
+          @sample.prepared!
+          @sample.tested!
+          @sample.analysed!
+          @sample.communicated!
+          @sample.commcomplete!
+          @p_retest = @sample.create_posthoc_retest(Rerun::POSITIVE)
+          @p_retest.preparing!
+          @p_retest.prepared!
+          @p_retest.prepared!
+          @p_retest.tested!
+          @p_retest.analysed!
+          @p_retest.communicated!
+          @p_retest.commcomplete!
+          @stats = Sample.stats_for(@client)
+          expect(@stats.first.communicated).to eq 1
+          expect(@stats.first.requested).to eq 1
+          expect(@stats.first.retests).to eq 0
+          expect(@stats.first.internalchecks).to eq 1
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
+      end
+
+      it "should count a posthoc retest as a communicated sample, however the retest count should differentiate communicating and noncommunicating retests with an internal retest too" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          r = @sample.records.first
+          r.note = 'Created from API'
+          r.save!
+          @sample.preparing!
+          @sample.prepared!
+          @sample.prepared!
+          @sample.tested!
+          @sample.analysed!
+          @sample.communicated!
+          @sample.commcomplete!
+          @p_retest = @sample.create_posthoc_retest(Rerun::POSITIVE)
+
+          @sample_2 = create(:sample, state: :received, client: @client)
+          r = @sample_2.records.first
+          r.note = 'Created from API'
+          r.save!
+          @sample_2.preparing!
+          @sample_2.prepared!
+          @sample_2.prepared!
+          @sample_2.tested!
+          @p_2_retest = @sample_2.create_retest(Rerun::POSITIVE)
+
+          @stats = Sample.stats_for(@client)
+
+          expect(@stats.first.communicated).to eq 1
+          expect(@stats.first.requested).to eq 2
+          expect(@stats.first.retests).to eq 1
+          expect(@stats.first.internalchecks).to eq 1
+          expect(@stats.first.rejects).to eq 0
+          expect(@stats.size).to eq 1
+        end
       end
 
       it "should not create a rerun of a sample that has not been communicated already" do
         Sample.with_user(@user) do
           @sample = create(:sample, state: :received, client: @client)
           @rerun = @sample.create_retest(Rerun::POSITIVE)
-          expect { @rerun.create_posthoc_retest(Rerun::POSITIVE) }.to raise_error
+          expect { @rerun.create_posthoc_retest(Rerun::POSITIVE) }.to raise_error "Sample is a rerun"
         end
       end
 
       it "should not allow an internal rerun of a rerun" do
         Sample.with_user(@user) do
           @sample = create(:sample, state: :received, client: @client)
-          expect {@sample.create_posthoc_retest(Rerun::POSITIVE)}.to raise_error
+          expect {@sample.create_posthoc_retest(Rerun::POSITIVE)}.to raise_error "Sample cannot be retested unless communicated"
         end
       end
     end
