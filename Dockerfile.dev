@@ -1,4 +1,4 @@
-FROM ruby:2.7
+FROM ruby:2.7.2
 RUN apt-get update -qq && apt-get install -y postgresql-client curl clamav clamav-daemon
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN apt-get install nodejs

@@ -26,7 +26,7 @@ class Plate < ApplicationRecord
 
   extend BarcodeModule
 
-has_many :wells, dependent: :destroy
+  has_many :wells, dependent: :destroy
   has_many :samples, through: :wells
   has_one :test, dependent: :destroy
   accepts_nested_attributes_for :wells
@@ -62,7 +62,7 @@ has_many :wells, dependent: :destroy
 
   def assign_samples(sample_mappings)
     sample_mappings.reject { |swm| swm[:id].blank? && ActiveModel::Type::Boolean.new.cast(swm[:control]) == false }.each do |mapping|
-      
+
       well = wells.find { |w| w[:column] == mapping[:column].to_i && w[:row] == mapping[:row]}
       if (well.nil?)
         @assign_error = true
