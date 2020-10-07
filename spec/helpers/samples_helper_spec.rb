@@ -13,7 +13,6 @@ RSpec.describe SamplesHelper, type: :helper do
     end
   end
 
-
   describe "get_focus_index" do
     it "gets the right index for a given plate A1" do
       well = build(:well, row: 'A', column: 1)
