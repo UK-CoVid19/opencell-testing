@@ -11,5 +11,5 @@ RSpec.describe Test, type: :model do
     expect(@test_2.save).to eq false
     expect(@test_2.errors.messages[:plate_id].first).to eq 'has already been taken'
     expect(@test_2.errors.details[:plate_id].first[:error]).to eq :taken
-  end  
+  end
 end

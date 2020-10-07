@@ -56,10 +56,15 @@
             <% end  %>
         </tbody>
     </table>
-    <div class="actions">
+    <div class="actions d-flex justify-content-between">
         <%= form.submit "Create Plate", class: 'btn btn-primary' %>
+        <%= form.button "Reset Plate", type: 'reset', class: 'btn btn-danger', data: {confirm: "Clear All?", turbolinks: false} %>
     </div>
     <% end %>
+    <div class="d-flex justify-content-end mt-2">
+        <%= button_tag "Reload Samples", type: nil, id: 'reloadPending', class: 'btn btn-warning' %>
+    </div>
+    
 </div>
 <script>
     $(document).on('turbolinks:load', function() {
@@ -94,11 +99,12 @@
             return Promise.resolve();
         }
        
-        fetch('/samples/pendingprepare.json')
+        function getSamples(){
+            fetch('/samples/pendingprepare.json')
             .then(res => res.json())
             .then(js => mapSamples(js, i => pending_samples = i))
-
-
+        }
+        
         function validateInput(item, success, failure) {
             if (setSamples().includes(item.value)) {
                 const err = 'Sample has already been assigned to a well';
@@ -196,5 +202,7 @@
         $(".control-well").on('input', debounce(handleControl, 500));
         $(".sample-assign").on('input', handleDeletion);
         $(".sample-assign").on('input', debounce(handleSet, 500));
+        $('#reloadPending').on('click', getSamples);
+        getSamples()
     });
 </script>

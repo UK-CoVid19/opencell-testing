@@ -1,6 +1,6 @@
   <div class="card shadow">
     <div class="card-header">
-      <h3> Sample Plating</h3>
+      <h3><%= title %></h3>
     </div>
     <div class="card-body table-responsive">
       <table class="table table-striped table-bordered">
@@ -17,19 +17,24 @@
           <tr>
             <td class="dark-cell text-center"><%= row %></td>
             <% wells.sort_by{|w|w.column}.each do |well| %>
-              <%= generate_well_cell(well) %>
+              <%= cell_function.call(well) %>
             <% end %>
           </tr>
         <% end %>
         </tbody>
       </table>
-    </div>
+      <%  if @plate.test && !@plate.test.comment.blank? %>
+      <div class="row p-1 m-1">
+        <%= tag.p @plate.test.comment %>
+      </div>
+      <% end %>
+    </div>      
     <div class="card-footer">
       <div class="d-flex state-keys">
         <div class="state-key-container ml-auto p-1 mb-1">
           <span class="pl-1 "><div class="marked-cell states-key align-middle"></div><span class="m-1 align-middle">Active</span></span>
           <span class="pl-1 "><div class="control-cell states-key align-middle"></div><span class="m-1 align-middle">Control</span></span>
-          <span class="pl-1 "><div class=" rejected-cell states-key align-middle"></div><span class="m-1 align-middle">Rejected</span></span>
+          <span class="pl-1 "><div class="rejected-cell states-key align-middle"></div><span class="m-1 align-middle">Retests</span></span>
         </div>
       </div>
     </div>
