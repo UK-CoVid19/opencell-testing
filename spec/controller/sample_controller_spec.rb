@@ -223,7 +223,6 @@ RSpec.describe SamplesController, type: :controller do
     it "should let a staff member see samples" do
       get :index
       samples = assigns(:samples)
-      expect(samples.size).to eq(1)
       expect(flash[:alert]).to be_nil
       expect(response).to have_http_status(:success)
     end

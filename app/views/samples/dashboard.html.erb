@@ -1,64 +1,31 @@
 <div class="container">
-  <div class="row mt-3 mb-4">
-    <div class="container-fluid d-flex justify-content-between flex-wrap">
-      <%= render partial: 'view_card', locals: {key: 'testingrate',title: 'Testing Rate', stat1: @tested_last_week.first ? @tested_last_week.first.count : 0 , stat2: @tested_last_week.second ? @tested_last_week.second.count : 0, statdata: @tested_last_week.reverse.map(&:count)} %>
-      <%= render partial: 'view_card', locals: {key: 'requestingrate', title: 'Requesting Rate', stat1: @requested_last_week.first ? @requested_last_week.first.count : 0, stat2: @requested_last_week.second ? @requested_last_week.second.count: 0, statdata: @requested_last_week.reverse.map(&:count)} %>
-      <%= render partial: 'view_card', locals: {key: 'failurerate', title: 'Failure Rate', stat1: @failure_rate_last_week.first ? @failure_rate_last_week.first.count : 0, stat2: @failure_rate_last_week.second ? @failure_rate_last_week.second.count : 0, statdata: @failure_rate_last_week.reverse.map(&:count)} %>
-      <div class="card shadow-sm mb-3 p-3" style="width: 14rem;">
-        <div class=" d-inline-flex align-items-center" style="width: 100%">
-          <span class="text-black-50">
-            Total Tests
-          </span>
+    <div class="row mt-3 mb-4">
+        <div class="container-fluid d-flex justify-content-between flex-wrap">
+            <%= render partial: 'view_card', locals: {key: 'testingrate',title: 'Testing Rate', stat1: @tested_last_week.first ? @tested_last_week.first.count : 0 , stat2: @tested_last_week.second ? @tested_last_week.second.count : 0, statdata: @tested_last_week.reverse.map(&:count)} %>
+            <%= render partial: 'view_card', locals: {key: 'requestingrate', title: 'Requesting Rate', stat1: @requested_last_week.first ? @requested_last_week.first.count : 0, stat2: @requested_last_week.second ? @requested_last_week.second.count: 0, statdata: @requested_last_week.reverse.map(&:count)} %>
+            <%= render partial: 'view_card', locals: {key: 'failurerate', title: 'Failure Rate', stat1: @failure_rate_last_week.first ? @failure_rate_last_week.first.count : 0, stat2: @failure_rate_last_week.second ? @failure_rate_last_week.second.count : 0, statdata: @failure_rate_last_week.reverse.map(&:count)} %>
+            <div class="card shadow-sm mb-3 p-3" style="width: 14rem;">
+                <div class=" d-inline-flex align-items-center" style="width: 100%">
+                    <span class="text-black-50">
+                        Total Tests
+                    </span>
+                </div>
+                <div class="ml-2 mt-2 ">
+                    <h1><%= @total_tests %></h1>
+                </div>
+            </div>
         </div>
-        <div class="ml-2 mt-2 ">
-          <h1><%= @total_tests %></h1>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col col-md-6">
-      <div class="card shadow-sm">
-        <div class="card-header">
-          <h3>Sample Status Distribution</h3>
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3>Sample Data</h3>
+                </div>
+                <div class="card-body p-3">
+                    <%= render partial: 'samples_table' %>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-4">
-          <canvas id="myChart" width="100%" height="400"></canvas>
-        </div>
-      </div>
     </div>
-    <div class="col">
-      <div class="card shadow-sm">
-        <div class="card-header">
-          <h3>Sample Data</h3>
-        </div>
-        <div class="card-body p-3">
-          <table id="datatable" class="table">
-            <thead class="thead-dark">
-            <tr>
-              <th width="20">Sample</th>
-              <th>User</th>
-              <th>Progress</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% @samples.each do |sample| %>
-              <tr>
-                <td><%= link_to "##{sample.id}", sample %></td>
-                <td><%= link_to sample.client.name, sample.client %></td>
-                <td>
-                  <div class="progress" style="height:15px;">
-                    <div class="progress-bar" role="progressbar" style="width: <%= get_sample_bar(sample) %>%" aria-valuenow="<%= get_sample_bar(sample) %>" aria-valuemin="0" aria-valuemax="100", data-toggle="tooltip", data-placement="bottom", title="<%= sample.state.capitalize %>" ></div>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
 </div>

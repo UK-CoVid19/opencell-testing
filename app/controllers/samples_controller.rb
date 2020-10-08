@@ -2,13 +2,16 @@ class SamplesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sample, only: [:show, :edit, :destroy, :receive, :prepare, :prepared, :ship, :tested, :analyze, :reject, :retestpositive, :retestinconclusive]
   around_action :wrap_in_current_user
-  after_action :verify_policy_scoped, only: [:index, :step3_pendingprepare, :pending_plate]
+  after_action :verify_policy_scoped, only: [:step3_pendingprepare, :pending_plate]
   after_action :verify_authorized
   # GET /samples
   # GET /samples.json
   def index
-    @samples = policy_scope(Sample.all)
     authorize Sample
+    respond_to do |format|
+      format.html
+      format.json { render json: SampleDatatable.new(params, view_context: view_context) }
+    end
   end
 
   def pending_plate

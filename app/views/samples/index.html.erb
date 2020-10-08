@@ -4,35 +4,6 @@
   <p id="notice"><%= notice %></p>
 
   <h1>Samples</h1>
-  <table id="datatable" class="table table-striped">
-    <thead class="thead-dark">
-    <tr>
-      <th>ID</th>
-      <th>UID</th>
-      <th>State</th>
-      <th>Created At</th>
-      <th>Updated At</th>
-      <th colspan="1"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @samples.each do |sample| %>
-      <tr>
-        <td>
-          <%= sample.id %>
-        </td>
-        <td><%= sample.uid %></td>
-        <td class="text-left"><%= get_badge(sample.state) %></td>
-        <td class="text-left"><%= sample.created_at.strftime('%a %d %b %H:%M') %></td>
-        <td class="text-left"><%= sample.updated_at.strftime('%a %d %b %H:%M') %></td>
-        <td>
-          <%= link_to sample do %>
-            <button class="btn btn-primary">Show</button>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
+  <%= render partial: 'samples_table' %>
   <br>
 </div>
