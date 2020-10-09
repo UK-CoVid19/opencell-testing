@@ -58,6 +58,43 @@ class Sample < ApplicationRecord
     end
   end
 
+  def after_retestable?
+    # sample is commcomplete and is not a retest itself
+    return false unless commcomplete?
+
+    return false if is_retest?
+
+    return false if rerun.present?
+
+    true
+  end
+
+  def before_retestable?
+    # sample is analysed and is not a retest itself
+    return false unless analysed?
+
+    return false if is_retest?
+
+    return false if rerun.present?
+
+    true
+  end
+
+  def rejectable?
+    # sample is not being retested or has already been communicated, it can be rejected if it is an internal retest and hasn't been communicated
+    return false if commcomplete?
+
+    return false if rerun.present?
+
+    return false if client.name == Client::INTERNAL_RERUN_NAME
+
+    true
+  end
+
+  def is_posthoc_retest?
+    is_retest? && client.name == Client::INTERNAL_RERUN_NAME
+  end
+
   def rerun_for?
     rerun_for.present?
   end
@@ -65,6 +102,7 @@ class Sample < ApplicationRecord
   def create_retest(reason)
     raise "Retest already exists".freeze if rerun.present?
     raise "Sample is a rerun".freeze if is_retest
+    raise "Cannot retest a control sample".freeze if control?
 
     self.transaction do
       attribs = attributes.merge!(state: Sample.states[:received], is_retest: true).except!("id")
@@ -81,6 +119,7 @@ class Sample < ApplicationRecord
     raise "Retest already exists".freeze if rerun.present?
     raise "Sample is a rerun".freeze if is_retest
     raise "Sample cannot be retested unless communicated" unless commcomplete?
+    raise "Cannot retest a control sample".freeze if control?
 
     retest_client = Client.find_by(name: Client::INTERNAL_RERUN_NAME)
 

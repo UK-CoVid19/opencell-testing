@@ -15,7 +15,7 @@ class TestsController < ApplicationController
 
   def done
     authorize Test
-    @tests = Test.all.joins(:plate).where(plates: {state: Plate.states[:analysed]})
+    @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: {state: Plate.states[:analysed]})
   end
 
   # GET /tests/1

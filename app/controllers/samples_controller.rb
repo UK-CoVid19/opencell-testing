@@ -62,7 +62,7 @@ class SamplesController < ApplicationController
   def retestpositive
     begin
       @retest = @sample.create_retest(Rerun::POSITIVE)
-      head :accepted
+      redirect_to @retest
     rescue
       head :bad_request
     end
@@ -71,7 +71,7 @@ class SamplesController < ApplicationController
   def retestinconclusive
     begin
       @retest = @sample.create_retest(Rerun::INCONCLUSIVE)
-      head :accepted
+      redirect_to @retest
     rescue
       head :bad_request
     end
@@ -81,6 +81,7 @@ class SamplesController < ApplicationController
     authorize Sample
     @retest_samples = Sample.all.where(state: Sample.states[:commcomplete]).where(is_retest: false).where("samples.updated_at >= ?", 2.days.ago.beginning_of_day)
     @reasons = Rerun::REASONS
+    @query_sample = Sample.find(params[:query]) if params[:query]
   end
 
   def retest_after
@@ -240,7 +241,7 @@ class SamplesController < ApplicationController
   end
 
   def set_sample
-    @sample = authorize Sample.find(params[:id])
+    @sample = authorize Sample.includes(:client, records: [:user]).find(params[:id])
   end
 
     # Only allow a list of trusted parameters through.

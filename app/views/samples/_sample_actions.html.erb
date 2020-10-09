@@ -1,0 +1,34 @@
+ <% return if @sample.control? %>
+ <% return if @sample.rejected? %>
+ <% return if @sample.retest? %>
+ <% return if @sample.is_posthoc_retest? %>
+
+ <div class="col-md-6">
+    <div class="card shadow mt-2">
+        <div class="card-header">
+            <h4 class="mb-1 card-title">Actions</h4>
+        </div>
+        <div class="card-body">
+            <% if(@sample.after_retestable?) %>
+                <%= link_to new_retest_path(query: @sample.id) do %>
+                    <%= button_tag "PostHoc Retest", class: 'btn btn-warning' %>
+                <% end %>
+            <% end %>
+            <% if @sample.before_retestable? %>
+                <%= link_to retestpositive_sample_path(@sample), method: :post, data: {confirm: "Positive retest #{@sample.uid}?"} do  %>
+                    <%= button_tag "Positive Retest", class: 'btn btn-sm btn-success' %>
+                <% end %>
+                <%= link_to retestinconclusive_sample_path(@sample), method: :post, data: {confirm: "Inconclusive retest #{@sample.uid}?"} do  %>
+                    <%= button_tag "Inconclusive Retest", class: 'btn btn-sm btn-info' %>
+                <% end %>
+            <% end %>
+            <% if @sample.rejectable? %>
+                <%= link_to reject_sample_path(@sample), method: :patch, data: {confirm: "Reject sample #{@sample.uid} and request reswab?"} do  %>
+                    <%= tag.button class: 'btn btn-sm btn-danger' do %>
+                        Reject <%= fa_icon "warning" %>
+                    <% end  %>
+                <% end %>
+            <% end %>
+        </div>
+    </div>
+ </div>

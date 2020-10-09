@@ -1,5 +1,17 @@
 module SamplesHelper
 
+  def retest_selected(query_sample, retest_samples)
+    if query_sample.nil?
+      if retest_samples.present? && retest_samples.any?
+        retest_samples.first.id
+      else
+        nil
+      end
+    else
+      query_sample.id
+    end
+  end
+
   def get_badge(status)
     case Sample.states.to_hash[status]
     when Sample.states[:requested], Sample.states[:dispatched],

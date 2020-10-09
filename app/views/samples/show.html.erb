@@ -1,40 +1,38 @@
-
 <div class="container">
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-header">
-          <h4 class="mb-1 card-title">Sample History</h4>
-        </div>
-        <table class="card-table table table-hover">
-          <thead>
-          <tr>
-            <th>Update</th>
-            <tH>Time</tH>
-            <th>Operator</th>
-          </tr>
-          </thead>
-          <tbody>
-          <% @sample.records.sort_by(&:created_at).each do |record| %>
-            <tr>
-              <td>
-                <%= get_badge(Sample.states.key(record.state)) %>
-              </td>
-              <td>
-                <%= record.updated_at.strftime('%A %-d %b %H:%M') %>
-              </td>
-              <td>
-                <%= link_to record.user.email, record.user unless record.user.nil? %>
-              </td>
-            </tr>
-          <% end %>
-          </tbody>
-        </table>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-1 card-title">Sample History</h4>
+                </div>
+                <table class="card-table table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Update</th>
+                            <tH>Time</tH>
+                            <th>Operator</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @sample.records.sort_by(&:created_at).each do |record| %>
+                        <tr>
+                            <td>
+                                <%= get_badge(Sample.states.key(record.state)) %>
+                            </td>
+                            <td>
+                                <%= record.updated_at.strftime('%A %-d %b %H:%M') %>
+                            </td>
+                            <td>
+                                <%= link_to record.user.email, record.user unless record.user.nil? %>
+                            </td>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
 
-      </div>
+            </div>
+        </div>
+          <%= render partial: 'base_info' %>
+          <%= render partial: 'sample_actions' %>
     </div>
-    <div class="col-md-6">
-      <%= render partial: 'base_info' %>
-    </div>
-  </div>
 </div>

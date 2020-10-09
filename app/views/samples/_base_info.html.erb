@@ -1,92 +1,94 @@
-<div class="card shadow" style="max-width: 20em;">
-    <div class="card-header">
-        <h3>Sample #<%= @sample.id %> </h3>
-    </div>
-    <div class="card-body">
-        <%= image_tag @sample.barcode, class: 'object-contain' %>
-        <div class="p-1">
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "hashtag", class: 'fa-fw' %>
-                </span>
-                <span>
-                    <small><%= @sample.uid %></small>
-                </span>
-            </div>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "clock-o", class: 'fa-fw' %>
-                </span>
-                <span>
-                    <small><%= @sample.created_at.strftime('%A %-d %b %H:%M') %></small>
-                </span>
-            </div>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "user", class: 'fa-fw' %>
-                </span>
-                <span>
-                    <small><%= link_to @sample.client.name, @sample.client %></small>
-                </span>
-            </div>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "magic", class: 'fa-fw' %>
-                </span>
-                <span>
-                    <small><%= get_badge(@sample.state) %></small>
-                </span>
-            </div>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "flask", class: 'fa-fw' %>
-                </span>
-                <span>
-                    <small><%= get_control_badge(@sample.control?) %></small>
-                </span>
-            </div>
-            <% if @sample.test_result.present? %>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "check", class: 'fa-fw' %>
-                </span>
-                <span>
-                    <span><%= get_result_icon(@sample.test_result) %></span>
-                    <span><%= @sample.test_result.state.capitalize %></span>
-                </span>
-            </div>
-            <% end  %>
-            <% if @sample.retest? %>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "arrow-right", class: 'fa-fw' %>
-                </span>
-                <%= link_to sample_path(@sample.retest) do %>
-                    <%= tag.button class: 'btn btn-warning' do %>
-                        Retest
-                    <% end %>
-                <% end %>
-            </div>
-            <% elsif @sample.rerun_for? %>
-            <div class="mt-1 mb-1">
-                <span>
-                    <%= fa_icon "arrow-left", class: 'fa-fw' %>
-                </span>
-                <%= link_to sample_path(@sample.rerun_for.source_sample) do %>
-                    <%= tag.button class: 'btn btn-warning' do %>
-                        Retesting
-                    <% end %>
-                <% end %>
-            </div>
-            <% end %>
+<div class="col-md-6">
+    <div class="card shadow" style="max-width: 20em;">
+        <div class="card-header">
+            <h3>Sample #<%= @sample.id %> </h3>
         </div>
-    </div>
-    <div class="card-footer">
-        <% unless @sample.well.nil? or @sample.well.plate.nil? %>
-        <span><%= fa_icon "location-arrow", class: 'fa-fw' %> <%= link_to "Plate ##{@sample.well.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.well.plate %></span>
-        <% else %>
-        <p>Not yet assigned to plate</p>
-        <% end %>
+        <div class="card-body">
+            <%= image_tag @sample.barcode, class: 'object-contain' %>
+            <div class="p-1">
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "hashtag", class: 'fa-fw' %>
+                    </span>
+                    <span>
+                        <small><%= @sample.uid %></small>
+                    </span>
+                </div>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "clock-o", class: 'fa-fw' %>
+                    </span>
+                    <span>
+                        <small><%= @sample.created_at.strftime('%A %-d %b %H:%M') %></small>
+                    </span>
+                </div>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "user", class: 'fa-fw' %>
+                    </span>
+                    <span>
+                        <small><%= link_to @sample.client.name, @sample.client %></small>
+                    </span>
+                </div>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "magic", class: 'fa-fw' %>
+                    </span>
+                    <span>
+                        <small><%= get_badge(@sample.state) %></small>
+                    </span>
+                </div>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "flask", class: 'fa-fw' %>
+                    </span>
+                    <span>
+                        <small><%= get_control_badge(@sample.control?) %></small>
+                    </span>
+                </div>
+                <% if @sample.test_result.present? %>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "check", class: 'fa-fw' %>
+                    </span>
+                    <span>
+                        <span><%= get_result_icon(@sample.test_result) %></span>
+                        <span><%= @sample.test_result.state.capitalize %></span>
+                    </span>
+                </div>
+                <% end  %>
+                <% if @sample.retest? %>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "arrow-right", class: 'fa-fw' %>
+                    </span>
+                    <%= link_to sample_path(@sample.retest) do %>
+                        <%= tag.button class: 'btn btn-warning' do %>
+                            Retest
+                        <% end %>
+                    <% end %>
+                </div>
+                <% elsif @sample.rerun_for? %>
+                <div class="mt-1 mb-1">
+                    <span>
+                        <%= fa_icon "arrow-left", class: 'fa-fw' %>
+                    </span>
+                    <%= link_to sample_path(@sample.rerun_for.source_sample) do %>
+                        <%= tag.button class: 'btn btn-warning' do %>
+                            Retesting
+                        <% end %>
+                    <% end %>
+                </div>
+                <% end %>
+            </div>
+        </div>
+        <div class="card-footer">
+            <% unless @sample.well.nil? or @sample.well.plate.nil? %>
+            <span><%= fa_icon "location-arrow", class: 'fa-fw' %> <%= link_to "Plate ##{@sample.well.plate.id} Well #{@sample.well.row}#{@sample.well.column}", @sample.well.plate %></span>
+            <% else %>
+            <p>Not yet assigned to plate</p>
+            <% end %>
 
+        </div>
     </div>
 </div>

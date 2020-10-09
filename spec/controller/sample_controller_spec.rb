@@ -400,7 +400,7 @@ RSpec.describe SamplesController, type: :controller do
           @this_sample = create(:sample, state: Sample.states[:tested], client: @client)
         end
         post :retestinconclusive, params: {id: @this_sample.id }
-        expect(response).to have_http_status(:accepted)
+        expect(response).to have_http_status(:redirect)
         s = Sample.find(@this_sample.id)
         expect(s.state).to eq "retest"
         expect(s.rerun.present?).to eq true
@@ -413,7 +413,7 @@ RSpec.describe SamplesController, type: :controller do
           @this_sample = create(:sample, state: Sample.states[:tested], client: @client)
         end
         post :retestpositive, params: {id: @this_sample.id }
-        expect(response).to have_http_status(:accepted)
+        expect(response).to have_http_status(:redirect)
         s = Sample.find(@this_sample.id)
         expect(s.state).to eq "retest"
         expect(s.rerun.present?).to eq true

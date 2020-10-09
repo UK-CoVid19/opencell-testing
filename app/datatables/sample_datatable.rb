@@ -3,8 +3,8 @@ require 'forwardable'
 class SampleDatatable < AjaxDatatablesRails::ActiveRecord
 
   extend Forwardable
-  
-  def_delegators :@view, :get_badge, :button_to, :policy_scope
+
+  def_delegators :@view, :get_badge, :button_tag, :policy_scope, :link_to
 
   def initialize(params, opts = {})
     @view = opts[:view_context]
@@ -32,7 +32,7 @@ class SampleDatatable < AjaxDatatablesRails::ActiveRecord
         state: get_badge(record.state),
         created_at: record.created_at.strftime('%a %d %b %H:%M'),
         updated_at: record.updated_at.strftime('%a %d %b %H:%M'),
-        link: button_to("Show", record, class: "btn btn-primary "),
+        link: link_to(record) { button_tag("Show", class: 'btn btn-primary') },
         DT_RowId:  record.id
       }
     end
