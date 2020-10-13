@@ -18,7 +18,7 @@ class ClientsController < InheritedResources::Base
   end
 
   def stats
-    @stats = Sample.stats_for(resource)
+    @stats = resource.stats
     respond_to do |format|
       format.html
       format.csv { send_data create_stats_csv(@stats.to_a), filename: "stats-client-#{resource.id}.csv" }

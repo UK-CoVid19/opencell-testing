@@ -157,20 +157,23 @@ RSpec.describe Sample, type: :model do
     end
 
     it "should enqueue a rejection job on rejection" do
-      Rails.application.config.send_test_results = true
       Sample.with_user(@user) do
         @sample = create(:sample)
         expect { @sample.rejected! }.to have_enqueued_job(RejectionJob)
       end
     end
 
-    it "should not enqueue a rejection job on rejection if sending disabled" do
-      Rails.application.config.send_test_results = false
+    it "should enqueue a notification job on setting to communicated" do
       Sample.with_user(@user) do
-        @sample = create(:sample)
-        expect { @sample.rejected! }.to_not have_enqueued_job(RejectionJob)
+        @sample = create(:sample, state: :received)
+        @sample.preparing!
+        @sample.prepared!
+        @sample.tested!
+        @sample.analysed!
+        expect { @sample.communicated! }.to have_enqueued_job(ResultNotifyJob)
       end
     end
+    
 
     [:commcomplete, :commfailed].each do |state|
       it "should allow a rejected sample to transition to communication states" do
@@ -188,122 +191,6 @@ RSpec.describe Sample, type: :model do
           @sample = create(:sample, state: value)
           @sample.state = value +1
           expect { @sample.save! }.to_not raise_error
-        end
-      end
-    end
-
-    describe "stats" do
-      it "should generate valid stats when samples are created straight at commcomplete stage" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :commcomplete, client: @client)
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 1
-          expect(@stats.first.requested).to eq 0
-          expect(@stats.first.retests).to eq 0
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.first.internalchecks).to eq 0
-          expect(@stats.size).to eq 1
-        end
-      end
-
-      it "should record the request and communication of a sample" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample.preparing!
-          @sample.prepared!
-          @sample.prepared!
-          @sample.tested!
-          @sample.analysed!
-          @sample.communicated!
-          @sample.commcomplete!
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 1
-          expect(@stats.first.requested).to eq 1
-          expect(@stats.first.retests).to eq 0
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.first.internalchecks).to eq 0
-          expect(@stats.size).to eq 1
-        end
-      end
-
-      it "should record the request and rejection of a sample" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample.preparing!
-          @sample.rejected!
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 0
-          expect(@stats.first.requested).to eq 1
-          expect(@stats.first.retests).to eq 0
-          expect(@stats.first.rejects).to eq 1
-          expect(@stats.first.internalchecks).to eq 0
-          expect(@stats.size).to eq 1
-        end
-      end
-
-      it "should record the request and rerun of a sample" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample.preparing!
-          @sample.retest!
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 0
-          expect(@stats.first.requested).to eq 1
-          expect(@stats.first.retests).to eq 1
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.first.internalchecks).to eq 0
-          expect(@stats.size).to eq 1
-        end
-      end
-
-      it "should not record samples that are not created from the API" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Not Created from API'
-          r.save!
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 0
-          expect(@stats.first.requested).to eq 0
-          expect(@stats.first.retests).to eq 0
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.first.internalchecks).to eq 0
-          expect(@stats.size).to eq 1
-        end
-      end
-
-      it "should record the communication of a retest" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample.preparing!
-          @retest = @sample.create_retest(Rerun::POSITIVE)
-          @rerun = @retest
-          @rerun.preparing!
-          @rerun.prepared!
-          @rerun.prepared!
-          @rerun.tested!
-          @rerun.analysed!
-          @rerun.communicated!
-          @rerun.commcomplete!
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 1
-          expect(@stats.first.requested).to eq 1
-          expect(@stats.first.retests).to eq 1
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.first.internalchecks).to eq 0
-          expect(@stats.size).to eq 1
         end
       end
     end
@@ -327,73 +214,6 @@ RSpec.describe Sample, type: :model do
         expect(@sample.state).to eq "retest"
         expect(@retest.source_sample).to eq @sample
         expect(@retest.rerun_for.source_sample).to eq @sample
-      end
-
-      it "should count a posthoc retest as a communicated sample, however the retest count should differentiate communicating and noncommunicating retests" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample.preparing!
-          @sample.prepared!
-          @sample.prepared!
-          @sample.tested!
-          @sample.analysed!
-          @sample.communicated!
-          @sample.commcomplete!
-          @p_retest = @sample.create_posthoc_retest(Rerun::POSITIVE)
-          @p_retest.preparing!
-          @p_retest.prepared!
-          @p_retest.prepared!
-          @p_retest.tested!
-          @p_retest.analysed!
-          @p_retest.communicated!
-          @p_retest.commcomplete!
-          @stats = Sample.stats_for(@client)
-          expect(@stats.first.communicated).to eq 1
-          expect(@stats.first.requested).to eq 1
-          expect(@stats.first.retests).to eq 0
-          expect(@stats.first.internalchecks).to eq 1
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.size).to eq 1
-        end
-      end
-
-      it "should count a posthoc retest as a communicated sample, however the retest count should differentiate communicating and noncommunicating retests with an internal retest too" do
-        Sample.with_user(@user) do
-          @sample = create(:sample, state: :received, client: @client)
-          r = @sample.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample.preparing!
-          @sample.prepared!
-          @sample.prepared!
-          @sample.tested!
-          @sample.analysed!
-          @sample.communicated!
-          @sample.commcomplete!
-          @p_retest = @sample.create_posthoc_retest(Rerun::POSITIVE)
-
-          @sample_2 = create(:sample, state: :received, client: @client)
-          r = @sample_2.records.first
-          r.note = 'Created from API'
-          r.save!
-          @sample_2.preparing!
-          @sample_2.prepared!
-          @sample_2.prepared!
-          @sample_2.tested!
-          @p_2_retest = @sample_2.create_retest(Rerun::POSITIVE)
-
-          @stats = Sample.stats_for(@client)
-
-          expect(@stats.first.communicated).to eq 1
-          expect(@stats.first.requested).to eq 2
-          expect(@stats.first.retests).to eq 1
-          expect(@stats.first.internalchecks).to eq 1
-          expect(@stats.first.rejects).to eq 0
-          expect(@stats.size).to eq 1
-        end
       end
 
       it "should not create a rerun of a sample that has not been communicated already" do

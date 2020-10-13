@@ -1,4 +1,3 @@
-require 'ostruct'
 class Sample < ApplicationRecord
   extend BarcodeModule
 
@@ -31,8 +30,8 @@ class Sample < ApplicationRecord
   scope :is_analysed, -> { where(state: Sample.states[:analysed]) }
   scope :is_communicated, -> { where(state: Sample.states[:communicated]) }
 
-  after_update :send_notification_after_analysis, if: :communicated?
-  after_update :send_rejection, if: :rejected?
+  after_update_commit :send_notification_after_analysis, if: :communicated?
+  after_update_commit :send_rejection, if: :rejected?
 
   CONTROL_CODE = 1234
 
@@ -177,36 +176,6 @@ class Sample < ApplicationRecord
     samples
   end
 
-  def self.stats_for(client)
-    received = Sample.states[:received]
-    commcomplete = Sample.states[:commcomplete]
-    retest = Sample.states[:retest]
-    reject = Sample.states[:rejected]
-
-    query = <<-SQL
-      select
-      foo.date,
-      count(case when foo.states @> ARRAY[#{received}] and foo.notes @> array['Created from API']::varchar[] then 1 else null end) as requested,
-      count(case when foo.states @> ARRAY[#{commcomplete}] and not foo.states @> ARRAY[#{reject}] then 1 else null end) as communicated,
-      count(case when foo.states @> ARRAY[#{reject}] then 1 else null end) as rejects,
-      count(case when foo.states @> ARRAY[#{retest}] and not foo.states @> ARRAY[#{[reject]}] and not foo.states @> ARRAY[#{[commcomplete]}] then 1 else null end) as retests,
-      count(case when foo.states @> ARRAY[#{retest}] and not foo.states @> ARRAY[#{reject}] and foo.states @> ARRAY[#{[commcomplete, retest].join(',')}] then 1 else null end) as internalchecks
-      from (
-        select date(r.updated_at) as date, r.sample_id as sample_id, array_agg(r.state) as states, array_agg(r.note) as notes
-        from public.records r
-        inner join public.samples s on sample_id = s.id
-        where s.client_id = #{client.id}
-        and r.state in(#{[received, commcomplete, retest, reject].join(',')})
-        and s.control = false
-        group by date(r.updated_at), r.sample_id ) as foo
-      group by foo.date
-      order by foo.date desc
-    SQL
-
-    results = ActiveRecord::Base.connection.execute(query)
-    results.map { |r| OpenStruct.new(r) }.map { |i| Stat.new(i) }
-  end
-
   private
 
   def unique_well_in_plate?
@@ -223,11 +192,11 @@ class Sample < ApplicationRecord
   end
 
   def send_notification_after_analysis
-    ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated? && Rails.application.config.send_test_results)
+    ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated?)
   end
 
   def send_rejection
-    RejectionJob.perform_later(self, @with_user) if ( self.saved_change_to_state? && Rails.application.config.send_test_results)
+    RejectionJob.perform_later(self, @with_user) if ( self.saved_change_to_state?)
   end
 
   def set_uid
@@ -260,16 +229,5 @@ class Sample < ApplicationRecord
   def set_change_record
     record_user = @with_user || Sample.block_user
     records << Record.new(user: record_user, note: nil, state: Sample.states[state])
-  end
-  class Stat
-    attr_reader :requested, :communicated, :retests, :rejects, :date, :internalchecks
-    def initialize(args)
-      @requested = args.requested
-      @communicated = args.communicated
-      @retests = args.retests
-      @rejects = args.rejects
-      @internalchecks = args.internalchecks
-      @date = args.date
-    end
   end
 end
