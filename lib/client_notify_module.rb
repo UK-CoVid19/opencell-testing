@@ -11,16 +11,19 @@ module ClientNotifyModule
     Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
   ].freeze
 
-  def make_request(to_send)
+  def make_request(to_send, opts = {})
 
-    url = URI.parse(ENV['NOTIFY_URL'])
-    authorization = ActionController::HttpAuthentication::Basic.encode_credentials(ENV['NOTIFY_USERNAME'], ENV['NOTIFY_PASSWORD'])
+    url = URI.parse(opts.url ||= ENV['NOTIFY_URL'])
+    username = opts.username ||= ENV['NOTIFY_USERNAME']
+    password = opts.password ||= ENV['NOTIFY_PASSWORD']
+    apikey = opts.apikey ||= ENV['NOTIFY_API_KEY']
+    authorization = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     request = Net::HTTP::Post.new(url, 'Content-Type' => 'application/json')
     request['Accept'] = '*/*'
     request['Authorization'] = authorization
-    request['apikey'] = ENV['NOTIFY_API_KEY']
+    request['apikey'] = apikey
     request.body = to_send.to_json
 
     response = nil
