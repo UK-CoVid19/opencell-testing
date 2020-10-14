@@ -17,6 +17,8 @@ class Client < ApplicationRecord
   CONTROL_NAME = "control"
   INTERNAL_RERUN_NAME = 'Posthoc Retest'
 
+  scope :real, -> { where.not(name: [CONTROL_NAME, INTERNAL_RERUN_NAME]) }
+
   def hash_api_key
     raise "API key required" if api_key.blank?
 

@@ -123,7 +123,7 @@ class SamplesController < ApplicationController
     @sample = authorize Sample.new(sample_params.merge!(state: Sample.states[:received]))
     respond_to do |format|
       if @sample.save
-        format.html { redirect_to client_path(@sample.client), notice: 'Sample was successfully created.' }
+        format.html { redirect_to @sample, notice: 'Sample was successfully created.' }
         format.json { render :show, status: :created, location: @sample }
       else
         format.html { render :new }
@@ -252,7 +252,7 @@ class SamplesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
   def sample_params
-    params.require(:sample).permit(:client_id, :state)
+    params.require(:sample).permit(:client_id, :state, :uid)
   end
 
   def retest_params

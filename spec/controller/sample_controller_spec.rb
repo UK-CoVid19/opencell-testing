@@ -207,13 +207,13 @@ RSpec.describe SamplesController, type: :controller do
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
     end
-      
+
     it "should not let a patient reject a sample " do
       patch :reject, params: {id: @sample.id}
       expect(flash[:alert]).to eq("You are not authorized to perform this action")
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
-    
+
     end
   end
 
@@ -272,11 +272,24 @@ RSpec.describe SamplesController, type: :controller do
 
     it "should let a staff member create a sample with the correct defaults" do
       before = Sample.all.size
-      post :create, params: {sample: {client_id: @client.id }}
+      post :create, params: { sample: { client_id: @client.id } }
       expect(flash[:alert]).to be_nil
-      expect(response).to redirect_to client_path(@client)
+      expect(response).to redirect_to sample_path(Sample.last)
       expect(Sample.all.size).to eq before + 1
       expect(Sample.last.state).to eq :received.to_s
+      expect(Sample.last.uid).to_not be_nil
+      expect(Sample.last.uid.size).to be > 8
+    end
+
+    it "should let a staff member create a sample with a UID" do
+      before = Sample.all.size
+      post :create, params: { sample: { client_id: @client.id, uid: "abcd" } }
+      expect(flash[:alert]).to be_nil
+      expect(response).to redirect_to sample_path(Sample.last)
+      expect(Sample.all.size).to eq before + 1
+      expect(Sample.last.state).to eq :received.to_s
+      expect(Sample.last.uid).to_not be_nil
+      expect(Sample.last.uid).to eq "abcd"
     end
 
     it "should let a staff member reject a sample " do
@@ -300,7 +313,7 @@ RSpec.describe SamplesController, type: :controller do
         current_samples = Sample.all.size
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
-        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'C', column: 1, id: @this_sample.id, control: false}]}}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: { mappings: [{ row:'C', column: 1, id: @this_sample.id, control: false }]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
         expect(flash[:alert]).to_not be_present
@@ -315,7 +328,7 @@ RSpec.describe SamplesController, type: :controller do
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
-        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id, control: true, control_code: 1234}]}}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: { mappings: [{ row:'A', column: 1, id: @this_sample.id, control: true, control_code: 1234}]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
       end
@@ -326,7 +339,7 @@ RSpec.describe SamplesController, type: :controller do
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
-        post :step3_bulkprepared, params: {plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 1, id: @this_sample.id, control: true, control_code: nil}]}}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: { mappings: [{ row:'A', column: 1, id: @this_sample.id, control: true, control_code: nil}]}}
         expect(response).to render_template(:step3_pendingprepare)
         expect(flash[:alert]).to be_present
         expect(Plate.all.size).to eq 0

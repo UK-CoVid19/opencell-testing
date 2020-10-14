@@ -1,5 +1,5 @@
 <br/>
-<%= form_with(model: sample, local: true, html: {class: 'form-inline'}) do |form| %>
+<%= form_with(model: sample, local: true, html: {class: ''}) do |form| %>
   <% if sample.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(sample.errors.count, "error") %> prohibited this sample from being saved:</h2>
@@ -11,10 +11,16 @@
       </ul>
     </div>
   <% end %>
-  <div class="form-group mx-sm-3 mb-2">
-    <%= form.label :client_id, "Client", class: 'sr-only' %>
-    <%= form.collection_select :client_id, Client.all, :id, :name, {}, {class: 'form-control'} %>
+  <div class="form-group  mb-2">
+    <%= form.label :client_id, "Client" %>
+    <%= form.collection_select :client_id, Client.real, :id, :name, {}, {class: 'form-control'} %>
   </div>
+  <div class="form-group  mb-2">
+    <%= form.label :uid, "UID" %>
+    <%= form.text_field :uid, {class: 'form-control'} %>
+    <small id="uidHelp" class="form-text text-muted">Leave blank for auto-generated UID</small>
+  </div>
+  
   <%= form.submit class: 'btn btn-primary mb-2' %>
 <% end %>
   
