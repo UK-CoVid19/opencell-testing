@@ -24,7 +24,12 @@ class ResultNotifyJob < ApplicationJob
       'sampleid' => sample.uid,
       'result' => get_result(sample.test_result.state)
     }
-    response = make_request(to_send)
+    credentials = {}
+    if !sample.client.credentials.nil?
+      credentials = sample.client.credentials
+    end
+
+    response = make_request(to_send, credentials)
     if [200, 202].include? response.code.to_i
       sample.commcomplete!
       return

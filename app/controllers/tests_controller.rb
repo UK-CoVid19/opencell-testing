@@ -95,7 +95,7 @@ class TestsController < ApplicationController
 
     if @plate.analysed?
       flash[:alert] = "Invalid plate state to confirm"
-      redirect_to(request.referrer || plates_tests_path(@plate, @test)) and return 
+      redirect_to(request.referrer || plates_tests_path(@plate, @test)) and return
     end
 
     tp = test_analysis_params.merge!(plate_id: params[:plate_id])
