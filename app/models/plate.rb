@@ -74,9 +74,9 @@ class Plate < ApplicationRecord
           @assign_control_error = true
           break
         end
-        sample = Sample.create(client: Client.control_client, state: Sample.states[:preparing], control: true)
+        sample = Sample.create!(client: Client.control_client, state: Sample.states[:preparing], control: true)
       elsif PlateHelper.auto_control_positions.include?({row: well[:row], col: well[:column].to_i})
-        sample = Sample.create(client: Client.control_client, state: Sample.states[:preparing], control: true)
+        sample = Sample.create!(client: Client.control_client, state: Sample.states[:preparing], control: true)
       else
         sample = Sample.find(mapping[:id])
       end

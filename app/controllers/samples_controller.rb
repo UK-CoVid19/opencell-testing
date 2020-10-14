@@ -15,7 +15,7 @@ class SamplesController < ApplicationController
   end
 
   def pending_plate
-    @samples = policy_scope(Sample.is_received.includes(:client).includes(rerun_for: [:source_sample]))
+    @samples = policy_scope(Sample.is_received.includes(:client).includes(rerun_for: [source_sample: [:test_result]]))
     authorize Sample
   end
 
@@ -134,18 +134,24 @@ class SamplesController < ApplicationController
 
   def step3_bulkprepared
     authorize Sample
-    plate_params = get_bulk_plate
-    Plate.transaction do
-      @plate = Plate.new(plate_params).assign_samples(get_mappings)
-      respond_to do |format|
-        if @plate.save
-          format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
-          format.json { render :show, status: :created, location: @plate }
-        else
-          format.html { redirect_to step3_pendingprepare_path, status: :unprocessable_entity, alert: "Could not process plate" }
-          format.json { render json: @plate.errors, status: :unprocessable_entity }
-        end
+    @plate = Plate.new(plate_params)
+    begin
+      @plate.transaction do
+        @plate.assign_samples(get_mappings)
+        @plate.save!
       end
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error("Request failed with exception #{e}")
+      respond_to do |format|
+        flash.now[:alert] = "Could not process plate"
+        format.html { render :step3_pendingprepare, alert: "Could not process plate" }
+        format.json { render json: @plate.errors, status: :unprocessable_entity }
+      end
+      return
+    end
+    respond_to do |format|
+      format.html { redirect_to step4_pendingreadytest_path, notice: "Samples have been successfully plated" }
+      format.json { render :show, status: :created, location: @plate }
     end
   end
 
@@ -276,7 +282,7 @@ class SamplesController < ApplicationController
 
   end
 
-  def get_bulk_plate
+  def plate_params
     params.require(:plate).permit(wells_attributes:[:id, :row, :column ])
   end
   def get_mappings

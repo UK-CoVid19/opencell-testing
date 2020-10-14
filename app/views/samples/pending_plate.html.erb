@@ -35,7 +35,7 @@
               </td>
               <td>
                 <% if sample.is_retest %>
-                  <%= fa_icon "check" %>
+                  <%= get_result_icon(sample.rerun_for.source_sample.test_result) %>
                   <p hidden>true</p>
                 <% else %>
                   <%= fa_icon "times" %>

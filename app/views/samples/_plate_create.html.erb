@@ -2,7 +2,7 @@
     <meta name="turbolinks-visit-control" content="reload">
 <% end %>
 <div class="container table-responsive">
-    <%= form_with(model: @plate, url: step3_sample_bulkprepared_path) do |form| %>
+    <%= form_with(model: @plate, url: step3_sample_bulkprepared_path, local: true) do |form| %>
     <% if @plate.errors.any? %>
     <div id="error_explanation">
         <h2><%= pluralize(@plate.errors.count, "error") %> prohibited this test from being saved:</h2>
