@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_07_144131) do
+ActiveRecord::Schema.define(version: 2020_10_15_123458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,8 +68,19 @@ ActiveRecord::Schema.define(version: 2020_10_07_144131) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "notify"
+    t.string "url"
+    t.jsonb "headers"
     t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
     t.index ["name"], name: "index_clients_on_name", unique: true
+  end
+
+  create_table "headers", force: :cascade do |t|
+    t.string "key"
+    t.string "value"
+    t.bigint "client_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_id"], name: "index_headers_on_client_id"
   end
 
   create_table "plates", force: :cascade do |t|
@@ -184,6 +195,7 @@ ActiveRecord::Schema.define(version: 2020_10_07_144131) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "headers", "clients"
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
   add_foreign_key "reruns", "samples"

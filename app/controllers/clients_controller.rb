@@ -26,10 +26,14 @@ class ClientsController < InheritedResources::Base
     end
   end
 
+  def test_webhook
+    response = @client.test_webhook
+  end
+
   private
 
   def client_params
-    params.require(:client).permit(:name, :notify)
+    params.require(:client).permit(:name, :notify, :url, headers_attributes: [:id, :key, :value, :_destroy])
   end
 
   def create_stats_csv(stats)

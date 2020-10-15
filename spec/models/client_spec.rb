@@ -20,6 +20,23 @@ RSpec.describe Client, type: :model do
       expect(@client_b.errors.size).to eq 0
     end
 
+    it "should require a URL when notify is set to true" do
+      @client = build(:client, name: "myname2", notify: true, url: nil)
+      expect(@client.save).to eq false
+      expect(@client.errors.size).to eq 1
+      expect(@client.errors[:url].size).to eq 1
+    end
+
+    it "should require a URL when notify is set to true" do
+      @client = build(:client, name: "myname2", notify: true, url: "https://blah.com")
+      expect(@client.save).to eq true
+    end
+
+    it "should not require a URL when notify is set to false" do
+      @client = build(:client, name: "myname2", notify: false, url: nil)
+      expect(@client.save).to eq true
+    end
+
     it "should require api key" do
       @client_a = Client.new(name: 'blah', notify: false)
       expect { @client_a.save }.to raise_error "API key required"
