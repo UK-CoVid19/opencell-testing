@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 require 'ostruct'
 class Client < ApplicationRecord
+  include ClientNotifyModule
   has_many :samples, dependent: :destroy
+  has_many :headers, dependent: :destroy
+  accepts_nested_attributes_for :headers, allow_destroy: true
+  validates :url, presence: true, if: :notify?
 
   validates :name, uniqueness: true
   before_create :hash_api_key
@@ -23,6 +27,23 @@ class Client < ApplicationRecord
     raise "API key required" if api_key.blank?
 
     self.api_key_hash = Digest::SHA256.base64digest(api_key.encode('UTF-8'))
+  end
+
+
+  def test_webhook
+    raise "Client cannot notify" if !notify?
+
+    to_send = {
+      'sampleid' => "TEST",
+      'result' => "INCONCLUSIVE"
+    }
+    response = make_request(to_send, self)
+
+    if [200, 202].include? response.code.to_i
+      return true
+    else
+      return false
+    end
   end
 
   def stats

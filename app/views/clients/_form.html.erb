@@ -1,6 +1,6 @@
 <div class="container">
 
-<%= form_with(model: client, local: true, html: {class: 'was-validated'}) do |form| %>
+<%= form_with(model: client, local: true) do |form| %>
   <% if client.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(client.errors.count, "error") %> prohibited this client from being saved:</h2>
@@ -13,11 +13,42 @@
     </div>
   <% end %>
 
-  <div class="form-group">
+  <div class="form-group was-validated">
     <%= form.label :name %>
     <%= form.text_field :name, class: 'form-control', required: true %>
     <div class="valid-feedback">Valid.</div>
     <div class="invalid-feedback">Name Required</div>
+  </div>
+  <div class="form-group">
+    <%= form.label :url, "Webhook URL" %>
+    <%= form.url_field :url, class: 'form-control'  %>
+  </div>
+  <div class="form-group">
+    <%= form.label :headers, "Webhook Headers" %>
+    <%= form.fields_for :headers, get_headers(client) do |builder| %>
+      
+      <div class="form-inline">
+        <div class="header-fields row">
+          <%= builder.hidden_field :id, name: "client[headers_attributes][][id]" %>
+          <%= builder.label :key %>
+          <%= builder.text_field :key, name: "client[headers_attributes][][key]", class: 'form-control m-2' %>
+          <%= builder.label :value %>
+          <%= builder.text_field :value, name: "client[headers_attributes][][value]", class: 'form-control m-2' %>
+          <% if action_name == "edit" %>
+          <div class="form-check">
+            <%= builder.check_box :_destroy, class: 'form-check-input' %>
+            <%= builder.label :_destroy, "Destroy?", class: 'form-check-label' %>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <%= button_tag class: 'btn btn-primary btn-small', type: 'button', id: "add-header" do  %>
+      <%= fa_icon "plus-circle", class: 'fa-fw' %>
+    <% end %>
+    <%= button_tag class: 'btn btn-danger btn-small', type: 'button', id: "remove-row" do  %>
+      <%= fa_icon "warning", class: 'fa-fw' %>
+    <% end %>
   </div>
   <div class="form-check">
     <%= form.check_box :notify, class: 'form-check-input' %>
@@ -28,3 +59,26 @@
   </div>
 <% end %>
 </div>
+
+
+<script>
+$(document).on('turbolinks:load', function(){
+  let deleteVisible = false
+  $('#remove-row').hide()
+  function addRow(){
+    let row = $('.header-fields:last').clone(false)
+    row.find('input').val(null) // set inputs to nothing
+    row.insertAfter('.header-fields:last')
+    deleteVisible = true
+    $('#remove-row').show();
+  }
+
+  function removeRow(){
+    $('.header-fields:last').remove()
+  }
+  
+  $("#add-header").on('click', addRow)
+  $("#remove-row").on('click', removeRow)
+
+})
+</script>

@@ -13,13 +13,18 @@ module ClientNotifyModule
 
   def make_request(to_send, client)
 
-    url = URI.parse(client.url)
+    url = URI.parse(client.url ||= ENV['NOTIFY_URL'])
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     request = Net::HTTP::Post.new(url, 'Content-Type' => 'application/json')
     request['Accept'] = '*/*'
     client.headers.each do |header|
       request[header.key] = header.value
+    end
+    # fallback
+    if client.headers.empty?
+      request['Authorization'] = ActionController::HttpAuthentication::Basic.encode_credentials(ENV['NOTIFY_USERNAME'], ENV['NOTIFY_PASSWORD'])
+      request['apikey'] = ENV['NOTIFY_API_KEY']
     end
     request.body = to_send.to_json
 
