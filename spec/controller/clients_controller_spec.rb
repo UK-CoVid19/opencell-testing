@@ -84,6 +84,87 @@ RSpec.describe ClientsController, type: :controller do
       expect(Client.last.name).to eq "test name"
     end
 
+    it "should create a client with webhook parameters" do
+
+      notify_attributes = {headers_attributes: [{key: "Authorization", value: "Basic asd9h802ij"}]}
+      @client = build(:client, notify: true, name: "test name", url: 'https://abc.com/endpoint')
+      post :create, params: { client: @client.attributes.merge!(notify_attributes) }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:success)
+      expect(Client.last.notify).to eq true
+      expect(Client.last.name).to eq "test name"
+      expect(Client.last.url).to eq 'https://abc.com/endpoint'
+      expect(Client.last.headers.size).to eq 1
+      expect(Client.last.headers.first.key).to eq "Authorization"
+      expect(Client.last.headers.first.value).to eq "Basic asd9h802ij"
+    end
+
+    it "should create a client with multiple parameters" do
+      notify_attributes = {headers_attributes: [{key: "Authorization", value: "Basic asd9h802ij"},{key: "apikey", value: "blah"}]}
+      @client = build(:client, notify: true, name: "test name", url: 'https://abc.com/endpoint')
+      attrs = @client.attributes.merge!(notify_attributes)
+      post :create, params: { client: attrs }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:success)
+      expect(Client.last.notify).to eq true
+      expect(Client.last.name).to eq "test name"
+      expect(Client.last.url).to eq 'https://abc.com/endpoint'
+      expect(Client.last.headers.size).to eq 2
+      expect(Client.last.headers.first.key).to eq "Authorization"
+      expect(Client.last.headers.first.value).to eq "Basic asd9h802ij"
+      expect(Client.last.headers.second.key).to eq "apikey"
+      expect(Client.last.headers.second.value).to eq "blah"
+    end
+
+    it "should update a client and its headers" do
+
+      @client = create(:client, notify: true, name: "test name", url: "https://blah.com")
+      notify_attributes = {url: 'https://abc.com/endpoint', notify: false, headers_attributes: [{ id: @client.headers.first.id, key: "Authorization", value: "Basic asd9h802ij"},{id: @client.headers.last.id, key: "apikey", value: "blah"}]}
+      put :update, params: { id: @client.id, client: notify_attributes }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:redirect)
+      @updated_client = Client.find(@client.id)
+      expect(@updated_client.notify).to eq false
+      expect(@updated_client.name).to eq "test name"
+      expect(@updated_client.url).to eq 'https://abc.com/endpoint'
+      expect(@updated_client.headers.size).to eq 2
+      expect(@updated_client.headers.first.key).to eq "Authorization"
+      expect(@updated_client.headers.first.value).to eq "Basic asd9h802ij"
+      expect(@updated_client.headers.second.key).to eq "apikey"
+      expect(@updated_client.headers.second.value).to eq "blah"
+    end
+
+    it "should update a client to create a new header if it does not already exist" do
+      @client = create(:client, notify: true, name: "test name", url: "https://blah.com")
+      notify_attributes = {url: 'https://abc.com/endpoint', notify: false, headers_attributes: [{ id: @client.headers.first.id, key: "Authorization", value: "Basic asd9h802ij"},{id: nil, key: "apikey", value: "blah"}]}
+      put :update, params: { id: @client.id, client: notify_attributes }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:redirect)
+      @updated_client = Client.find(@client.id)
+      expect(@updated_client.notify).to eq false
+      expect(@updated_client.name).to eq "test name"
+      expect(@updated_client.url).to eq 'https://abc.com/endpoint'
+      expect(@updated_client.headers.size).to eq 3
+      expect(@updated_client.headers.first.key).to eq "Authorization"
+      expect(@updated_client.headers.first.value).to eq "Basic asd9h802ij"
+      expect(@updated_client.headers.last.key).to eq "apikey"
+      expect(@updated_client.headers.last.value).to eq "blah"
+    end
+
+    it "should update a client to delete headers" do
+      @client = create(:client, notify: true, name: "test name", url: "https://blah.com")
+      notify_attributes = {url: 'https://abc.com/endpoint', notify: false, headers_attributes: [{ id: @client.headers.first.id, _destroy: true}]}
+      expect(@client.headers.size).to eq 2
+      put :update, params: { id: @client.id, client: notify_attributes }
+      expect(flash[:alert]).to_not be_present
+      expect(response).to have_http_status(:redirect)
+      @updated_client = Client.find(@client.id)
+      expect(@updated_client.notify).to eq false
+      expect(@updated_client.name).to eq "test name"
+      expect(@updated_client.url).to eq 'https://abc.com/endpoint'
+      expect(@updated_client.headers.size).to eq 1
+    end
+
     it "should update a client" do
       @client = create(:client, notify: true, name: "test name")
       put :update, params: { id: @client.id, client: { id: @client.id, name: "edited name" } }

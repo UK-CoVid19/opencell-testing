@@ -36,6 +36,16 @@
                             <% end %>
                         </span>
                     </div>
+                    <div class="mt-1 mb-1 ">
+                        <span class="profile-icon">
+                            <%= fa_icon "desktop" %>
+                        </span>
+                        <span>
+                            <% if !@client.url.nil? %>
+                            <%= @client.url %>
+                            <% end %>
+                        </span>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <%= link_to "Stats", stats_client_path(@client), class: 'btn btn-primary'%>

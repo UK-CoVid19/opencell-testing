@@ -4,5 +4,7 @@ FactoryBot.define do
   factory :client do
     name { generate(:client_name) }
     api_key { SecureRandom.base64(16) }
+    url { "https://blah.com"}
+    headers { build_list(:header, 2)}
   end
 end
