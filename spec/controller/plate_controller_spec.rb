@@ -12,7 +12,7 @@ RSpec.describe PlatesController, type: :controller do
     end
 
     it "routes to #edit" do
-      expect(get: "/plates/1/edit").to route_to("plates#edit", id: "1")
+      expect(get: "/plates/1/edit").not_to be_routable
     end
 
     it "routes to #create" do
@@ -20,18 +20,17 @@ RSpec.describe PlatesController, type: :controller do
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/plates/1").to route_to("plates#update", id: "1")
+      expect(put: "/plates/1").not_to be_routable
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/plates/1").to route_to("plates#update", id: "1")
+      expect(patch: "/plates/1").not_to be_routable
     end
 
     it "routes to #destroy" do
-      expect(delete: "/plates/1").to route_to("plates#destroy", id: "1")
+      expect(delete: "/plates/1").not_to be_routable
     end
   end
-
 
   describe('not signed in redirects all requests to sign in') do
     it "routes to #index" do
@@ -42,31 +41,7 @@ RSpec.describe PlatesController, type: :controller do
 
     it "routes to #show" do
       # expect(get: "/plates/1").to route_to("plates#show", id: "1")
-      get :show, params: {id: 1}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(new_user_session_path)
-    end
-
-    it "routes to #edit" do
-      get :edit, params: {id: 1}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(new_user_session_path)
-    end
-
-    it "routes to #update via PUT" do
-      put :update, params: {id: 1}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(new_user_session_path)
-    end
-
-    it "routes to #update via PATCH" do
-      patch :update, params: {id: 1}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(new_user_session_path)
-    end
-
-    it "routes to #destroy" do
-      delete :destroy, params: {id: 1}
+      get :show, params: { id: 1 }
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)
     end
@@ -78,7 +53,7 @@ RSpec.describe PlatesController, type: :controller do
       @user = create(:user, role: User.roles[:patient]) # in factories.rb you should create a factory for user
       sign_in @user
       wells = build_list(:well, 96)
-      @plate = create(:plate, wells: wells )
+      @plate = create(:plate, wells: wells)
     end
 
     it "routes to #index" do
@@ -90,30 +65,6 @@ RSpec.describe PlatesController, type: :controller do
     it "routes to #show" do
       # expect(get: "/plates/1").to route_to("plates#show", id: "1")
       get :show, params: {id: @plate.id}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "routes to #edit" do
-      get :edit, params: {id: @plate.id}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "routes to #update via PUT" do
-      put :update, params: {id: @plate.id}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "routes to #update via PATCH" do
-      patch :update, params: {id: @plate.id}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(root_path)
-    end
-
-    it "routes to #destroy" do
-      delete :destroy, params: {id: @plate.id}
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(root_path)
     end
@@ -134,32 +85,8 @@ RSpec.describe PlatesController, type: :controller do
 
     it "routes to #show" do
       # expect(get: "/plates/1").to route_to("plates#show", id: "1")
-      get :show, params: {id: @plate.id}
+      get :show, params: { id: @plate.id }
       expect(response).to have_http_status(:success)
-    end
-
-    it "routes to #edit" do
-      get :edit, params: {id: @plate.id}
-      expect(response).to have_http_status(:success)
-    end
-
-    it "routes to #update via PUT" do
-      put :update, params: { id: @plate.id, plate: {id: @plate.id} }
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(plate_path(@plate))
-    end
-
-    it "routes to #update via PATCH" do
-      patch :update, params: {id: @plate.id, plate: {id: @plate.id}}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(plate_path(@plate))
-    end
-
-    it "routes to #destroy" do
-      delete :destroy, params: {id: @plate.id}
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(plates_path)
     end
   end
-
 end

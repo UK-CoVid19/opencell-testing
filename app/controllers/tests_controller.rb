@@ -10,12 +10,12 @@ class TestsController < ApplicationController
 
   def complete
     authorize Test
-    @tests = Test.all.joins(:plate).where(plates: {state: Plate.states[:complete]})
+    @tests = Test.all.joins(:plate).where(plates: { state: Plate.states[:complete] })
   end
 
   def done
     authorize Test
-    @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: {state: Plate.states[:analysed]})
+    @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
   end
 
   # GET /tests/1
@@ -28,10 +28,6 @@ class TestsController < ApplicationController
     @test_results = @plate.samples.map {|s| TestResult.new({well: s.well})}
     @test = Test.new({plate: @plate, test_results: @test_results})
     authorize @test
-  end
-
-  # GET /tests/1/edit
-  def edit
   end
 
   def analyse
@@ -59,7 +55,7 @@ class TestsController < ApplicationController
     end
   end
 
-  RESULTS_FORMAT = [ 'application/json', 'text/json' ]
+  RESULTS_FORMAT = ['application/json', 'text/json'].freeze
   def createfile
     tp = test_file_params.merge!(plate_id: params[:plate_id])
     result_file = tp[:computed_results]
@@ -92,50 +88,32 @@ class TestsController < ApplicationController
   end
 
   def confirm
-
     if @plate.analysed?
       flash[:alert] = "Invalid plate state to confirm"
-      redirect_to(request.referrer || plates_tests_path(@plate, @test)) and return 
+      redirect_to(request.referrer || plates_tests_path(@plate, @test)) and return
     end
 
     tp = test_analysis_params.merge!(plate_id: params[:plate_id])
-    @test.update(tp)
-    @test.plate.analysed!
-    # update all the samples to confirmed status
-    @test.plate.samples.update(state: Sample.states[:communicated])
-    respond_to do |format|
-      if @test.save
-        format.html { redirect_to plate_url(@plate), notice: 'Test was successfully confirmed.' }
-        format.json { render :show, status: :created, location: @test }
-      else
+    begin
+      @test.transaction do
+        @test.update(tp)
+        @test.plate.analysed!
+        # update all the samples to confirmed status
+        @test.plate.samples.update(state: Sample.states[:communicated])
+        @test.save!
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error("Request failed with exception #{e}")
+      respond_to do |format|
+        flash.now[:alert] = "Could not process plate"
         format.html { render :new }
         format.json { render json: @test.errors, status: :unprocessable_entity }
       end
+      return
     end
-  end
-
-  # PATCH/PUT /tests/1
-  # PATCH/PUT /tests/1.json
-  def update
-    tp = test_params.merge!(plate_id: params[:plate_id])
     respond_to do |format|
-      if @test.update(tp)
-        format.html { redirect_to [@plate, @test], notice: 'Test was successfully updated.' }
-        format.json { render :show, status: :ok, location: @test }
-      else
-        format.html { render :edit }
-        format.json { render json: @test.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /tests/1
-  # DELETE /tests/1.json
-  def destroy
-    @test.destroy
-    respond_to do |format|
-      format.html { redirect_to tests_url, notice: 'Test was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html { redirect_to plate_url(@plate), notice: 'Test was successfully confirmed.' }
+      format.json { render :show, status: :created, location: @test }
     end
   end
 

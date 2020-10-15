@@ -19,34 +19,6 @@ class PlatesController < ApplicationController
     end
   end
 
-  # GET /plates/1/edit
-  def edit
-  end
-
-  # PATCH/PUT /plates/1
-  # PATCH/PUT /plates/1.json
-  def update
-    respond_to do |format|
-      if @plate.update(plate_params)
-        format.html { redirect_to @plate, notice: 'Plate was successfully updated.' }
-        format.json { render :show, status: :ok, location: @plate }
-      else
-        format.html { render :edit }
-        format.json { render json: @plate.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /plates/1
-  # DELETE /plates/1.json
-  def destroy
-    @plate.destroy
-    respond_to do |format|
-      format.html { redirect_to plates_url, notice: 'Plate was successfully destroyed.' }
-      format.json { head :no_content }
-    end
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_plate

@@ -27,8 +27,8 @@ Rails.application.routes.draw do
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
   post 'users/create_staff', to: 'users#create_staff', as: 'create_staff'
 
-  resources :plates do
-    resources :tests, except: [:index] do
+  resources :plates, except: [:edit, :update, :destroy] do
+    resources :tests, except: [:index, :edit, :update, :destroy] do
       member do
         get 'analyse'
         patch 'confirm'

@@ -7,7 +7,6 @@
         <th>ID</th>
         <th>Created at</th>
         <th>Tested By</th>
-        <th>Plate</th>
         <th>Result Files</th>
         <th>Actions</th>
       </tr>
@@ -18,7 +17,6 @@
           <td><%= tag.b test.id %></td>
           <td><%= test.created_at.strftime('%A %-d %b %H:%M') %></td>
           <td><%= link_to test.user.email, user_path(test.user) %></td>
-          <td><%= link_to test.plate.id, test.plate %></td>
           <td>
             <% test.result_file.tap do |file| %>
               <%= link_to "Download #{file.filename}", rails_blob_path(file, disposition: "attachment") %>
@@ -28,13 +26,7 @@
           <td>
             <%= link_to plate_path(test.plate) do  %>
               <button class="btn btn-primary">Show</button>
-            <% end  %>
-            <%= link_to edit_plate_test_path(test.plate, test) do %>
-              <button class="btn btn-outline-info">Edit</button>
-            <% end  %>
-            <%= link_to plate_test_path(test.plate, test), method: :delete, data: { confirm: 'Are you sure?' } do %>
-              <button class="btn btn-outline-danger">Delete</button>
-            <% end  %>
+            <% end  %>            
           </td>
         </tr>
       <% end %>

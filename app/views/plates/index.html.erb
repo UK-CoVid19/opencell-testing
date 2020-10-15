@@ -8,7 +8,7 @@
       <th>UID</th>
       <th>Status</th>
       <th>Created At</th>
-      <th colspan="1"></th>
+      <th colspan="1">Actions</th>
     </tr>
     </thead>
 
@@ -22,13 +22,7 @@
         <td class="text-right">
           <%= link_to plate do  %>
             <button class="btn btn-primary">Show</button>
-          <% end %>
-          <%= link_to edit_plate_path(plate) do  %>
-            <button class="btn btn-outline-info">Edit</button>
-          <% end %>
-          <%= link_to plate, method: :delete, data: { confirm: 'Are you sure?' } do  %>
-            <button class="btn btn-outline-danger">Delete</button>
-          <% end %>
+          <% end %>          
         </td>
       </tr>
     <% end %>
