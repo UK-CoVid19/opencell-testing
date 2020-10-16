@@ -19,8 +19,16 @@ RSpec.describe ClientsController, type: :controller do
       expect(get: "/clients/1/edit").to route_to("clients#edit", id: "1")
     end
 
+    it "routes to #update with put" do
+      expect(put: "/clients/1").to route_to("clients#update", id: "1")
+    end
+
+    it "routes to #update with patch" do
+      expect(patch: "/clients/1").to route_to("clients#update", id: "1")
+    end
+
     it "routes to #destroy" do
-      expect(delete: "/clients/1").to route_to("clients#destroy", id: "1")
+      expect(delete: "/clients/1").to_not be_routable
     end
 
     it "routes to #stats" do
@@ -175,13 +183,6 @@ RSpec.describe ClientsController, type: :controller do
       expect(response).to redirect_to(client_path(@client))
     end
 
-    it "should let a user delete themselves from the users controller" do
-      @client = create(:client)
-      delete :destroy, params: { id: @client.id }
-      expect(flash[:notice]).to be_present
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(clients_path)
-    end
   end
 
   describe("not signed in") do
@@ -226,14 +227,6 @@ RSpec.describe ClientsController, type: :controller do
     it "should be signed in to update a client" do 
       @client = create(:client, notify: true, name: "test name")
       put :update, params: { id: @client.id, client: { id: @client.id, name: "edited name" } }
-      expect(flash[:alert]).to be_present
-      expect(response).to have_http_status(:redirect)
-      expect(response).to redirect_to(new_user_session_path)
-    end
-
-    it "should not allow deletion" do
-      @client = create(:client)
-      delete :destroy, params: { id: @client.id }
       expect(flash[:alert]).to be_present
       expect(response).to have_http_status(:redirect)
       expect(response).to redirect_to(new_user_session_path)

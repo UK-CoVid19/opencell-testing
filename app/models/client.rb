@@ -6,6 +6,7 @@ class Client < ApplicationRecord
   has_many :headers, dependent: :destroy
   accepts_nested_attributes_for :headers, allow_destroy: true
   validates :url, presence: true, if: :notify?
+  validates :url, format: URI::regexp(%w[https]), if: :notify?
 
   validates :name, uniqueness: true
   before_create :hash_api_key

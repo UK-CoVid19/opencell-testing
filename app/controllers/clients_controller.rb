@@ -26,8 +26,13 @@ class ClientsController < InheritedResources::Base
     end
   end
 
-  def test_webhook
-    response = @client.test_webhook
+  def testhook
+    success = resource.test_webhook
+    if success
+      head :ok
+    else
+      head :bad_request
+    end
   end
 
   private

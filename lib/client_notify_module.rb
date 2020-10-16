@@ -32,6 +32,7 @@ module ClientNotifyModule
     begin
       response = http.request(request)
     rescue *ALL_NET_HTTP_ERRORS => e
+      puts e.to_json
       Rails.logger.error("Request failed with exception #{e}")
       raise NotifyException.new(e), "Request failed with exception #{e}"
     end
