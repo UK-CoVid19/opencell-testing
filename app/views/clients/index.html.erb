@@ -25,13 +25,13 @@
                   <% end %>
                 </div>
                 <div class="p-1">
-                  <%= link_to edit_client_path(client) do %>
-                    <button class="btn btn-outline-info">Edit</button>
+                  <%= link_to stats_client_path(client) do %>
+                    <button class="btn btn-secondary">Stats</button>
                   <% end %>
                 </div>
                 <div class="p-1">
-                  <%= link_to client, method: :delete, data: { confirm: 'Are you sure?' } do %>
-                    <button class="btn btn-outline-danger">Delete</button>
+                  <%= link_to edit_client_path(client) do %>
+                    <button class="btn btn-outline-info">Edit</button>
                   <% end %>
                 </div>
               </div>

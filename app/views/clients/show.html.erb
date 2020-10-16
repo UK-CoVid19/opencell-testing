@@ -46,9 +46,21 @@
                             <% end %>
                         </span>
                     </div>
+                    <div class="row">
+                        <ul>
+                        <% @client.headers.each do |header| %>
+                            <li><%= "#{header.key} : #{header.value}" %></li>
+                        <% end %>
+                        </ul>
+                    </div>
                 </div>
                 <div class="card-footer">
-                    <%= link_to "Stats", stats_client_path(@client), class: 'btn btn-primary'%>
+                    <%= link_to "Stats", stats_client_path(@client), class: 'btn btn-primary' %>
+                    <% if @client.notify? %>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Test Webhook</button>
+                    <% end %>
+                    <%= link_to "Edit", edit_client_path(@client), class: 'btn btn-info' %>
+                    <%= link_to 'Back', clients_path, class: 'btn btn-secondary' %>
                 </div>
             </div>
             <br>
@@ -76,5 +88,50 @@
             <br />
         </div>
     </div>
-    <%= link_to 'Back', clients_path %>
 </div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Test Webhook</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Calls webhook with <strong>test</strong> data </p>
+        <input name="sample-id" id="sampleid" type="text" hidden>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" id="testWebhook">Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+$(document).on('turbolinks:load', async () => {
+    
+    async function testWebhook(){
+        const token = document.querySelector('meta[name="csrf-token"]').content
+        try{
+            const resp = await fetch('/clients/<%= @client.id %>/testhook', {method: 'POST', headers: {'X-CSRF-TOKEN': token}})
+            if(resp.ok){
+                alert('success')
+            }else{
+                alert('failed')    
+            }
+        } catch(err) {
+            alert('failed' + err)
+        }
+    }
+
+    $('#testWebhook').on('click', testWebhook)
+})
+</script>

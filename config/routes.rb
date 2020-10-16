@@ -1,8 +1,9 @@
 require 'sidekiq/web'
 Rails.application.routes.draw do
-  resources :clients do
+  resources :clients, except: [:destroy] do
     member do
       get 'stats'
+      post 'testhook'
     end
   end
   get 'home/index', as: 'home'
