@@ -14,7 +14,7 @@ RSpec.describe ResultNotifyJob, type: :job do
 
     Sample.with_user(@user) do
       @sample = create(:sample, state: Sample.states[:tested], client: @client)
-    
+
 
     @plate.wells.third.sample = @sample
     @test_result = create(:test_result, test: @test, well: @plate.wells.third, state: TestResult.states[:positive])
@@ -24,7 +24,7 @@ RSpec.describe ResultNotifyJob, type: :job do
       'sampleid' => @sample.uid,
       'result' => "Positive"
     }
-    allow_any_instance_of(ResultNotifyJob).to receive(:make_request).with(expected).and_return(TestDummy.new("200"))
+    allow_any_instance_of(ResultNotifyJob).to receive(:make_request).with(expected, @sample.client).and_return(TestDummy.new("200"))
     ResultNotifyJob.perform_now(@sample, @user)
     assert @sample.commcomplete?
     
@@ -50,7 +50,7 @@ RSpec.describe ResultNotifyJob, type: :job do
       'sampleid' => @sample.uid,
       'result' => "Positive"
     }
-    allow_any_instance_of(ResultNotifyJob).to receive(:make_request).with(expected).and_return(TestDummy.new("400", "bad request"))
+    allow_any_instance_of(ResultNotifyJob).to receive(:make_request).with(expected, @sample.client).and_return(TestDummy.new("400", "bad request"))
     ResultNotifyJob.perform_now(@sample, @user)
     assert @sample.commfailed?
 

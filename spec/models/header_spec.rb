@@ -41,5 +41,25 @@ RSpec.describe Header, type: :model do
 
       expect(@header.save).to be false
     end
+
+    it "should not have duplicate keys for the same client" do
+      @client = create(:client)
+
+      @header = Header.create(key: 'bleep', value: 'bloop', client: @client)
+      @header_dup = Header.new(key: 'bleep', value: 'blarp', client: @client)
+
+      expect(@header_dup.save).to be false
+      expect(@header_dup.errors[:key].size).to eq 1
+    end
+
+    it "should allow duplicate keys for a different client" do
+      @client = create(:client)
+      @client_dup = create(:client)
+
+      @header = Header.create(key: 'bleep', value: 'bloop', client: @client)
+      @header_dup = Header.new(key: 'bleep', value: 'blarp', client: @client_dup)
+
+      expect(@header_dup.save).to be true
+    end
   end
 end

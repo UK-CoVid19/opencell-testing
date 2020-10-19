@@ -14,7 +14,7 @@ RSpec.describe RejectionJob, type: :job do
       'sampleid' => @sample.uid,
       'result' => "Inconclusive"
     }
-    allow_any_instance_of(RejectionJob).to receive(:make_request).with(expected).and_return(TestDummy.new("200", "OK"))
+    allow_any_instance_of(RejectionJob).to receive(:make_request).with(expected, @sample.client).and_return(TestDummy.new("200", "OK"))
     RejectionJob.perform_now(@sample, @user)
     assert @sample.commcomplete?
   end
@@ -30,7 +30,7 @@ RSpec.describe RejectionJob, type: :job do
       'sampleid' => @sample.uid,
       'result' => "Inconclusive"
     }
-    allow_any_instance_of(RejectionJob).to receive(:make_request).with(expected).and_return(TestDummy.new("400", "bad request"))
+    allow_any_instance_of(RejectionJob).to receive(:make_request).with(expected, @sample.client).and_return(TestDummy.new("400", "bad request"))
     RejectionJob.perform_now(@sample, @user)
     assert @sample.commfailed?
   end
@@ -46,7 +46,7 @@ RSpec.describe RejectionJob, type: :job do
       'sampleid' => @sample.uid,
       'result' => "Inconclusive"
     }
-    allow_any_instance_of(RejectionJob).to receive(:make_request).with(expected).and_return(TestDummy.new("400", "bad request"))
+    allow_any_instance_of(RejectionJob).to receive(:make_request).with(expected, @sample.client).and_return(TestDummy.new("400", "bad request"))
 
     func = -> {RejectionJob.perform_now(@sample, @user)}
     expect{ func.call }.to raise_error StandardError, "Invalid state to send rejection"

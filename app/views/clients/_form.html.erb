@@ -26,19 +26,17 @@
   <div class="form-group">
     <%= form.label :headers, "Webhook Headers" %>
     <%= form.fields_for :headers, get_headers(client) do |builder| %>
-      
       <div>
         <div class="header-fields form-row">
-          <%= builder.hidden_field :id, name: "client[headers_attributes][][id]" %>
+          <%= builder.hidden_field :id %>
           <div class="form-group col col-md-4">
             <%= builder.label :key %>
-            <%= builder.text_field :key, name: "client[headers_attributes][][key]", class: 'form-control' %>
+            <%= builder.text_field :key, class: 'form-control' %>
           </div>
           <div class="form-group col col-md-6">
             <%= builder.label :value %>
-            <%= builder.text_field :value, name: "client[headers_attributes][][value]", class: 'form-control' %>
+            <%= builder.text_field :value, class: 'form-control' %>
           </div>
-          
           <% if action_name == "edit" %>
           <div class="form-group col col-md-2">
             <div class="form-check">
@@ -75,9 +73,22 @@ $(document).on('turbolinks:load', function(){
   function addRow(){
     let row = $('.header-fields:last').clone(false)
     row.find('input').val(null) // set inputs to nothing
+    row.find('input').each(incrementIndex)
     row.insertAfter('.header-fields:last')
     deleteVisible = true
     $('#remove-row').show();
+  }
+
+  function incrementIndex(idx, element){
+    const match = /\d+/g.exec(element.name) 
+    if(!match){
+      throw "no match found";
+    }
+    const oldIndex = match[0]
+    const newIndex = parseInt(oldIndex) + 1
+
+    element.id = element.id.replace(oldIndex, newIndex.toString())
+    element.name = element.name.replace(oldIndex, newIndex.toString())
   }
 
   function removeRow(){

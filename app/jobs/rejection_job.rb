@@ -26,7 +26,7 @@ class RejectionJob < ApplicationJob
       'sampleid' => sample.uid,
       'result' => INCONCLUSIVE
     }
-    response = make_request(to_send)
+    response = make_request(to_send, sample.client)
     if [200, 202].include? response.code.to_i
       sample.commcomplete!
       return

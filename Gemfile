@@ -94,5 +94,3 @@ gem "sidekiq"
 gem "sidekiq_alive", "~> 2.0"
 
 gem "ajax-datatables-rails", "~> 1.2"
-
-gem "activeadmin_json_editor", "~> 0.0.9"

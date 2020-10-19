@@ -60,6 +60,48 @@ RSpec.describe Client, type: :model do
     end
   end
 
+  describe "test webhook" do
+    it "should send an inconclusive test message to the endpoint" do
+      @client = create(:client, notify: true)
+      expected = {
+        'sampleid' => "TEST",
+        'result' => ClientNotifyModule::INCONCLUSIVE
+      }
+      allow(@client).to receive(:make_request).with(expected, @client).and_return(TestDummy2.new("200", {}))
+      expect(@client.test_webhook).to eq true
+    end
+
+    it "should fail an inconclusive test message to the endpoint" do
+      @client = create(:client, notify: true)
+      expected = {
+        'sampleid' => "TEST",
+        'result' => ClientNotifyModule::INCONCLUSIVE
+      }
+      allow(@client).to receive(:make_request).with(expected, @client).and_return(TestDummy2.new("401", {}))
+      expect(@client.test_webhook).to eq false
+    end
+
+    it "should throw if client cannot notify" do
+      @client = create(:client, notify: false)
+      expected = {
+        'sampleid' => "TEST",
+        'result' => ClientNotifyModule::INCONCLUSIVE
+      }
+      allow(@client).to receive(:make_request).with(expected, @client).and_return(TestDummy2.new("401", {}))
+      expect { @client.test_webhook }.to raise_error("Client cannot notify")
+    end
+
+    class TestDummy2
+      def initialize(code, body)
+        @code = code
+        @body = body
+      end
+
+      attr_accessor :code
+      attr_accessor :body
+    end
+  end
+
   describe "stats" do
     before :each do
       @user = create(:user)
