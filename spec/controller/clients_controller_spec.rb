@@ -34,6 +34,10 @@ RSpec.describe ClientsController, type: :controller do
     it "routes to #stats" do
       expect(get: "/clients/1/stats").to route_to("clients#stats", id: "1")
     end
+
+    it "routes to #testhook" do
+      expect(post: "/clients/1/testhook").to route_to("clients#testhook", id: "1")
+    end
   end
 
   describe("Signed in") do

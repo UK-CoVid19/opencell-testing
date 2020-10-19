@@ -30,16 +30,14 @@ class Client < ApplicationRecord
     self.api_key_hash = Digest::SHA256.base64digest(api_key.encode('UTF-8'))
   end
 
-
   def test_webhook
-    raise "Client cannot notify" if !notify?
+    raise "Client cannot notify" unless notify?
 
     to_send = {
       'sampleid' => "TEST",
-      'result' => "INCONCLUSIVE"
+      'result' => ClientNotifyModule::INCONCLUSIVE
     }
     response = make_request(to_send, self)
-
     if [200, 202].include? response.code.to_i
       return true
     else
