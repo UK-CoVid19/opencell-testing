@@ -192,7 +192,7 @@ class Sample < ApplicationRecord
   end
 
   def send_notification_after_analysis
-    ResultNotifyJob.perform_later(self, Sample.block_user) if ( self.saved_change_to_state? && self.communicated?)
+    ResultNotifyJob.perform_later(self) if ( self.saved_change_to_state? && self.communicated?)
   end
 
   def send_rejection

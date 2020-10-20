@@ -49,7 +49,7 @@
                     <div class="row">
                         <ul>
                         <% @client.headers.each do |header| %>
-                            <li><%= "#{header.key} : #{header.value}" %></li>
+                            <li><%= "#{header.key} : #{header.value.chars.map {'•'}.join}" %></li>
                         <% end %>
                         </ul>
                     </div>

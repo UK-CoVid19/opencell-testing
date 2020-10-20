@@ -7,8 +7,8 @@ class ResultNotifyJob < ApplicationJob
 
   retry_on NotifyException
 
-  def perform(sample, user)
-    sample.with_user(user) do |s|
+  def perform(sample)
+    sample.with_user(sample.test_result.test.user) do |s|
       send_message(s)
     end
   end
