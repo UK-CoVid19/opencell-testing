@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     member do
       get 'stats'
       post 'testhook'
+      get 'samples'
     end
   end
   get 'home/index', as: 'home'

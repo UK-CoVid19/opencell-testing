@@ -1,6 +1,6 @@
 <div class="container">
     <br>
-    <div class="row">
+    <div class="row m-1">
         <div class="col-md-6 col-sm-12">
 
             <div class="card shadow">
@@ -62,31 +62,13 @@
                     <%= link_to "Edit", edit_client_path(@client), class: 'btn btn-info' %>
                     <%= link_to 'Back', clients_path, class: 'btn btn-secondary' %>
                 </div>
-            </div>
-            <br>
-            <% if @client.samples.any? %>
-            <div class="card shadow">
-                <div class="card-header">Tests</div>
-                <ul class="list-group list-group-flush">
-                    <% @client.samples.each do | sample| %>
-                    <%= link_to sample, class: "list-group-item list-group-item-action flex-column align-items-start" do %>
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">#<%= sample.uid %></h5>
-                        <small><%=sample.created_at.strftime('%A %-d %b %H:%M') %></small>
-                    </div>
-                    <p class="mb-1">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: <%= get_sample_bar(sample) %>%" aria-valuenow=<%= get_sample_bar(sample) %> aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    </p>
-                    <small><%= get_badge(sample.state)%></small>
-                    <% end %>
-                    <% end %>
-                </ul>
-            </div>
-            <% end %>
-            <br />
+            </div>        
         </div>
+    </div>
+    <div class="row m-1">
+      <div class="col-md-12 table-responsive card shadow p-2">
+        <%= render partial: 'samples/samples_table', locals: {path: samples_client_path(@client, format: :json)} %>
+      </div>
     </div>
 </div>
 

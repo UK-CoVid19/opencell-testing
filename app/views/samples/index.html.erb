@@ -4,6 +4,6 @@
   <p id="notice"><%= notice %></p>
 
   <h1>Samples</h1>
-  <%= render partial: 'samples_table' %>
+  <%= render partial: 'samples_table', locals: {path: samples_path(format: :json)} %>
   <br>
 </div>

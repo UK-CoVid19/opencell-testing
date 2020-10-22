@@ -38,6 +38,10 @@ RSpec.describe ClientsController, type: :controller do
     it "routes to #testhook" do
       expect(post: "/clients/1/testhook").to route_to("clients#testhook", id: "1")
     end
+
+    it "routes to #samples" do
+      expect(get: "/clients/1/samples").to route_to("clients#samples", id: "1")
+    end
   end
 
   describe("Signed in") do
@@ -66,6 +70,19 @@ RSpec.describe ClientsController, type: :controller do
       expect(flash[:alert]).to_not be_present
       expect(response).to have_http_status(:success)
     end
+
+    it "should view the clients samples in json format" do
+      @client = create(:client)
+      @other_client = create(:client)
+      Sample.with_user(create(:user)) do
+        @sample = create(:sample, client: @client)
+        @sample_2 = create(:sample, client: @other_client)
+      end
+      get :samples, params: { id: @client.id }
+      expect(response).to have_http_status(:success)
+      expect(response.body).to match "\"uid\":\"#{@sample.uid}\""
+      expect(response.body).to_not match "\"uid\":\"#{@sample_2.uid}\""
+    end 
 
     it "should view the stats page as csv" do
       @client = create(:client)

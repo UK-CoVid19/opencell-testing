@@ -23,7 +23,7 @@
                     <h3>Sample Data</h3>
                 </div>
                 <div class="card-body p-3">
-                    <%= render partial: 'samples_table' %>
+                    <%= render partial: 'samples_table', locals: {path: samples_path(format: :json)} %>
                 </div>
             </div>
         </div>

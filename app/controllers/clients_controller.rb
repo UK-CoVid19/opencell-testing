@@ -17,6 +17,11 @@ class ClientsController < InheritedResources::Base
     end
   end
 
+  def samples
+    authorize resource
+    render json: ClientDatatable.new(params, view_context: view_context, client: resource)
+  end
+
   def stats
     @stats = resource.stats
     respond_to do |format|
