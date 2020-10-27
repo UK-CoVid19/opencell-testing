@@ -9,6 +9,10 @@
         <th>Retests</th>
         <th>Rejected</th>
         <th>Internal Checks</th>
+        <th>Positives</th>
+        <th>Negatives</th>
+        <th>Inconclusives</th>
+        <th>Percent Positive</th>
     </tr>
     </thead>
     <tbody>
@@ -20,6 +24,10 @@
         <td><%= stat.retests %></td>
         <td><%= stat.rejects %></td>
         <td><%= stat.internalchecks %></td>
+        <td><%= stat.positives %></td>
+        <td><%= stat.negatives %></td>
+        <td><%= stat.inconclusives %></td>
+        <td><%= stat.percent_positive %></td>
       </tr>
     <% end %>
     </tbody>

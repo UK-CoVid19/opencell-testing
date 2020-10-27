@@ -110,14 +110,26 @@ RSpec.describe Client, type: :model do
 
     it "should generate valid stats when samples are created straight at commcomplete stage" do
       Sample.with_user(@user) do
-        @sample = create(:sample, state: :commcomplete, client: @client)
+        @sample = create(:sample, state: :tested, client: @client)
+        @plate = create(:plate, wells: build_list(:well, 96))
+        @plate.wells.last.tap do |w|
+          w.sample = @sample
+          w.save!
+        end
+        @test = create(:test, plate: @plate)
+        @test_result = create(:test_result, well: @plate.wells.last, test: @test, state: TestResult.states[:positive])
+        @sample.communicated!
+        @sample.commcomplete!
         @stats = @client.stats
         expect(@stats.first.communicated).to eq 1
         expect(@stats.first.requested).to eq 0
         expect(@stats.first.retests).to eq 0
         expect(@stats.first.rejects).to eq 0
         expect(@stats.first.internalchecks).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.first.positives).to eq 1
+        expect(@stats.first.negatives).to eq 0
+        expect(@stats.first.inconclusives).to eq 0
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -131,6 +143,13 @@ RSpec.describe Client, type: :model do
         @sample.prepared!
         @sample.prepared!
         @sample.tested!
+        @plate = create(:plate, wells: build_list(:well, 96))
+        @plate.wells.last.tap do |w|
+          w.sample = @sample
+          w.save!
+        end
+        @test = create(:test, plate: @plate)
+        @test_result = create(:test_result, well: @plate.wells.last, test: @test, state: TestResult.states[:positive])
         @sample.analysed!
         @sample.communicated!
         @sample.commcomplete!
@@ -140,7 +159,10 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 0
         expect(@stats.first.rejects).to eq 0
         expect(@stats.first.internalchecks).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.first.positives).to eq 1
+        expect(@stats.first.negatives).to eq 0
+        expect(@stats.first.inconclusives).to eq 0
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -158,7 +180,7 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 0
         expect(@stats.first.rejects).to eq 1
         expect(@stats.first.internalchecks).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -176,7 +198,7 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 1
         expect(@stats.first.rejects).to eq 0
         expect(@stats.first.internalchecks).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -192,7 +214,7 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 0
         expect(@stats.first.rejects).to eq 0
         expect(@stats.first.internalchecks).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -218,7 +240,7 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 1
         expect(@stats.first.rejects).to eq 0
         expect(@stats.first.internalchecks).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -249,7 +271,7 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 0
         expect(@stats.first.internalchecks).to eq 1
         expect(@stats.first.rejects).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
 
@@ -285,7 +307,7 @@ RSpec.describe Client, type: :model do
         expect(@stats.first.retests).to eq 1
         expect(@stats.first.internalchecks).to eq 1
         expect(@stats.first.rejects).to eq 0
-        expect(@stats.size).to eq 1
+        expect(@stats.size).to eq (Date.today - Date.parse("2020-09-11")).to_i + 1
       end
     end
   end
