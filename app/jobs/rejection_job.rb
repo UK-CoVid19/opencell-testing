@@ -18,8 +18,8 @@ class RejectionJob < ApplicationJob
       return
     end
 
-    unless sample.rejected?
-      raise "Invalid state to send rejection"
+    unless sample.rejected? || (sample.records.map(&:state).include?(Sample.states[:rejected]) && sample.commfailed?)
+      raise "#{sample.state} Invalid state to send rejection"
     end
 
     to_send = {
