@@ -8,6 +8,7 @@
         <th>Created at</th>
         <th>Tested By</th>
         <th>Plate</th>
+        <th>UID</th>
         <th>Result Files</th>
         <th>Actions</th>
       </tr>
@@ -19,6 +20,7 @@
           <td><%= test.created_at.strftime('%A %-d %b %H:%M') %></td>
           <td><%= link_to test.user.email, user_path(test.user) %></td>
           <td><%= link_to test.plate.id, test.plate %></td>
+          <td><%= test.plate.uid %></td>
           <td>
             <% test.result_file.tap do |file| %>
               <%= link_to "Download #{file.filename}", rails_blob_path(file, disposition: "attachment") %>

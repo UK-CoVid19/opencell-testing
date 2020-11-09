@@ -10,6 +10,7 @@
       <tr>
         <th class="no-sort" width="25"><!-- check_box_tag--></th>
         <th>Plate</th>
+        <th>Uid</th>
         <th class="no-sort">State</th>
         <th class="no-sort">Export</th>
         <th>Created</th>
@@ -21,6 +22,7 @@
         <tr>
           <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'plates[][id]', plate.id %></td>
           <td><%= link_to "Plate #{plate.id}", plate %></td>
+          <td><%= plate.uid %></td>
           <td><%= get_badge(plate.state) %></td>
           <td>
             <%= link_to "Download CSV", plate_path(plate, format: :csv), {'data-turbolinks': false}  %>
