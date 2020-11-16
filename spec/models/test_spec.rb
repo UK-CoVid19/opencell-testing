@@ -12,4 +12,13 @@ RSpec.describe Test, type: :model do
     expect(@test_2.errors.messages[:plate_id].first).to eq 'has already been taken'
     expect(@test_2.errors.details[:plate_id].first[:error]).to eq :taken
   end
+
+  it "should validate that a plate needs a user" do
+    wells = build_list(:well, 96)
+    @plate = create(:plate, wells: wells)
+    @test = build(:test, plate: @plate, user: nil)
+
+    expect(@test.save).to eq false
+    expect(@test.errors.messages[:user].first).to eq 'must exist'
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_19_131551) do
+ActiveRecord::Schema.define(version: 2020_11_16_171445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 2020_10_19_131551) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "notify"
     t.string "url"
+    t.jsonb "headers"
     t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
     t.index ["name"], name: "index_clients_on_name", unique: true
   end
@@ -122,7 +123,7 @@ ActiveRecord::Schema.define(version: 2020_10_19_131551) do
     t.string "uid"
     t.bigint "client_id"
     t.boolean "control", default: false
-    t.boolean "is_retest", default: false, null: false
+    t.boolean "is_retest", default: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"
@@ -148,7 +149,7 @@ ActiveRecord::Schema.define(version: 2020_10_19_131551) do
 
   create_table "tests", force: :cascade do |t|
     t.bigint "plate_id"
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "comment"
