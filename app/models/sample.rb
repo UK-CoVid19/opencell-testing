@@ -196,7 +196,7 @@ class Sample < ApplicationRecord
   end
 
   def send_rejection
-    RejectionJob.perform_later(self, @with_user) if ( self.saved_change_to_state?)
+    RejectionJob.perform_later(self, @with_user) if ( self.saved_change_to_state? && self.rejected?)
   end
 
   def set_uid

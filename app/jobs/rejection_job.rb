@@ -13,8 +13,14 @@ class RejectionJob < ApplicationJob
 
   private
   def send_message(sample)
+    
     unless sample.client.notify
       sample.commcomplete!
+      return
+    end
+
+    if sample.commcomplete?
+      Rails.logger.info("sample #{sample.id} rejected with commcomplete")
       return
     end
 
