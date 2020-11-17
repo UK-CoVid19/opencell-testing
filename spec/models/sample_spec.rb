@@ -75,8 +75,8 @@ RSpec.describe Sample, type: :model do
     [false, true].each do |b|
       it "should not allow the same UID if the retest flag is the same" do
         Sample.with_user(@user) do
-          @sample_a = create(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b)
-          @sample_b_attribs = build(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b).attributes
+          @sample_a = create(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b, client: @client)
+          @sample_b_attribs = build(:sample, state: Sample.states[:tested], uid: 'abc', is_retest: b, client: @client).attributes
           expect { Sample.create!(@sample_b_attribs) }.to raise_error ActiveRecord::RecordInvalid
         end
       end
@@ -234,15 +234,32 @@ RSpec.describe Sample, type: :model do
 
     describe "validations" do
       it "should not allow duplicate ID" do
-        new_sample = Sample.create(client: @client, uid: "abc")
-        other_sample = Sample.new(client: @client, uid: "abc")
-        expect(other_sample.save).to be false
+        Sample.with_user(@user) do
+          new_sample = create(:sample, client: @client, uid: "abc")
+          other_sample = build(:sample,client: @client, uid: "abc")
+          expect(other_sample.save).to be false
+        end
+      end
+      
+      it "should allow duplicate ID if the client is different" do
+        Sample.with_user(@user) do
+          new_sample = create(:sample, client: @client, uid: "abc")
+          
+          @second_client = create(:client)
+
+          other_sample = build(:sample, client: @second_client, uid: "abc")
+          other_sample.save
+          puts other_sample.errors.full_messages
+          expect(other_sample.save).to be true
+        end
       end
 
       it "should create a new UID if one is not provided" do
-        new_sample = Sample.create(client: @client)
-        other_sample = Sample.create(client: @client)
-        expect(other_sample.uid).to_not eq new_sample.uid
+        Sample.with_user(@user) do
+          new_sample = create(:sample, client: @client)
+          other_sample = create(:sample, client: @client)
+          expect(other_sample.uid).to_not eq new_sample.uid
+        end
       end
 
       it "should validate that the sample can only be one well on the same plate" do

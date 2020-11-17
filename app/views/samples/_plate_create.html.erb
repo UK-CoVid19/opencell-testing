@@ -1,5 +1,5 @@
 <% content_for :meta do %>
-    <meta name="turbolinks-visit-control" content="reload">
+<meta name="turbolinks-visit-control" content="reload">
 <% end %>
 <div class="container table-responsive">
     <%= form_with(model: @plate, url: step3_sample_bulkprepared_path, local: true) do |form| %>
@@ -64,7 +64,26 @@
     <div class="d-flex justify-content-end mt-2">
         <%= button_tag "Reload Samples", type: nil, id: 'reloadPending', class: 'btn btn-warning' %>
     </div>
-    
+    <div class="modal" tabindex="-1" role="dialog" id="exampleModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Select sample by client</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="clientA">Client A</button>
+                    <button type="button" class="btn btn-info" id="clientB">Client B</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     $(document).on('turbolinks:load', function() {
@@ -73,8 +92,8 @@
 
         let pending_samples = []
 
-        function setSamples(){
-            let items =  Array.from($('[data-set-item]')).map(i => {
+        function setSamples() {
+            let items = Array.from($('[data-set-item]')).map(i => {
                 return i.getAttribute("data-set-item");
             });
 
@@ -90,21 +109,24 @@
 
         function mapSamples(items, setter) {
             mapped = items.map(item => {
+                console.log(item)
                 return {
                     label: item.uid,
-                    value: item.id.toString()
+                    value: item.id.toString(),
+                    client: item.client
                 }
             });
             setter(mapped)
             return Promise.resolve();
         }
-       
-        function getSamples(){
+
+
+        function getSamples() {
             fetch('/samples/pendingprepare.json')
-            .then(res => res.json())
-            .then(js => mapSamples(js, i => pending_samples = i))
+                .then(res => res.json())
+                .then(js => mapSamples(js, i => pending_samples = i))
         }
-        
+
         function validateInput(item, success, failure) {
             if (setSamples().includes(item.value)) {
                 const err = 'Sample has already been assigned to a well';
@@ -118,7 +140,7 @@
             }
         }
 
-         function handleDeletion(event) {
+        function handleDeletion(event) {
             const uid = event.currentTarget.value;
             if (uid == null || uid == "") {
                 oldValue = event.currentTarget.getAttribute('data-set-item');
@@ -150,32 +172,122 @@
             };
         };
 
-        function tabNext(event){
+        function tabNext(event) {
             const currentTabIndex = Number(event.currentTarget.getAttribute('tabindex'))
             const selector = `[tabindex=${currentTabIndex +1}]`
             $(selector).focus()
         }
 
-        function handleSet(event){
+        function notSetMulti(filtered){
+            const set = setSamples()
+            if(set.includes(filtered[0].value || set.inclues(filtered[1].value))){
+                return false
+            }
+            return true
+        }
+
+        function setWrapper(event){
             const uid = event.currentTarget.value
-            if (uid.length > 0) {
-                item = pending_samples.find(p => p.label == uid || p.value == uid)
-                if(item && item.value == event.currentTarget.getAttribute('data-set-item')){
+            if (uid.length == 0) return
+            const filtered = pending_samples.filter(p => p.label == uid || p.value == uid)
+            if (filtered && filtered.length == 1){
+                const item = filtered[0]
+                if (item && item.value == event.currentTarget.getAttribute('data-set-item')) {
                     event.currentTarget.value = item.value
                     return
                 }
-                if(!item){
+                if (!item) {
                     event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
                     alert("Cannot set sample ID " + uid);
-                    return 
+                    return
                 }
-                validateInput(item, (match) => {
+                setValue(event, item);
+                return
+
+            }else if(filtered && filtered.length == 2){
+                console.log('multiple results found')
+                var modal = $('#exampleModal')
+                modal.find('.modal-title').text('Select Sample Client for UID ' + filtered[0].label)
+                modal.find('.modal-body p').text(`Select between ${filtered[0].client} and ${filtered[1].client}`)
+                const buttonA = modal.find('#clientA')
+                const buttonB = modal.find('#clientB')
+                
+                buttonA.text(filtered[0].client)
+                buttonB.text(filtered[1].client)
+                buttonA.off('click.setA')
+                buttonB.off('click.setB')
+                buttonA.on('click.setA', () => {
+                    setValue(event, filtered[0])
+                    $('#exampleModal').hide()
+                    })
+                buttonB.on('click.setB', () => {
+                    setValue(event, filtered[1])
+                    $('#exampleModal').hide()
+                    })
+                $('#exampleModal').show()
+                
+                return
+            }else{}
+
+
+        }
+
+        // function handleSet(event) {
+        //     const uid = event.currentTarget.value
+        //     if (uid.length > 0) {
+        //         item = pending_samples.filter(p => p.label == uid || p.value == uid)
+
+        //         if (item && item.length == 1 && item[0].value == event.currentTarget.getAttribute('data-set-item')) {
+        //             event.currentTarget.value = item[0].value
+        //             return
+        //         }
+        //         if (!item || item.length == 0) {
+        //             event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
+        //             alert("Cannot set sample ID " + uid);
+        //             return
+        //         }
+        //         if (item && item.length > 1) {
+        //             console.log('multiple results found')
+        //             var modal = $('#exampleModal')
+        //             modal.find('.modal-title').text('Select Sample Client for UID ' + item[0].label)
+        //             modal.find('.modal-body p').text(`Select between ${item[0].client} and ${item[1].client}`)
+        //             const buttonA = modal.find('#clientA')
+        //             const buttonB = modal.find('#clientB')
+                    
+        //             buttonA.text(item[0].client)
+        //             buttonB.text(item[1].client)
+                    
+        //             $('#exampleModal').show()
+        //             return
+        //         }
+                
+        //         validateInput(item, (match) => {
+        //             const setValue = event.currentTarget.getAttribute('data-set-item')
+        //             if (setValue) {
+        //                 const canWrite = confirm(`Overwrite ${setValue} ?`)
+        //                 if (!canWrite) {
+        //                     event.currentTarget.value = setValue
+        //                     return
+        //                 }
+        //             }
+        //             event.currentTarget.value = match.value
+        //             event.currentTarget.setAttribute('data-set-item', match.value)
+        //             tabNext(event);
+        //         }, (err) => {
+        //             event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
+        //             alert(err);
+        //         })
+        //     }
+        // }
+
+        function setValue(event, item){
+            validateInput(item, (match) => {
                     const setValue = event.currentTarget.getAttribute('data-set-item')
-                    if(setValue){
+                    if (setValue) {
                         const canWrite = confirm(`Overwrite ${setValue} ?`)
-                        if(!canWrite){
+                        if (!canWrite) {
                             event.currentTarget.value = setValue
-                            return 
+                            return
                         }
                     }
                     event.currentTarget.value = match.value
@@ -185,23 +297,22 @@
                     event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
                     alert(err);
                 })
-            }
         }
 
 
-        function handleControl(event){
-            if(event.currentTarget.value != <%= Sample::CONTROL_CODE %>){
+        function handleControl(event) {
+            if (event.currentTarget.value != <%= Sample::CONTROL_CODE %> ) {
                 event.currentTarget.value = null;
                 alert('invalid control code')
                 return;
             }
-            
+
             tabNext(event);
         }
 
         $(".control-well").on('input', debounce(handleControl, 500));
         $(".sample-assign").on('input', handleDeletion);
-        $(".sample-assign").on('input', debounce(handleSet, 500));
+        $(".sample-assign").on('input', debounce(setWrapper, 500));
         $('#reloadPending').on('click', getSamples);
         getSamples()
     });

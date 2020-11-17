@@ -12,7 +12,7 @@ class Sample < ApplicationRecord
   belongs_to :plate, optional: true
   validate :unique_well_in_plate?, on: :update, if: :well_id_changed?
   validate :check_valid_transition?, on: :update, if: :state_changed?
-  validates_uniqueness_of :uid, scope: :is_retest
+  validates_uniqueness_of :uid, scope: [:is_retest, :client]
   has_one :test_result, through: :well
 
   before_create :set_uid, unless: :uid?

@@ -21,7 +21,7 @@ class SamplesController < ApplicationController
 
   def step3_pendingprepare
     @plate = Plate.build_plate
-    @samples = policy_scope(Sample.is_received)
+    @samples = policy_scope(Sample.includes(:client).is_received)
     authorize Sample
   end
 
