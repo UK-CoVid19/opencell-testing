@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_171445) do
+ActiveRecord::Schema.define(version: 2020_11_17_153352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_171445) do
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"
-    t.index ["uid", "is_retest"], name: "index_samples_on_uid_and_is_retest", unique: true
+    t.index ["uid", "is_retest", "client_id"], name: "index_samples_on_uid_and_is_retest_and_client_id", unique: true
     t.index ["uid"], name: "index_samples_on_uid"
   end
 
