@@ -24,7 +24,7 @@
                 <%= result_builder.hidden_field :id %>
                 <%= result_builder.select :state, TestResult.states.map {|key, val| [key.humanize, key]},{}, {class: 'form-control m-2'} %>
                 <% unless control?(rw.row, rw.column) || retest_disabled?(rw) %>
-                <button type="button" class="btn btn-primary retestbutton" data-toggle="modal" data-target="#exampleModal" data-sample-uid=<%= rw.sample.uid %> data-sample-id=<%= rw.sample.id %>>Retest</button>
+                <button type="button" class="btn btn-primary retestbutton" data-toggle="modal" data-target="#exampleModal" data-sample-uid=<%= rw.sample.uid %> data-sample-id=<%= rw.sample.id %> data-client-name=<%= rw.sample.client.name %>>Retest</button>
                 <% end %>
                 <% end %>
                 <% else %>
@@ -62,13 +62,14 @@
 <script>
 $(document).on('turbolinks:load', function() {
   $('#exampleModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget) // Button that triggered the modal
-    var sampleId = button.data('sample-id') // Extract info from data-* attributes
-    var uid = button.data('sample-uid')
+    const button = $(event.relatedTarget) // Button that triggered the modal
+    const sampleId = button.data('sample-id') // Extract info from data-* attributes
+    const uid = button.data('sample-uid')
+    const name = button.data('client-name')
     // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
     var modal = $(this)
-    modal.find('.modal-title').text('Retest Sample ' + sampleId + ': ' + uid)
+    modal.find('.modal-title').text('Retest Sample ' + sampleId + ': ' + uid + ' ' + name)
     modal.find('.modal-body input').val(sampleId)
     modal.find('#positiveClick').data('sample', sampleId)
     modal.find('#inconclusiveClick').data('sample', sampleId)

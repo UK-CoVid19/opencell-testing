@@ -120,7 +120,7 @@ class TestsController < ApplicationController
 private
   # Use callbacks to share common setup or constraints between actions.
   def set_test
-    @test = authorize Test.find(params[:id])
+    @test = authorize Test.includes(plate: [wells: [sample: [:client]]]).find(params[:id])
   end
 
   def set_plate
