@@ -106,7 +106,6 @@
 
         function mapSamples(items, setter) {
             mapped = items.map(item => {
-                console.log(item)
                 return {
                     label: item.uid,
                     value: item.id.toString(),
@@ -188,51 +187,44 @@
                 setValue(event, item);
                 return
 
-            }else if(filtered && filtered.length == 2){
-                const modal = $('#exampleModal')
-                modal.find('.modal-title').text('Select Sample Client for UID ' + filtered[0].label)
-                modal.find('.modal-body p').text(`Select between ${filtered.map(f => f.client).join(', ')}`)
-
-                const buttons = modal.find('.client-button')
-                for(i = 0; i < buttons.length; i++){
-                    const b = buttons[i]
-                    b.remove()    
-                }
-                const footer = modal.find('.modal-footer')
-
-                filtered.forEach((f, idx) => {
-                    const button = document.createElement("button")
-                    button.id = `client${idx}`
-                    button.className = "btn btn-primary client-button"
-                    button.innerText = f.client
-                    button.addEventListener('click', () => {
-                        setValue(event, f)
-                        $('#exampleModal').hide()
-                    })
-                    footer.prepend(button)   
-                })
-
-                $('#footerHide').off('click')
-                $('#topHide').off('click')
-                $('#footerHide').on('click', () => {
-                    event.currentTarget.value = null
-                    $('#exampleModal').hide()
-                    $(event.currentTarget).focus()
-                })
-                $('#topHide').on('click', () => {
-                    event.currentTarget.value = null
-                    $('#exampleModal').hide()
-                    $(event.currentTarget).focus()
-                    })
-
-                $('#exampleModal').show()
-                
+            }else if(filtered && filtered.length >= 2){
+                setSampleChoiceModal(filtered, event)
                 return
             }else if(filtered && filtered.length == 0){
                 event.currentTarget.value = event.currentTarget.getAttribute('data-set-item');
                 alert("Cannot set sample ID " + uid);
                 return
             }
+        }
+
+        function setSampleChoiceModal(filtered, event){
+            const modal = $('#exampleModal')
+            modal.find('.modal-title').text('Select Sample Client for UID ' + filtered[0].label)
+            modal.find('.modal-body p').text(`Select between ${filtered.map(f => f.client).join(', ')}`)
+            modal.find('.client-button').remove()
+            
+            const footer = modal.find('.modal-footer')
+
+            filtered.forEach((f, idx) => {
+                const button = document.createElement("button")
+                button.id = `client${idx}`
+                button.className = `btn ${idx % 2 == 0 ? 'btn-primary' : 'btn-info'} client-button`
+                button.innerText = f.client
+                button.addEventListener('click', () => {
+                    setValue(event, f)
+                    modal.hide()
+                })
+                footer.prepend(button)   
+            })
+
+            $('#footerHide,#topHide').off('click')
+            $('#footerHide,#topHide').on('click', () => {
+                event.currentTarget.value = null
+                modal.hide()
+                $(event.currentTarget).focus()
+            })
+
+            modal.show()
         }
 
         function setValue(event, item){
@@ -253,7 +245,6 @@
                     alert(err);
                 })
         }
-
 
         function handleControl(event) {
             if (event.currentTarget.value != <%= Sample::CONTROL_CODE %> ) {

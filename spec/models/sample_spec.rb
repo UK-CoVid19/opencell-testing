@@ -240,6 +240,13 @@ RSpec.describe Sample, type: :model do
           expect(other_sample.save).to be false
         end
       end
+      it "should  allow duplicate ID if retest" do
+        Sample.with_user(@user) do
+          new_sample = create(:sample, client: @client, uid: "abc")
+          other_sample = build(:sample,client: @client, uid: "abc", is_retest: true)
+          expect(other_sample.save).to be true
+        end
+      end
       
       it "should allow duplicate ID if the client is different" do
         Sample.with_user(@user) do
