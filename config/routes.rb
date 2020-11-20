@@ -28,6 +28,8 @@ Rails.application.routes.draw do
   post 'samples/tested', to: 'samples#step5_bulktested', as: 'step5_sample_bulk_tested'
   post 'samples/analysed', to: 'samples#step6_bulkanalysed', as: 'step6_sample_bulk_analysed'
   post 'users/create_staff', to: 'users#create_staff', as: 'create_staff'
+  resources :labgroups
+  resources :labs
 
   resources :plates, except: [:edit, :update, :destroy] do
     resources :tests, except: [:index, :edit, :update, :destroy] do
@@ -51,7 +53,12 @@ Rails.application.routes.draw do
   end
 
   devise_for :users
-  resources :users, except: [:edit, :update]
+  resources :users, except: [:edit, :update] do
+    collection do
+      get 'session_location'
+      post 'session_location_set'
+    end
+  end
   root to: "home#index"
   get 'privacy', to: 'home#privacy', as: 'privacy'
   get 'about', to: 'home#about', as: 'about'

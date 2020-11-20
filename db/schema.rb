@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_17_153352) do
+ActiveRecord::Schema.define(version: 2020_11_19_162547) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,7 +70,9 @@ ActiveRecord::Schema.define(version: 2020_11_17_153352) do
     t.boolean "notify"
     t.string "url"
     t.jsonb "headers"
+    t.bigint "labgroup_id", null: false
     t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
+    t.index ["labgroup_id"], name: "index_clients_on_labgroup_id"
     t.index ["name"], name: "index_clients_on_name", unique: true
   end
 
@@ -82,6 +84,27 @@ ActiveRecord::Schema.define(version: 2020_11_17_153352) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_id"], name: "index_headers_on_client_id"
     t.index ["key", "client_id"], name: "index_headers_on_key_and_client_id", unique: true
+  end
+
+  create_table "labgroups", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "labgroups_users", id: false, force: :cascade do |t|
+    t.bigint "labgroup_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["labgroup_id", "user_id"], name: "index_labgroups_users_on_labgroup_id_and_user_id"
+    t.index ["user_id", "labgroup_id"], name: "index_labgroups_users_on_user_id_and_labgroup_id"
+  end
+
+  create_table "labs", force: :cascade do |t|
+    t.string "name"
+    t.bigint "labgroup_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["labgroup_id"], name: "index_labs_on_labgroup_id"
   end
 
   create_table "plates", force: :cascade do |t|
@@ -196,7 +219,9 @@ ActiveRecord::Schema.define(version: 2020_11_17_153352) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "clients", "labgroups"
   add_foreign_key "headers", "clients"
+  add_foreign_key "labs", "labgroups"
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
   add_foreign_key "reruns", "samples"

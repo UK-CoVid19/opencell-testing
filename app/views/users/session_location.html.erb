@@ -1,0 +1,14 @@
+<div class="container col col-sm-6 col-sm-offset-3">
+    <h2>Set Labgroup and Lab</h2>
+    <%= form_tag(session_location_set_users_path, method: :post) do |f| %>
+        <div class="form-group">
+            <%= label_tag :labgroup %>
+            <%= collection_select :ss, :labgroup, current_user.labgroups, :id, :name, {selected: @session_location[:labgroup]} %>
+        </div>
+        <div class="form-group">
+            <%= label_tag :lab %>
+            <%= collection_select :ss, :lab, current_user.labgroups.map(&:labs).flatten, :id, :name, {selected: @session_location[:lab]} %>
+        </div>
+        <%= submit_tag "Submit", class: 'btn btn-primary'%>
+    <% end %>
+</div>

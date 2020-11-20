@@ -10,6 +10,7 @@ class Client < ApplicationRecord
 
   validates :name, uniqueness: true
   before_create :hash_api_key
+  belongs_to :labgroup
 
   attr_accessor :api_key
 

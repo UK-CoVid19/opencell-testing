@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="card shadow">
+                <div class="card-header ">
+                    <h4><%= "Labgroup #{@labgroup.name}" %></h4>
+                </div>
+                <div class="card-body">
+                    <h5>Group Members</h5>
+                    <ul class="list-group">
+                        <% @labgroup.labs.each do | lab | %>
+                            <li class="list-group-item"><%= link_to lab.name, lab %></li>
+                        <% end %>
+                    </ul>
+                    <h5>Group Staff</h5>
+                    <ul class="list-group">
+                        <% @labgroup.users.each do | user | %>
+                            <li class="list-group-item"><%= link_to user.email, user %></li>
+                        <% end %>
+                    </ul>
+                    <h5>Clients</h5>
+                    <ul class="list-group">
+                        <% @labgroup.clients.each do | client | %>
+                            <li class="list-group-item"><%= link_to client.name, client %></li>
+                        <% end %>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <%= link_to 'Edit', edit_labgroup_path(@labgroup), class: 'btn btn-secondary' %>
+                    <%= link_to 'Back', labgroups_path, class: 'btn btn-info' %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

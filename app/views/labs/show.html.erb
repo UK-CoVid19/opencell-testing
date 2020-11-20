@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="card shadow">
+                <div class="card-header ">
+                    <h4><%= "Lab #{@lab.name}" %></h4>
+                </div>
+                <div class="card-body">
+                    <p><%= "Belongs to #{@lab.labgroup.name} Labgroup"%>
+                </div>
+                <div class="card-footer">
+                    <%= link_to 'Edit', edit_lab_path(@lab) %> |
+                    <%= link_to 'Back', labs_path %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

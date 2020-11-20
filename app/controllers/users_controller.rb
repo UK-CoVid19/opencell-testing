@@ -23,6 +23,23 @@ class UsersController < ApplicationController
   def patient_created
   end 
 
+  def session_location
+    authorize current_user
+    @session_location = {labgroup: session[:labgroup], lab: session[:lab]}
+  end
+
+  def session_location_set
+    authorize current_user
+    p = params.require(:ss).permit(:labgroup, :lab)
+    puts p
+    unless Labgroup.find(p[:labgroup]).labs.includes(Lab.find(p[:lab]))
+    raise "cannot reconcile lab with group"
+    end
+    session[:labgroup] = p[:labgroup]
+    session[:lab] = p[:lab]
+
+    redirect_to staff_dashboard_path
+  end
 
   def create_staff
     authorize User

@@ -4,6 +4,14 @@ class UserPolicy < ApplicationPolicy
       staffmember?
     end
 
+    def session_location?
+      staffmember?
+    end
+
+    def session_location_set?
+      staffmember?
+    end
+
     def new?
       staffmember?
     end

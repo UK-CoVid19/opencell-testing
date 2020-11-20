@@ -1,0 +1,32 @@
+<%= form_with(model: labgroup, local: true) do |form| %>
+  <% if labgroup.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(labgroup.errors.count, "error") %> prohibited this labgroup from being saved:</h2>
+
+      <ul>
+        <% labgroup.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="form-group col col-sm-6">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: 'form-control' %>
+  </div>
+  <div class="form-group col col-sm-6">
+    <%= form.label :labs %>
+    <%= form.collection_select :lab_ids, Lab.all, :id, :name, {selected: labgroup.labs.map(&:id), include_blank: 'Select Labs'} ,{class: 'form-control', multiple: true } %>
+  </div>
+  <div class="form-group col col-sm-6">
+    <%= form.label :users %>
+    <%= form.collection_select :user_ids, User.all, :id, :email, {selected: labgroup.users.map(&:id), include_blank: 'Select Users'} ,{class: 'form-control', multiple: true } %>
+  </div>
+  <div class="form-group col col-sm-6">
+    <%= form.label :clients %>
+    <%= form.collection_select :client_ids, Client.all, :id, :name, {selected: labgroup.clients.map(&:id)} ,{class: 'form-control', multiple: true } %>
+  </div>
+  <div class="form-group col">
+    <%= form.submit class: 'btn btn-primary', data: {confirm: 'Are you sure? Client & Lab associations will be changed destructively '} %>
+  </div>
+<% end %> 

@@ -1,0 +1,25 @@
+<%= form_with(model: lab, local: true) do |form| %>
+  <% if lab.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(lab.errors.count, "error") %> prohibited this lab from being saved:</h2>
+
+      <ul>
+        <% lab.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="form-group col col-sm-6">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: 'form-control' %>
+  </div>
+  <div class="form-group col col-sm-6">
+    <%= form.label :labgroup %>
+    <%= form.collection_select :labgroup_id, Labgroup.all, :id, :name, {} ,{class: 'form-control'} %>
+  </div>
+  <div class="actions">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
