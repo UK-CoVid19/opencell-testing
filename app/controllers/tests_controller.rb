@@ -1,5 +1,6 @@
 class TestsController < ApplicationController
   before_action :authenticate_user!
+  before_action :verify_labgroup
   before_action :set_test, only: [:show, :edit, :update, :destroy, :analyse, :confirm]
   before_action :set_plate, except: [:complete, :done]
   around_action :wrap_in_current_user, only: [:create, :confirm, :update, :createfile]
@@ -10,12 +11,12 @@ class TestsController < ApplicationController
 
   def complete
     authorize Test
-    @tests = Test.all.joins(:plate).where(plates: { state: Plate.states[:complete] })
+    @tests = Test.labgroup(session[:labgroup]).joins(:plate).where(plates: { state: Plate.states[:complete] })
   end
 
   def done
     authorize Test
-    @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
+    @tests = Test.labgroup(session[:labgroup]).includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
   end
 
   # GET /tests/1

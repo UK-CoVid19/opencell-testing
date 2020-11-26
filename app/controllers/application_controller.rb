@@ -1,21 +1,29 @@
 class ApplicationController < ActionController::Base
   include Pundit
-  before_action :set_state_quantities
+  before_action :set_state_quantities, if: :user_signed_in?
+  before_action :verify_labgroup
   before_action :set_raven_context
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   def after_sign_in_path_for(resource)
-    session_location_path
+    session_location_users_path
   end
   
   protected
 
+  def verify_labgroup
+    unless session[:labgroup] && session[:lab]
+      flash[:alert] = "Pleas set a lab group"
+      redirect_to session_location_users_path
+    end
+  end 
+  
   def set_state_quantities
 
     unless request.format.json?
-      sample_groups = Sample.group(:state).count
-      plate_groups = Plate.group(:state).count
+      sample_groups = Sample.labgroup(session[:labgroup]).group(:state).count
+      plate_groups = Plate.labgroup(session[:labgroup]).group(:state).count
       @pendingprepare_count = sample_groups[:received.to_s] || 0
       @pendingreadytest_count = plate_groups[:preparing.to_s] || 0
       @pendingtest_count = plate_groups[:prepared.to_s] || 0
@@ -25,8 +33,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
-  protected
   def wrap_in_current_user
     Sample.with_user(current_user) do
       yield

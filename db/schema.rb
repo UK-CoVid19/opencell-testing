@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_19_162547) do
+ActiveRecord::Schema.define(version: 2020_11_26_141618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(version: 2020_11_19_162547) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "notify"
     t.string "url"
-    t.jsonb "headers"
     t.bigint "labgroup_id", null: false
     t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
     t.index ["labgroup_id"], name: "index_clients_on_labgroup_id"
@@ -112,6 +111,8 @@ ActiveRecord::Schema.define(version: 2020_11_19_162547) do
     t.datetime "updated_at", null: false
     t.integer "state", default: 0
     t.string "uid"
+    t.bigint "lab_id", null: false
+    t.index ["lab_id"], name: "index_plates_on_lab_id"
     t.index ["state"], name: "index_plates_on_state"
     t.index ["uid"], name: "index_plates_on_uid", unique: true
   end
@@ -146,7 +147,7 @@ ActiveRecord::Schema.define(version: 2020_11_19_162547) do
     t.string "uid"
     t.bigint "client_id"
     t.boolean "control", default: false
-    t.boolean "is_retest", default: false
+    t.boolean "is_retest", default: false, null: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"
@@ -222,6 +223,7 @@ ActiveRecord::Schema.define(version: 2020_11_19_162547) do
   add_foreign_key "clients", "labgroups"
   add_foreign_key "headers", "clients"
   add_foreign_key "labs", "labgroups"
+  add_foreign_key "plates", "labs"
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
   add_foreign_key "reruns", "samples"

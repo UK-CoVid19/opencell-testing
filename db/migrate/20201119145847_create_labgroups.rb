@@ -5,6 +5,6 @@ class CreateLabgroups < ActiveRecord::Migration[6.0]
 
       t.timestamps
     end
-    LabGroup.create(name: "Jersey")
+    Labgroup.create(name: "Jersey")
   end
 end

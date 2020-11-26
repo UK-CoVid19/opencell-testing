@@ -55,8 +55,10 @@ Rails.application.routes.draw do
   devise_for :users
   resources :users, except: [:edit, :update] do
     collection do
-      get 'session_location'
-      post 'session_location_set'
+      get 'session_labgroup'
+      post 'session_labgroup_set'
+      get 'session_lab'
+      post 'session_lab_set'
     end
   end
   root to: "home#index"

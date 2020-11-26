@@ -29,6 +29,7 @@ class Sample < ApplicationRecord
   scope :is_tested, -> { where(state: Sample.states[:tested]) }
   scope :is_analysed, -> { where(state: Sample.states[:analysed]) }
   scope :is_communicated, -> { where(state: Sample.states[:communicated]) }
+  scope :labgroup, ->(labgroup) { joins(:client).where(clients: { labgroup_id: labgroup }) }
 
   after_update_commit :send_notification_after_analysis, if: :communicated?
   after_update_commit :send_rejection, if: :rejected?

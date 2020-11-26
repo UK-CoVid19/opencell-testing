@@ -28,10 +28,11 @@ class Plate < ApplicationRecord
 
   has_many :wells, dependent: :destroy
   has_many :samples, through: :wells
+  belongs_to :lab
   has_one :test, dependent: :destroy
   accepts_nested_attributes_for :wells
   enum state: %i[preparing prepared testing complete analysed]
-  validates :wells, length: {maximum: 96, minimum: 96}
+  validates :wells, length: { maximum: 96, minimum: 96 }
   barcode_for :uid
   attr_accessor :assign_error, :assign_control_error
   validates_with UniqueWellPlateValidator, on: :create
@@ -43,6 +44,7 @@ class Plate < ApplicationRecord
   scope :is_testing, -> { where(state: Plate.states[:testing]) }
   scope :is_complete, -> { where(state: Plate.states[:complete]) }
   scope :is_done, -> { where(state: Plate.states[:analysed]) }
+  scope :labgroup, ->(labgroup) { joins(lab: [:labgroup]).where(labs: { labgroups: {id: labgroup }}) }
 
   def self.build_plate
     plate = Plate.new

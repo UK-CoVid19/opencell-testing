@@ -15,28 +15,28 @@ class SamplesController < ApplicationController
   end
 
   def pending_plate
-    @samples = policy_scope(Sample.is_received.includes(:client).includes(rerun_for: [source_sample: [:test_result]]))
+    @samples = policy_scope(Sample.labgroup(session[:labgroup]).is_received.includes(:client).includes(rerun_for: [source_sample: [:test_result]]))
     authorize Sample
   end
 
   def step3_pendingprepare
     @plate = Plate.build_plate
-    @samples = policy_scope(Sample.includes(:client).is_received)
+    @samples = policy_scope(Sample.labgroup(session[:labgroup]).includes(:client).is_received)
     authorize Sample
   end
 
   def step4_pendingreadytest
-    @plates = Plate.all.where(state: Plate.states[:preparing]).order(:updated_at)
+    @plates = Plate.labgroup(session[:labgroup]).where(state: Plate.states[:preparing]).order(:updated_at)
     authorize Sample
   end
 
   def step5_pendingtest
-    @plates = Plate.all.where(state: Plate.states[:prepared]).order(:updated_at)
+    @plates = Plate.labgroup(session[:labgroup]).where(state: Plate.states[:prepared]).order(:updated_at)
     authorize Sample
   end
 
   def step6_pendinganalyze
-    @plates = Plate.all.where(state: Plate.states[:testing]).order(:updated_at)
+    @plates = Plate.labgroup(session[:labgroup]).where(state: Plate.states[:testing]).order(:updated_at)
     authorize Sample
   end
   # GET /samples/1
@@ -134,7 +134,7 @@ class SamplesController < ApplicationController
 
   def step3_bulkprepared
     authorize Sample
-    @plate = Plate.new(plate_params)
+    @plate = Plate.new(plate_params.merge!(lab_id: session[:lab]))
     begin
       @plate.transaction do
         @plate.assign_samples(get_mappings)

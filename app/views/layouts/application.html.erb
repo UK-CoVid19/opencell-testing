@@ -73,6 +73,11 @@
                       <% end %>
                     <% end %>
                   </li>
+                  <% if current_user && user_signed_in? %>
+                  <li class="nav-item">
+                    <p class="nav-link">Group <%= Labgroup.find(session[:labgroup]).name %> : Lab <%= Lab.find(session[:lab]).name %> </p>
+                  </li>
+                  <% end %>
                   <li class="nav-item ml-auto">
                     <ul class="navbar-nav justify-content-md-center w-50 ml-auto mr-auto">
                       <li class="nav-item dropdown  ">
@@ -89,6 +94,7 @@
                           <%= link_to "New User", new_user_path, class: "dropdown-item" %>
                           <%= link_to "New Client", new_client_path, class: "dropdown-item" %>
                           <div class="dropdown-divider"></div>
+                          <%= link_to "Change Lab", session_labgroup_users_path, class: "dropdown-item" %>
                           <%= link_to "Account Settings", current_user, class: "dropdown-item" %>
                           <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item" %>
                         </div>
