@@ -1,4 +1,5 @@
 class LabgroupsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_labgroup, only: [:show, :edit, :update, :destroy]
 
   # GET /labgroups
@@ -45,7 +46,6 @@ class LabgroupsController < ApplicationController
         format.html { redirect_to @labgroup, notice: 'Labgroup was successfully updated.' }
         format.json { render :show, status: :ok, location: @labgroup }
       else
-        puts @labgroup.errors.full_messages
         format.html { render :edit }
         format.json { render json: @labgroup.errors, status: :unprocessable_entity }
       end
@@ -70,7 +70,6 @@ class LabgroupsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def labgroup_params
-      puts params
       params.require(:labgroup).permit(:name, lab_ids:[], user_ids: [], client_ids: [])
     end
 end

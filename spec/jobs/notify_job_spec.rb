@@ -8,7 +8,7 @@ RSpec.describe ResultNotifyJob, type: :job do
     @client = create(:client, notify: true)
 
     @wells = build_list(:well, 96)
-    @plate = create(:plate, wells: @wells)
+    @plate = create(:plate, wells: @wells, lab: @client.labgroup.labs.first)
 
     @test = create(:test, plate: @plate, user: @user)
 
@@ -39,7 +39,7 @@ RSpec.describe ResultNotifyJob, type: :job do
     @client = create(:client, notify: true)
 
     @wells = build_list(:well, 96)
-    @plate = create(:plate, wells: @wells)
+    @plate = create(:plate, wells: @wells, lab: @client.labgroup.labs.first)
 
     @test = create(:test, plate: @plate, user: @user)
 

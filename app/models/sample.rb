@@ -124,7 +124,7 @@ class Sample < ApplicationRecord
     retest_client = Client.find_by(name: Client::INTERNAL_RERUN_NAME)
 
     if(retest_client.nil?)
-      retest_client = Client.create!(name: Client::INTERNAL_RERUN_NAME, api_key: SecureRandom.base64(16), notify: false)
+      retest_client = Client.create!(name: Client::INTERNAL_RERUN_NAME, api_key: SecureRandom.base64(16), notify: false, labgroup: Labgroup.find_or_create_by(name: Client::INTERNAL_RERUN_NAME))
     end
 
     self.transaction do

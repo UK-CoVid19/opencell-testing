@@ -73,7 +73,7 @@
                       <% end %>
                     <% end %>
                   </li>
-                  <% if current_user && user_signed_in? %>
+                  <% if current_user && user_signed_in? && session[:labgroup] && session[:lab] %>
                   <li class="nav-item">
                     <p class="nav-link">Group <%= Labgroup.find(session[:labgroup]).name %> : Lab <%= Lab.find(session[:lab]).name %> </p>
                   </li>

@@ -1,7 +1,6 @@
 class ApplicationController < ActionController::Base
   include Pundit
   before_action :set_state_quantities, if: :user_signed_in?
-  before_action :verify_labgroup
   before_action :set_raven_context
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
@@ -9,13 +8,14 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource)
     session_location_users_path
   end
-  
+
   protected
 
   def verify_labgroup
+    return if !user_signed_in?
     unless session[:labgroup] && session[:lab]
-      flash[:alert] = "Pleas set a lab group"
-      redirect_to session_location_users_path
+      flash[:alert] = "Please set a lab group"
+      redirect_to session_labgroup_users_path
     end
   end 
   

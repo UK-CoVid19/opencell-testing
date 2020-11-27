@@ -53,7 +53,10 @@ RSpec.describe PlatesController, type: :controller do
       @user = create(:user, role: User.roles[:patient]) # in factories.rb you should create a factory for user
       sign_in @user
       wells = build_list(:well, 96)
-      @plate = create(:plate, wells: wells)
+      labgroup = create(:labgroup)
+      @plate = create(:plate, wells: wells, lab: labgroup.labs.first)
+      session[:lab] = @plate.lab.id
+      session[:labgroup] = @plate.lab.labgroup.id
     end
 
     it "routes to #index" do
@@ -75,7 +78,10 @@ RSpec.describe PlatesController, type: :controller do
       @request.env["devise.mapping"] = Devise.mappings[:user]
       @user = create(:user, role: User.roles[:staff]) # in factories.rb you should create a factory for user
       sign_in @user
-      @plate = create(:plate, wells: build_list(:well, 96))
+      labgroup = create(:labgroup)
+      @plate = create(:plate, wells: build_list(:well, 96), lab: labgroup.labs.first)
+      session[:lab] = @plate.lab.id
+      session[:labgroup] = @plate.lab.labgroup.id
     end
 
     it "routes to #index" do

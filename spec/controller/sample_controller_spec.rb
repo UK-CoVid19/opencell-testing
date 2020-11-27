@@ -84,7 +84,8 @@ RSpec.describe SamplesController, type: :controller do
       Sample.with_user(@other_user) do
         @sample = create(:sample, client: @client)
       end
-
+      session[:labgroup] = @client.labgroup.id
+      session[:lab] = @client.labgroup.labs.first.id
       sign_in @other_user
     end
 
@@ -229,7 +230,7 @@ RSpec.describe SamplesController, type: :controller do
 
     it "should let a staff member see pending plate samples" do
       Sample.with_user(@user) do
-        create(:sample, state: Sample.states[:received])
+        create(:sample, state: Sample.states[:received], client: @client)
       end
       get :pending_plate
       samples = assigns(:samples)

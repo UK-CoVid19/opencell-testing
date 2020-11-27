@@ -43,7 +43,7 @@ class ClientsController < InheritedResources::Base
   private
 
   def client_params
-    params.require(:client).permit(:name, :notify, :url, headers_attributes: [:id, :key, :value, :_destroy])
+    params.require(:client).permit(:name, :notify, :url, :labgroup_id, headers_attributes: [:id, :key, :value, :_destroy])
   end
 
   def create_stats_csv(stats)

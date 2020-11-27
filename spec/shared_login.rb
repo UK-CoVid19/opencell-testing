@@ -6,6 +6,8 @@ RSpec.shared_context "create sample login", shared_context: :metadata do
       Sample.with_user(@user) do
         @sample = create(:sample, client: @client)
       end
+      session[:labgroup] = @client.labgroup.id
+      session[:lab] = @client.labgroup.labs.first.id
       sign_in @user
     end
   end

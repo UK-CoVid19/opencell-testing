@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe Test, type: :model do
   it "should validate that a plate can only be tested once" do
     wells = build_list(:well, 96)
-    @plate = create(:plate, wells: wells)
+    @labgroup = create(:labgroup)
+    @plate = create(:plate, wells: wells, lab: @labgroup.labs.first)
     @test = create(:test, plate: @plate)
 
     @test_2 = build(:test, plate: @plate)
@@ -15,7 +16,8 @@ RSpec.describe Test, type: :model do
 
   it "should validate that a plate needs a user" do
     wells = build_list(:well, 96)
-    @plate = create(:plate, wells: wells)
+    @labgroup = create(:labgroup)
+    @plate = create(:plate, wells: wells, lab: @labgroup.labs.first)
     @test = build(:test, plate: @plate, user: nil)
 
     expect(@test.save).to eq false

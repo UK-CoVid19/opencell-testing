@@ -271,7 +271,8 @@ RSpec.describe Sample, type: :model do
 
       it "should validate that the sample can only be one well on the same plate" do
         # this is hacky because we don't validate the changes to be added on the wells, rather make an assocation on the plate. This is brittle and relies on the awful method in the controller
-        plate = build(:plate, wells: 96.times.map { |t| build(:well) })
+        labgroup = create(:labgroup)
+        plate = build(:plate, wells: 96.times.map { |t| build(:well) }, lab: labgroup.labs.first)
         plate.save
         @sample = nil
         Sample.with_user(@user) do
