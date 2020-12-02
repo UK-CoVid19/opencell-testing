@@ -81,6 +81,10 @@ class Sample < ApplicationRecord
 
   def rejectable?
     # sample is not being retested or has already been communicated, it can be rejected if it is an internal retest and hasn't been communicated
+    return false if well&.plate?
+
+    return false if sample.records.map(&:state).include?(Sample.states[:rejected])
+
     return false if commcomplete?
 
     return false if rerun.present?
