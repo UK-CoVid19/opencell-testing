@@ -290,5 +290,27 @@ RSpec.describe Sample, type: :model do
         expect { func.call }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
+
+    describe "rejections" do
+      it "should not allow rejections if the sample has already been rejected" do
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @client)
+          @sample.rejected!
+          expect(@sample.rejectable?).to eq false
+        end
+      end
+
+      it "should not allow rejections if the sample is associated with a plate" do
+        Sample.with_user(@user) do
+          @plate =  Plate.build_plate
+          @sample = create(:sample, state: :received, client: @client)
+          @plate.wells.first.sample = @sample
+          @plate.save!
+          @sample.reload!
+          expect(@sample.rejectable?).to eq false
+        end
+      end
+    
+    end
   end
 end
