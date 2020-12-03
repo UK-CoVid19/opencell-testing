@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "clients/edit", type: :view do
   before(:each) do
-    @client = assign(:client, Client.create!(
+    @client = assign(:client, create(:client,
       name: "MyString",
       api_key_hash: "MyString",
       api_key: "otherstring"

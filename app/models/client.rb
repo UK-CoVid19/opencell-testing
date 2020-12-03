@@ -8,7 +8,7 @@ class Client < ApplicationRecord
   validates :url, presence: true, if: :notify?
   validates :url, format: URI::regexp(%w[https]), if: :notify?
 
-  validates :name, uniqueness: true
+  validates_uniqueness_of :name, scope: [ :labgroup ]
   before_create :hash_api_key
   belongs_to :labgroup
 

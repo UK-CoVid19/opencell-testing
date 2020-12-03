@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe "clients/index", type: :view do
   before(:each) do
     assign(:clients, [
-      Client.create!(
+      create(:client,
         name: "Name",
         api_key: "Api Key Hash"
       ),
-      Client.create!(
+      create(:client,
         name: "Name2",
         api_key: "Api Key Hash"
       )

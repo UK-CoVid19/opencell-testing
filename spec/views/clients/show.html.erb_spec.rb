@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "clients/show", type: :view do
   before(:each) do
-    @client = assign(:client, Client.create!(
+    @client = assign(:client, create(:client,
       name: "Name",
       api_key: "Api Key Hash"
     ))

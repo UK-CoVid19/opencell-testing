@@ -25,7 +25,6 @@ class LabsController < ApplicationController
   # POST /labs
   # POST /labs.json
   def create
-    puts lab_params
     @lab = Lab.new(lab_params)
 
     respond_to do |format|

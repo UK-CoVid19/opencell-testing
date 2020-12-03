@@ -216,6 +216,47 @@ RSpec.describe Sample, type: :model do
         expect(@retest.rerun_for.source_sample).to eq @sample
       end
 
+      it "should create a client for the labgroup for posthoc retests if it does not already exist" do
+        @labgroup = create(:labgroup, name: 'testgroup')
+        @this_client = create(:client, labgroup: @labgroup)
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @this_client)
+          @sample.preparing!
+          @sample.preparing!
+          @sample.prepared!
+          @sample.tested!
+          @sample.analysed!
+          @sample.communicated!
+          @sample.commcomplete!
+
+          @retest = @sample.create_posthoc_retest(Rerun::POSITIVE)
+        end
+        expect(@retest.uid).to eq @sample.uid
+        expect(@retest.state).to eq "received"
+        expect(@sample.state).to eq "retest"
+        expect(@retest.source_sample).to eq @sample
+        expect(@retest.rerun_for.retest.client.labgroup).to eq @labgroup
+        expect(@retest.rerun_for.source_sample).to eq @sample
+      end
+
+      it "should increase client countposthoc retests if it does not already exist" do
+        @labgroup = create(:labgroup, name: 'testgroup')
+        @this_client = create(:client, labgroup: @labgroup)
+        Sample.with_user(@user) do
+          @sample = create(:sample, state: :received, client: @this_client)
+          @sample.preparing!
+          @sample.preparing!
+          @sample.prepared!
+          @sample.tested!
+          @sample.analysed!
+          @sample.communicated!
+          @sample.commcomplete!
+
+          expect{ @sample.create_posthoc_retest(Rerun::POSITIVE) }.to change(Client, :count).by(1)
+        end
+      end
+
+
       it "should not create a rerun of a sample that has not been communicated already" do
         Sample.with_user(@user) do
           @sample = create(:sample, state: :received, client: @client)

@@ -4,16 +4,25 @@ RSpec.describe Client, type: :model do
 
   describe "validations" do
 
-    before :each do 
+    before :each do
       @labgroup = create(:labgroup)
     end
-    it "should not allow a duplicate name" do
-      @client_a = create(:client, name: "myname")
-      @client_b = build(:client, name: "myname")
+
+    it "should not allow a duplicate name for the same labgroup" do
+      @client_a = create(:client, name: "myname", labgroup: @labgroup)
+      @client_b = build(:client, name: "myname", labgroup: @labgroup)
 
       expect(@client_b.save).to eq false
       expect(@client_b.errors).to_not be nil
       expect(@client_b.errors[:name].first).to eq "has already been taken"
+    end
+
+    it "should allow a duplicate name for the same labgroup" do
+      @client_a = create(:client, name: "myname", labgroup: @labgroup)
+      @client_b = build(:client, name: "myname", labgroup: create(:labgroup))
+
+      expect(@client_b.save).to eq true
+      expect(@client_b.errors).to be_empty
     end
 
     it "should allow a different names" do

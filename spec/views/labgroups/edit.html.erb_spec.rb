@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "labgroups/edit", type: :view do
   before(:each) do
-    @labgroup = assign(:labgroup, Labgroup.create!())
+    @labgroup = assign(:labgroup, create(:labgroup))
   end
 
   it "renders the edit labgroup form" do

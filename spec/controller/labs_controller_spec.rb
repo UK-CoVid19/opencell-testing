@@ -12,21 +12,40 @@
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe "/labs", type: :request do
+RSpec.describe LabsController, type: :controller do
   # Lab. As you add validations to Lab, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  before :each do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    @user = create(:user, role: User.roles[:patient])
+    @client = create(:client)
+    Sample.with_user(@user) do
+      @sample = create(:sample, client: @client)
+    end
+    session[:labgroup] = @client.labgroup.id
+    session[:lab] = @client.labgroup.labs.first.id
+    sign_in @user
+  end
+
+  let(:valid_attributes) do
+    {
+      name: 'testlab',
+      labgroup_id: @client.labgroup.id
+    }
+  end
+
+  let(:invalid_attributes) do
+    {
+      name: 'testlab',
+      labgroup_id: nil
+    }
+  end
 
   describe "GET /index" do
     it "renders a successful response" do
       Lab.create! valid_attributes
-      get labs_url
+      get :index
       expect(response).to be_successful
     end
   end
@@ -34,14 +53,14 @@ RSpec.describe "/labs", type: :request do
   describe "GET /show" do
     it "renders a successful response" do
       lab = Lab.create! valid_attributes
-      get lab_url(lab)
+      get :show, params: {id: lab.id}
       expect(response).to be_successful
     end
   end
 
   describe "GET /new" do
     it "renders a successful response" do
-      get new_lab_url
+      get :new
       expect(response).to be_successful
     end
   end
@@ -49,7 +68,7 @@ RSpec.describe "/labs", type: :request do
   describe "GET /edit" do
     it "render a successful response" do
       lab = Lab.create! valid_attributes
-      get edit_lab_url(lab)
+      get :edit, params: { id: lab.id }
       expect(response).to be_successful
     end
   end
@@ -58,12 +77,12 @@ RSpec.describe "/labs", type: :request do
     context "with valid parameters" do
       it "creates a new Lab" do
         expect {
-          post labs_url, params: { lab: valid_attributes }
+          post :create, params: { lab: valid_attributes }
         }.to change(Lab, :count).by(1)
       end
 
       it "redirects to the created lab" do
-        post labs_url, params: { lab: valid_attributes }
+        post :create, params: { lab: valid_attributes }
         expect(response).to redirect_to(lab_url(Lab.last))
       end
     end
@@ -71,12 +90,12 @@ RSpec.describe "/labs", type: :request do
     context "with invalid parameters" do
       it "does not create a new Lab" do
         expect {
-          post labs_url, params: { lab: invalid_attributes }
+          post :create, params: { lab: invalid_attributes }
         }.to change(Lab, :count).by(0)
       end
 
       it "renders a successful response (i.e. to display the 'new' template)" do
-        post labs_url, params: { lab: invalid_attributes }
+        post :create, params: { lab: invalid_attributes }
         expect(response).to be_successful
       end
     end
@@ -84,20 +103,21 @@ RSpec.describe "/labs", type: :request do
 
   describe "PATCH /update" do
     context "with valid parameters" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+      let(:new_attributes) do {
+        name: "newname"
       }
+      end
 
       it "updates the requested lab" do
         lab = Lab.create! valid_attributes
-        patch lab_url(lab), params: { lab: new_attributes }
+        patch :update, params: {id: lab.id, lab: new_attributes }
         lab.reload
-        skip("Add assertions for updated state")
+        expect(lab.name).to eq "newname"
       end
 
       it "redirects to the lab" do
         lab = Lab.create! valid_attributes
-        patch lab_url(lab), params: { lab: new_attributes }
+        patch :update, params: {id: lab.id, lab: new_attributes }
         lab.reload
         expect(response).to redirect_to(lab_url(lab))
       end
@@ -106,7 +126,7 @@ RSpec.describe "/labs", type: :request do
     context "with invalid parameters" do
       it "renders a successful response (i.e. to display the 'edit' template)" do
         lab = Lab.create! valid_attributes
-        patch lab_url(lab), params: { lab: invalid_attributes }
+        patch :update, params: {id: lab.id, lab: invalid_attributes }
         expect(response).to be_successful
       end
     end
@@ -116,13 +136,13 @@ RSpec.describe "/labs", type: :request do
     it "destroys the requested lab" do
       lab = Lab.create! valid_attributes
       expect {
-        delete lab_url(lab)
+        delete :destroy, params: { id: lab.id }
       }.to change(Lab, :count).by(-1)
     end
 
     it "redirects to the labs list" do
       lab = Lab.create! valid_attributes
-      delete lab_url(lab)
+      delete :destroy, params: { id: lab.id }
       expect(response).to redirect_to(labs_url)
     end
   end
