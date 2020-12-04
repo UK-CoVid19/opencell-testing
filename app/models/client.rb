@@ -152,8 +152,8 @@ class Stat
     @inconclusives = args.inconclusives
     @percent_positive = args.percent_positive
     @total_tests = args.total_tests
-    @avg = args.avg ? Time.parse(args.avg).strftime("%H:%M:%S") : nil
-    @min = args.min ? Time.parse(args.min).strftime("%H:%M:%S") : nil
-    @max = args.max ? Time.parse(args.max).strftime("%H:%M:%S") : nil
+    @avg = args.avg ? DateTime.parse(args.avg).strftime("%H:%M:%S") : nil
+    @min = args.min ? DateTime.parse(args.min).strftime("%H:%M:%S") : nil
+    @max = args.max ? DateTime.parse(args.max).strftime("%H:%M:%S") : nil
   end
 end

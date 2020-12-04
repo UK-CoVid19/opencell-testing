@@ -47,11 +47,11 @@ class ClientsController < InheritedResources::Base
   end
 
   def create_stats_csv(stats)
-    headers = %w{date requested tested rerun rejected internalchecks positives negatives inconclusives percent_positive total_tests}
+    headers = %w{date requested tested rerun rejected internalchecks positives negatives inconclusives percent_positive total_tests, avg, min, max}
     CSV.generate(headers: true) do |csv|
       csv << headers
       stats.each do | stat |
-        csv << [stat.date, stat.requested, stat.communicated, stat.retests, stat.rejects, stat.internalchecks, stat.positives, stat.negatives, stat.inconclusives, stat.percent_positive, stat.total_tests]
+        csv << [stat.date, stat.requested, stat.communicated, stat.retests, stat.rejects, stat.internalchecks, stat.positives, stat.negatives, stat.inconclusives, stat.percent_positive, stat.total_tests, stat.avg, stat.min, stat.max]
       end
     end
   end
