@@ -52,7 +52,7 @@ class SamplesController < ApplicationController
   end
 
   def reject
-    @sample.with_user(current_user, &:rejected!)
+    @sample.with_user(current_user, &:reject!)
     respond_to do |format|
       format.html { redirect_to pending_plate_url, notice: 'Sample was successfully rejected.' }
       format.json { head :accepted }
