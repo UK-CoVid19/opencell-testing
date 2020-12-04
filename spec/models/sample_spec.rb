@@ -159,7 +159,7 @@ RSpec.describe Sample, type: :model do
     it "should enqueue a rejection job on rejection" do
       Sample.with_user(@user) do
         @sample = create(:sample)
-        expect { @sample.rejected! }.to have_enqueued_job(RejectionJob)
+        expect { @sample.reject! }.to have_enqueued_job(RejectionJob)
       end
     end
 
@@ -173,7 +173,6 @@ RSpec.describe Sample, type: :model do
         expect { @sample.communicated! }.to have_enqueued_job(ResultNotifyJob)
       end
     end
-    
 
     [:commcomplete, :commfailed].each do |state|
       it "should allow a rejected sample to transition to communication states" do
@@ -247,11 +246,11 @@ RSpec.describe Sample, type: :model do
           expect(other_sample.save).to be true
         end
       end
-      
+
       it "should allow duplicate ID if the client is different" do
         Sample.with_user(@user) do
           new_sample = create(:sample, client: @client, uid: "abc")
-          
+
           @second_client = create(:client)
 
           other_sample = build(:sample, client: @second_client, uid: "abc")
@@ -306,11 +305,21 @@ RSpec.describe Sample, type: :model do
           @sample = create(:sample, state: :received, client: @client)
           @plate.wells.first.sample = @sample
           @plate.save!
-          @sample.reload!
+          @sample.reload
           expect(@sample.rejectable?).to eq false
         end
       end
-    
+
+      it "should throw reject if sample isn't rejectable" do
+        Sample.with_user(@user) do
+          @plate =  Plate.build_plate
+          @sample = create(:sample, state: :received, client: @client)
+          @plate.wells.first.sample = @sample
+          @plate.save!
+          @sample.reload
+          expect { @sample.reject! }.to raise_error "Cannot Reject Sample #{@sample.id}"
+        end
+      end
     end
   end
 end
