@@ -109,7 +109,7 @@ class Client < ApplicationRecord
       join
       
       (
-      select dates.date,  avg(completed.finished_at - completed.created_at), min(completed.finished_at - completed.created_at), max(completed.finished_at - completed.created_at)
+      select dates.date,  date_trunc('second', avg(completed.finished_at - completed.created_at)) as avg, date_trunc('second', min(completed.finished_at - completed.created_at)) as min, date_trunc('second', max(completed.finished_at - completed.created_at)) as max
       from (
       
         (SELECT t.day::date as date
@@ -152,8 +152,8 @@ class Stat
     @inconclusives = args.inconclusives
     @percent_positive = args.percent_positive
     @total_tests = args.total_tests
-    @avg = args.avg ? DateTime.parse(args.avg).strftime("%H:%M:%S") : nil
-    @min = args.min ? DateTime.parse(args.min).strftime("%H:%M:%S") : nil
-    @max = args.max ? DateTime.parse(args.max).strftime("%H:%M:%S") : nil
+    @avg = args.avg
+    @min = args.min
+    @max = args.max
   end
 end
