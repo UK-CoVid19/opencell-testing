@@ -131,10 +131,9 @@ class Sample < ApplicationRecord
     raise "Sample cannot be retested unless communicated" unless commcomplete?
     raise "Cannot retest a control sample".freeze if control?
 
-    retest_client = Client.find_by(name: Client::INTERNAL_RERUN_NAME, labgroup: client.labgroup)
-
-    if(retest_client.nil?)
-      retest_client = Client.create!(name: Client::INTERNAL_RERUN_NAME, api_key: SecureRandom.base64(16), notify: false, labgroup: client.labgroup)
+    retest_client = Client.find_or_create_by!(name: Client::INTERNAL_RERUN_NAME, labgroup: client.labgroup) do |c|
+      c.api_key = SecureRandom.base64(16)
+      c.notify = false
     end
 
     self.transaction do

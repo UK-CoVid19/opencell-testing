@@ -14,13 +14,14 @@ class Client < ApplicationRecord
 
   attr_accessor :api_key
 
-  def self.control_client
-    c = find_by(name: CONTROL_NAME)
-    c = Client.create!(name: CONTROL_NAME, api_key: SecureRandom.base64(16), notify: false) if c.nil?
-    c
+  def self.control_client(labgroup)
+    find_or_create_by!(name: CONTROL_NAME, labgroup: labgroup) do |c|
+      c.api_key = SecureRandom.base64(16)
+      c.notify = false
+    end
   end
 
-  CONTROL_NAME = "control"
+  CONTROL_NAME = 'control'
   INTERNAL_RERUN_NAME = 'Posthoc Retest'
 
   scope :real, -> { where.not(name: [CONTROL_NAME, INTERNAL_RERUN_NAME]) }

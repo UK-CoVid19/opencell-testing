@@ -74,11 +74,17 @@
                     <% end %>
                   </li>
                   <% if current_user && user_signed_in? && session[:labgroup] && session[:lab] %>
-                  <li class="nav-item">
-                    <p class="nav-link">Group <%= Labgroup.find(session[:labgroup]).name %> : Lab <%= Lab.find(session[:lab]).name %> </p>
+                  <li class="nav-item ml-auto">
+                    <p class="nav-link">
+                    <%= content_tag :span, {"data-toggle":"tooltip", "data-placement": "bottom", title: Labgroup.find(session[:labgroup]).name } do %>
+                        <span><%= fa_icon "tags", class: "nav-icon" %></span>
+                    <% end %>
+                    <%= content_tag :span, {"data-toggle":"tooltip", "data-placement": "bottom", title: Lab.find(session[:lab]).name } do %>
+                        <span><%= fa_icon "flask", class: "nav-icon" %></span>
+                    <% end %>
                   </li>
                   <% end %>
-                  <li class="nav-item ml-auto">
+                  <li class="nav-item">
                     <ul class="navbar-nav justify-content-md-center w-50 ml-auto mr-auto">
                       <li class="nav-item dropdown  ">
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">More</a>

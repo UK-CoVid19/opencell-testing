@@ -5,6 +5,7 @@
         <tr>
             <th>Name</th>
             <th>Samples</th>
+            <th>Lab group</th>
             <th colspan="1"></th>
         </tr>
     </thead>
@@ -16,6 +17,9 @@
             </td>
             <td>
               <%= client.samples.size %>
+            </td>
+            <td>
+              <%= link_to client.labgroup.name, client.labgroup %>
             </td>
             <td>
               <div class="d-flex justify-content-end">

@@ -72,10 +72,20 @@ RSpec.describe Client, type: :model do
       expect(@client_a.save).to eq true
     end
 
-    it "should create only 1 instance of the control client" do
-      control = Client.control_client
-      control_2 = Client.control_client
+    it "should create only 1 instance of the control client per labgroup" do
+      labgroup = create(:labgroup)
+      control = Client.control_client(labgroup)
+      control_2 = Client.control_client(labgroup)
       expect(control).to eq control_2
+      expect(control.api_key.size).to eq 24
+    end
+
+    it "should create different control clients for different labgroups" do
+      labgroup = create(:labgroup)
+      labgroup_2 = create(:labgroup)
+      control = Client.control_client(labgroup)
+      control_2 = Client.control_client(labgroup_2)
+      expect(control).to_not eq control_2
     end
   end
 

@@ -2,7 +2,7 @@
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 #
 
-question = SecurityQuestion.find_or_create_by(name: 'Where were you born?', locale: :en)
+question = SecurityQuestion.find_or_create_by!(name: 'Where were you born?', locale: :en)
 unless AdminUser.find_by(email: 'admin@example.com')
   AdminUser.create!(email: 'admin@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n') if Rails.env.development?
 end
@@ -13,10 +13,12 @@ unless User.find_by(email: 'staff@example.com')
 end
 
 unless Client.find_by(name: 'testclient')
-  client = Client.create!(name: 'testclient', api_key: "abcd1234") if Rails.env.development?
+  labgroup = Labgroup.find_or_create_by!(name: 'Jersey')
+  client = Client.create!(name: 'testclient', api_key: "abcd1234", labgroup: labgroup) if Rails.env.development?
 end
 unless Client.find_by(name: Client::CONTROL_NAME)
-  control_client = Client.create!(name: Client::CONTROL_NAME, api_key:"666", notify: false)
+  labgroup = Labgroup.find_or_create_by!(name: 'Jersey')
+  control_client = Client.create!(name: Client::CONTROL_NAME, api_key: "666", notify: false, labgroup: labgroup)
 end
 
 if user
