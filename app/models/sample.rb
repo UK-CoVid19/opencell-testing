@@ -82,6 +82,10 @@ class Sample < ApplicationRecord
 
   def rejectable?
     # sample is not being retested or has already been communicated, it can be rejected if it is an internal retest and hasn't been communicated
+    return false if well&.plate
+
+    return false if records.map(&:state).include?(Sample.states[:rejected])
+
     return false if commcomplete?
 
     return false if rerun.present?
@@ -89,6 +93,12 @@ class Sample < ApplicationRecord
     return false if client.name == Client::INTERNAL_RERUN_NAME
 
     true
+  end
+
+  def reject!
+    raise "Cannot Reject Sample #{id}" unless rejectable?
+
+    rejected!
   end
 
   def is_posthoc_retest?

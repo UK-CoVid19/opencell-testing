@@ -48,7 +48,7 @@ class Client < ApplicationRecord
 
   def stats
     query = <<-SQL
-      select teststats.date, teststats.requested, teststats.communicated, teststats.retests, teststats.rejects, teststats.internalchecks, stat.positives, stat.negatives, stat.inconclusives, stat.percent_positive, stat.total_tests from
+      select teststats.date, teststats.requested, teststats.communicated, teststats.retests, teststats.rejects, teststats.internalchecks, stat.positives, stat.negatives, stat.inconclusives, stat.percent_positive, stat.total_tests, turnaround.avg, turnaround.min, turnaround.max from
 
       (select 
       dates.date,
@@ -106,7 +106,31 @@ class Client < ApplicationRecord
       group by res_dates.date
       order by res_dates.date desc) stat
       on teststats.date = stat.date
-    
+
+      join
+      
+      (
+      select dates.date,  date_trunc('second', avg(completed.finished_at - completed.created_at)) as avg, date_trunc('second', min(completed.finished_at - completed.created_at)) as min, date_trunc('second', max(completed.finished_at - completed.created_at)) as max
+      from (
+      
+        (SELECT t.day::date as date
+              FROM   generate_series(timestamp '2020-09-11', now(), interval  '1 day') AS t(day)) as dates
+        
+        left join
+      
+        (select s.id, s.state, date(s.created_at) as date, s.created_at as created_at, case when rS.is_retest = true then rS.updated_at else s.updated_at end as finished_at, rS.is_retest 
+        from samples s
+        left outer join reruns r2 on r2.sample_id = s.id
+        left outer join samples rS on rS.id = r2.retest_id
+        where s.state in(8,11)
+        and s.client_id = #{id}
+        and rS.state isnull or rS.state = 8
+        and s."control" = false) as completed
+        on dates.date = completed.date
+        )
+        group by dates.date
+      ) turnaround
+      on teststats.date = turnaround.date
     SQL
 
     results = ActiveRecord::Base.connection.execute(query)
@@ -116,7 +140,7 @@ end
 
 
 class Stat
-  attr_reader :requested, :communicated, :retests, :rejects, :date, :internalchecks, :positives, :negatives, :inconclusives, :percent_positive, :total_tests
+  attr_reader :requested, :communicated, :retests, :rejects, :date, :internalchecks, :positives, :negatives, :inconclusives, :percent_positive, :total_tests, :avg, :min, :max
   def initialize(args)
     @requested = args.requested
     @communicated = args.communicated
@@ -129,5 +153,8 @@ class Stat
     @inconclusives = args.inconclusives
     @percent_positive = args.percent_positive
     @total_tests = args.total_tests
+    @avg = args.avg
+    @min = args.min
+    @max = args.max
   end
 end
