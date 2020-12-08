@@ -7,18 +7,14 @@ unless AdminUser.find_by(email: 'admin@example.com')
   AdminUser.create!(email: 'admin@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n') if Rails.env.development?
 end
 
+labgroup = Labgroup.find_or_create_by!(name: 'Jersey')
 unless User.find_by(email: 'staff@example.com')
-  user = User.create!(email: 'staff@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n', role: User.roles[:staff], security_question: question, security_question_answer:"London") if Rails.env.development?
+  user = User.create!(email: 'staff@example.com', password: 'b]^$t&JF}?kN3Z5n', password_confirmation: 'b]^$t&JF}?kN3Z5n', role: User.roles[:staff], security_question: question, security_question_answer:"London", labgroups: [labgroup]) if Rails.env.development?
   user.confirm if Rails.env.development?
 end
 
 unless Client.find_by(name: 'testclient')
-  labgroup = Labgroup.find_or_create_by!(name: 'Jersey')
   client = Client.create!(name: 'testclient', api_key: "abcd1234", labgroup: labgroup) if Rails.env.development?
-end
-unless Client.find_by(name: Client::CONTROL_NAME)
-  labgroup = Labgroup.find_or_create_by!(name: 'Jersey')
-  control_client = Client.create!(name: Client::CONTROL_NAME, api_key: "666", notify: false, labgroup: labgroup)
 end
 
 if user
