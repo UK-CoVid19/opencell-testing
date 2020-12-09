@@ -6,7 +6,7 @@
                     <h4><%= "Lab #{@lab.name}" %></h4>
                 </div>
                 <div class="card-body">
-                    <p><%= "Belongs to #{@lab.labgroup.name} Labgroup"%>
+                    <p><%= "Belongs to #{@lab.labgroups.map{|g| link_to g.name, g}.join(',')}".html_safe%>
                 </div>
                 <div class="card-footer">
                     <%= link_to 'Edit', edit_lab_path(@lab) %> |

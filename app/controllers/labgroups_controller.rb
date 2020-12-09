@@ -70,6 +70,6 @@ class LabgroupsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def labgroup_params
-      params.require(:labgroup).permit(:name, lab_ids:[], user_ids: [], client_ids: [])
+      params.require(:labgroup).permit(:name, lab_ids: [], user_ids: [], client_ids: [])
     end
 end

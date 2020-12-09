@@ -44,7 +44,7 @@ class Plate < ApplicationRecord
   scope :is_testing, -> { where(state: Plate.states[:testing]) }
   scope :is_complete, -> { where(state: Plate.states[:complete]) }
   scope :is_done, -> { where(state: Plate.states[:analysed]) }
-  scope :labgroup, ->(labgroup) { joins(lab: [:labgroup]).where(labs: { labgroups: {id: labgroup }}) }
+  scope :by_lab, ->(lab){ where(lab_id: lab.labgroups.flat_map{ |g| g.labs.map(&:id)}) }
 
   def self.build_plate
     plate = Plate.new
@@ -76,9 +76,9 @@ class Plate < ApplicationRecord
           @assign_control_error = true
           break
         end
-        sample = Sample.create!(client: Client.control_client(lab.labgroup), state: Sample.states[:preparing], control: true)
+        sample = Sample.create!(client: Client.control_client(lab.main_labgroup), state: Sample.states[:preparing], control: true)
       elsif PlateHelper.auto_control_positions.include?({row: well[:row], col: well[:column].to_i})
-        sample = Sample.create!(client: Client.control_client(lab.labgroup), state: Sample.states[:preparing], control: true)
+        sample = Sample.create!(client: Client.control_client(lab.main_labgroup), state: Sample.states[:preparing], control: true)
       else
         sample = Sample.find(mapping[:id])
       end

@@ -92,6 +92,13 @@ ActiveRecord::Schema.define(version: 2020_12_03_165607) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "labgroups_labs", id: false, force: :cascade do |t|
+    t.bigint "labgroup_id", null: false
+    t.bigint "lab_id", null: false
+    t.index ["lab_id", "labgroup_id"], name: "index_labgroups_labs_on_lab_id_and_labgroup_id"
+    t.index ["labgroup_id", "lab_id"], name: "index_labgroups_labs_on_labgroup_id_and_lab_id"
+  end
+
   create_table "labgroups_users", id: false, force: :cascade do |t|
     t.bigint "labgroup_id", null: false
     t.bigint "user_id", null: false
@@ -101,10 +108,8 @@ ActiveRecord::Schema.define(version: 2020_12_03_165607) do
 
   create_table "labs", force: :cascade do |t|
     t.string "name"
-    t.bigint "labgroup_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["labgroup_id"], name: "index_labs_on_labgroup_id"
   end
 
   create_table "plates", force: :cascade do |t|
@@ -223,7 +228,6 @@ ActiveRecord::Schema.define(version: 2020_12_03_165607) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "clients", "labgroups"
   add_foreign_key "headers", "clients"
-  add_foreign_key "labs", "labgroups"
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
   add_foreign_key "reruns", "samples"

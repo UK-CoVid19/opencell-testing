@@ -11,12 +11,12 @@ class TestsController < ApplicationController
 
   def complete
     authorize Test
-    @tests = Test.labgroup(session[:labgroup]).joins(:plate).where(plates: { state: Plate.states[:complete] })
+    @tests = Test.by_lab(@lab).joins(:plate).where(plates: { state: Plate.states[:complete] })
   end
 
   def done
     authorize Test
-    @tests = Test.labgroup(session[:labgroup]).includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
+    @tests = Test.by_lab(@lab).includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
   end
 
   # GET /tests/1

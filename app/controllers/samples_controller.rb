@@ -27,17 +27,17 @@ class SamplesController < ApplicationController
   end
 
   def step4_pendingreadytest
-    @plates = Plate.labgroup(session[:labgroup]).where(state: Plate.states[:preparing]).order(:updated_at)
+    @plates = Plate.by_lab(@lab).where(state: Plate.states[:preparing]).order(:updated_at)
     authorize Sample
   end
 
   def step5_pendingtest
-    @plates = Plate.labgroup(session[:labgroup]).where(state: Plate.states[:prepared]).order(:updated_at)
+    @plates = Plate.by_lab(@lab).where(state: Plate.states[:prepared]).order(:updated_at)
     authorize Sample
   end
 
   def step6_pendinganalyze
-    @plates = Plate.labgroup(session[:labgroup]).where(state: Plate.states[:testing]).order(:updated_at)
+    @plates = Plate.by_lab(@lab).where(state: Plate.states[:testing]).order(:updated_at)
     authorize Sample
   end
   # GET /samples/1
