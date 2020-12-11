@@ -4,6 +4,7 @@ RSpec.describe Plate, type: :model do
   describe "build_plate" do
     it "Should create a valid plate with valid number of empty wells" do
       plate =  Plate.build_plate
+      plate.user = create(:user)
       expect(plate.save).to be true
       expect(plate.wells.size).to be 96
       expect(plate.samples.size).to be 0
@@ -11,12 +12,22 @@ RSpec.describe Plate, type: :model do
 
     it "Should create a valid plate with a correct UID" do
       plate =  Plate.build_plate
+      plate.user = create(:user)
       expect(plate.save).to be true
       expect(plate.uid).to eq "#{Date.today}-#{plate.id}"
     end
 
+    it "Should not create a valid plate with no user" do
+      plate =  Plate.build_plate
+      plate.user = nil
+      expect(plate.save).to be false
+      expect(plate.errors.size).to be 1
+      expect(plate.errors[:user].first).to eq "must exist"
+    end
+
     it "Should not create a plate with insufficient wells" do
       plate =  Plate.new
+      plate.user = create(:user)
       wells = []
       PlateHelper.columns.first(11).each do |col|
         PlateHelper.rows.each do |row|
@@ -31,6 +42,7 @@ RSpec.describe Plate, type: :model do
 
     it "Should not create a plate with insufficient wells" do
       plate =  Plate.new
+      plate.user = create(:user)
       wells = []
       PlateHelper.columns.to_a.concat([13]).each do |col|
         PlateHelper.rows.each do |row|
@@ -45,6 +57,7 @@ RSpec.describe Plate, type: :model do
 
     it "Should not create a plate with duplicate wells" do
       plate =  Plate.new
+      plate.user = create(:user)
       wells = []
       # should create G1-12
       ('A'..'G').to_a.concat(['G']).each do |row|
@@ -65,6 +78,7 @@ RSpec.describe Plate, type: :model do
 
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [{id: @sample.id, row: plate.wells.third.row, column: plate.wells.third.column}]
         this_plate = plate.assign_samples(sample_mappings)
@@ -78,6 +92,7 @@ RSpec.describe Plate, type: :model do
 
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [ {id: @sample.id, row: plate.wells.third.row, column: plate.wells.third.column}, {id: @sample.id, row: plate.wells.second.row, column: plate.wells.second.column} ]
         this_plate = plate.assign_samples(sample_mappings)
@@ -91,6 +106,7 @@ RSpec.describe Plate, type: :model do
     it "should handle a nil sample id" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [{id: nil, row: plate.wells.third.row, column: plate.wells.third.column, control: false}]
         this_plate = plate.assign_samples(sample_mappings)
@@ -102,6 +118,7 @@ RSpec.describe Plate, type: :model do
     it "should handle an empty sample id" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         sample_mappings = [{id: "", row: plate.wells.third.row, column: plate.wells.third.column, control: false}]
         this_plate = plate.assign_samples(sample_mappings)
         expect(this_plate.save).to be true
@@ -112,6 +129,7 @@ RSpec.describe Plate, type: :model do
     it "should throw on a nil row" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [{id: @sample.id, row: nil, column: plate.wells.third.column}]
         expect(plate.assign_samples(sample_mappings).assign_error).to be true
@@ -122,6 +140,7 @@ RSpec.describe Plate, type: :model do
     it "should throw on a nil column" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         sample_mappings = [{id: @sample.id, row: plate.wells.third.row, column: nil}]
         expect(plate.assign_samples(sample_mappings).assign_error).to be true
@@ -132,6 +151,7 @@ RSpec.describe Plate, type: :model do
     it "should handle a valid control sample" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         control_position = PlateHelper.control_positions.first
         sample_mappings = [{id: nil, column: control_position[:col], row: control_position[:row], control: true, control_code: Sample::CONTROL_CODE}]
@@ -142,6 +162,7 @@ RSpec.describe Plate, type: :model do
     it "should reject an invalid control sample" do
       Sample.with_user(create(:user, role: User.roles[:staff])) do
         plate = Plate.build_plate
+        plate.user = create(:user)
         @sample = create(:sample, state: Sample.states[:received])
         control_position = PlateHelper.control_positions.first
         sample_mappings = [{id: nil, column: control_position[:col], row: control_position[:row], control: true, control_code: 'WRONG CODE'}]

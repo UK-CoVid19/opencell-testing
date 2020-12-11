@@ -29,6 +29,7 @@ class Plate < ApplicationRecord
   has_many :wells, dependent: :destroy
   has_many :samples, through: :wells
   has_one :test, dependent: :destroy
+  belongs_to :user
   accepts_nested_attributes_for :wells
   enum state: %i[preparing prepared testing complete analysed]
   validates :wells, length: {maximum: 96, minimum: 96}

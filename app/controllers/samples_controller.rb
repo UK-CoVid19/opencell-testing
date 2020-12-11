@@ -283,7 +283,7 @@ class SamplesController < ApplicationController
   end
 
   def plate_params
-    params.require(:plate).permit(wells_attributes:[:id, :row, :column ])
+    params.require(:plate).permit(:user_id, wells_attributes:[:id, :row, :column ])
   end
   def get_mappings
     params.require(:sample_well_mapping).permit(mappings:[:id,:row, :column, :control, :control_code])[:mappings]

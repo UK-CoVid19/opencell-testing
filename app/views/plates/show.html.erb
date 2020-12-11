@@ -25,6 +25,14 @@
               </div>
               <div class="mt-1 mb-1">
                 <span >
+                  <%= fa_icon "user", class: 'fa-fw' %>
+                </span>
+                <span>
+                  <small><%= link_to @plate.user.email, @plate.user %></small>
+                </span>
+              </div>
+              <div class="mt-1 mb-1">
+                <span >
                   <%= fa_icon "clock-o", class: 'fa-fw' %>
                 </span>
                 <span>
