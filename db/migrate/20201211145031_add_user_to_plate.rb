@@ -2,7 +2,7 @@ class AddUserToPlate < ActiveRecord::Migration[6.0]
   def up
     add_reference :plates, :user, null: true, foreign_key: false
     pwd = Devise.friendly_token.first(12)
-    dummy_user = !User.all.any? ? User.create(email: 'dummy@user.com', password: pwd, password_confirmation: pwd, api_key:SecureRandom.base64(16)) : User.first
+    dummy_user = !User.all.any? ? User.create!(email: 'dummy@user.com', password: pwd, password_confirmation: pwd, role: User.roles[:staff]) : User.first
     Plate.all.each do |p|
       user = p.samples.first.records.where(state: Sample.states[:preparing]).first.user
       if user.nil?
