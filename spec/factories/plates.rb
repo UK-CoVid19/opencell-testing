@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :plate do
-    state { Plate.states[:p_preparing] }
+    state { Plate.statuses[:p_preparing] }
     user { create(:user) }
     transient do
       well_count  {96}
