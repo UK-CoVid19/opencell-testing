@@ -31,7 +31,7 @@ class Plate < ApplicationRecord
   has_one :test, dependent: :destroy
   belongs_to :user
   accepts_nested_attributes_for :wells
-  enum status: %i[p_preparing p_prepared p_testing p_complete p_analysed]
+  enum status: %i[p_preparing p_prepared p_testing p_complete p_analysed], _suffix: true
   validates :wells, length: {maximum: 96, minimum: 96}
   barcode_for :uid
   attr_accessor :assign_error, :assign_control_error
