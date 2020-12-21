@@ -75,6 +75,12 @@ class Plate < ApplicationRecord
           break
         end
         sample = Sample.create!(client: Client.control_client, state: Sample.states[:preparing], control: true)
+      elsif PlateHelper.positive_control_positions.include?({row: well[:row], col: well[:column].to_i})
+        if mapping[:control_code].to_i != Sample::POSITIVE_CONTROL_CODE
+          @assign_control_error = true
+          break
+        end
+        sample = Sample.create!(client: Client.control_client, state: Sample.states[:preparing], control: true)
       elsif PlateHelper.auto_control_positions.include?({row: well[:row], col: well[:column].to_i})
         sample = Sample.create!(client: Client.control_client, state: Sample.states[:preparing], control: true)
       else
@@ -111,14 +117,18 @@ module PlateHelper
   end
 
   def self.negative_extraction_controls
-    [{ row: 'A', col: 1 }, { row: 'D', col: 6 }, { row: 'E', col: 6 }, { row: 'E', col: 12 }]
+    [{ row: 'H', col: 1 }, { row: 'D', col: 6 }, { row: 'E', col: 6 }, { row: 'E', col: 12 }]
   end
 
   def self.auto_control_positions
     [{ row: 'F', col: 12 }, { row: 'G', col: 12 }, { row: 'H', col: 12 }]
   end
 
+  def self.positive_control_positions
+    [{ row: 'A', col: 1 }]
+  end
+
   def self.control_positions
-    negative_extraction_controls + auto_control_positions
+    negative_extraction_controls + auto_control_positions + positive_control_positions
   end
 end

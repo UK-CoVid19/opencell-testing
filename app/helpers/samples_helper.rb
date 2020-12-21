@@ -92,6 +92,14 @@ module SamplesHelper
     PlateHelper.control_positions.include?(row: row, col: col)
   end
 
+  def negative_control?(row, col)
+    PlateHelper.negative_extraction_controls.include?(row: row, col: col)
+  end
+
+  def positive_control?(row, col)
+    PlateHelper.positive_control_positions.include?(row: row, col: col)
+  end
+
   def auto_control?(row, col)
     PlateHelper.auto_control_positions.include?(row: row, col: col)
   end

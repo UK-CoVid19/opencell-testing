@@ -34,6 +34,7 @@ class Sample < ApplicationRecord
   after_update_commit :send_rejection, if: :rejected?
 
   CONTROL_CODE = 1234
+  POSITIVE_CONTROL_CODE = 5678
 
   def self.block_user
     @with_user

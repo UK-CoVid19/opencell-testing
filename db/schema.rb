@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_17_153352) do
+ActiveRecord::Schema.define(version: 2020_12_21_140429) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,6 +153,7 @@ ActiveRecord::Schema.define(version: 2020_11_17_153352) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "comment"
+    t.string "batch"
     t.index ["plate_id"], name: "index_tests_on_plate_id", unique: true
     t.index ["user_id"], name: "index_tests_on_user_id"
   end

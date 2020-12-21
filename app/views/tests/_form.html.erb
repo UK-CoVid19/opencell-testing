@@ -28,6 +28,12 @@
             </div>
             <%= form.collection_select :user_id, User.staffmembers, :id, :email, {prompt: 'Select verifying BMS' },  class: 'custom-select' %>
           </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <%= form.label :batch, 'Batch Number', class: 'input-group-text' %>
+            </div>
+            <%= form.text_field :batch, class: 'form-control' %>
+          </div>
         </div>
       </div>
     </div>
