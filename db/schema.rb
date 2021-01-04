@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(version: 2020_12_31_145031) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "notify"
     t.string "url"
-    t.jsonb "headers"
     t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
     t.index ["name"], name: "index_clients_on_name", unique: true
   end
@@ -125,7 +124,7 @@ ActiveRecord::Schema.define(version: 2020_12_31_145031) do
     t.string "uid"
     t.bigint "client_id"
     t.boolean "control", default: false
-    t.boolean "is_retest", default: false
+    t.boolean "is_retest", default: false, null: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"

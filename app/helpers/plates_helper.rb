@@ -24,7 +24,6 @@ module PlatesHelper
   end
 
   def get_plate_badge(status)
-    puts status
     case Plate.statuses.to_hash[status]
     when Plate.statuses[:preparing]
       return tag.span class: 'badge badge-pill badge-primary' do
@@ -47,7 +46,6 @@ module PlatesHelper
         status
       end
     end
-    puts status
   end
 
   def generate_test_cell(well)
