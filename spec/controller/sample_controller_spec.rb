@@ -328,7 +328,18 @@ RSpec.describe SamplesController, type: :controller do
         end
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
-        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: { mappings: [{ row:'A', column: 1, id: @this_sample.id, control: true, control_code: 1234}]}}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: { mappings: [{ row:'H', column: 1, id: @this_sample.id, control: true, control_code: 1234}]}}
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to("/samples/pendingreadytest")
+      end
+
+      it "needs a permanent variable positive control well to have the checking value" do
+        Sample.with_user(@user) do
+          @this_sample = create(:sample, state: Sample.states[:received], client: @client)
+        end
+        plate_attributes = @plate.attributes
+        plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: { mappings: [{ row:'A', column: 1, id: @this_sample.id, control: true, control_code: 5678}]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
       end
@@ -422,7 +433,7 @@ RSpec.describe SamplesController, type: :controller do
         plate_attributes = @plate.attributes
         plate_attributes["wells_attributes"] = @wells.map(&:attributes).map {|a| a.except("id", "plate_id", "created_at", "updated_at", "sample_id")}
         current_samples = Sample.all.size
-        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 6, id: @this_sample.id}, {row:'A', column: 1, id: nil, control: true, control_code: Sample::CONTROL_CODE}]}}
+        post :step3_bulkprepared, params: { plate: plate_attributes, sample_well_mapping: {mappings: [{row:'A', column: 6, id: @this_sample.id}, {row:'A', column: 1, id: nil, control: true, control_code: Sample::POSITIVE_CONTROL_CODE}]}}
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to("/samples/pendingreadytest")
         expect(Sample.all.size).to eq current_samples + 1

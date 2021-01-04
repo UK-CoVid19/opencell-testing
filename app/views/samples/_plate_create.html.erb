@@ -38,12 +38,14 @@
                 <td class="dark-cell text-center"><%= row %></td>
                 <%= form.fields_for :wells, row_wells.sort_by{|w|w.column} do |builder| %>
                 <% if auto_control?(builder.object.row, builder.object.column) %>
-                <td class="auto-control-cell" data-control="auto">
-                    <% elsif control?(builder.object.row, builder.object.column) %>
-                <td class="control-cell" data-control="manual">
-                    <% else %>
+                    <td class="auto-control-cell" data-control="auto">
+                <% elsif negative_control?(builder.object.row, builder.object.column) %>
+                    <td class="control-cell" data-control="manual">
+                <% elsif positive_control?(builder.object.row, builder.object.column) %>
+                    <td class="positive-control-cell" data-control="manual">
+                <% else %>
                 <td>
-                    <% end %>
+                <% end %>
                     <%= builder.hidden_field :row, name: '[sample_well_mapping][mappings][][row]'  %>
                     <%= builder.hidden_field :row  %>
                     <%= builder.hidden_field :column, name: '[sample_well_mapping][mappings][][column]'  %>
@@ -52,8 +54,11 @@
                     <% if auto_control?(builder.object.row, builder.object.column) %>
                     <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control control-well plate-cell", disabled: true, placeholder: 'N/A', tabindex: get_focus_index(builder.object) %>
                     <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
-                    <% elsif control?(builder.object.row, builder.object.column) %>
+                    <% elsif negative_control?(builder.object.row, builder.object.column) %>
                     <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control control-well", tabindex: get_focus_index(builder.object), required: true %>
+                    <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
+                    <% elsif positive_control?(builder.object.row, builder.object.column) %>
+                    <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][control_code]', class:"form-control positive-control-well", tabindex: get_focus_index(builder.object), required: true %>
                     <%= sample_builder.hidden_field :control, name: '[sample_well_mapping][mappings][][control]', value: true %>
                     <% else %>
                     <%= sample_builder.text_field :id, name: '[sample_well_mapping][mappings][][id]', class:"form-control sample-assign plate-cell", tabindex: get_focus_index(builder.object), novalidate: true %>
@@ -256,6 +261,16 @@
                 })
         }
 
+       function handlePositiveControl(event){
+           if (event.currentTarget.value != <%= Sample::POSITIVE_CONTROL_CODE %> ) {
+                event.currentTarget.value = null;
+                alert('invalid control code')
+                return;
+            }
+
+            tabNext(event);
+       }
+
         function handleControl(event) {
             if (event.currentTarget.value != <%= Sample::CONTROL_CODE %> ) {
                 event.currentTarget.value = null;
@@ -265,7 +280,7 @@
 
             tabNext(event);
         }
-
+        $(".positive-control-well").on('input', debounce(handlePositiveControl, 500));
         $(".control-well").on('input', debounce(handleControl, 500));
         $(".sample-assign").on('input', handleDeletion);
         $(".sample-assign").on('input', debounce(setWrapper, 500));

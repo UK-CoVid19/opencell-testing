@@ -46,9 +46,19 @@
                   <%= fa_icon "magic", class: 'fa-fw' %>
                 </span>
                 <span>
-                  <small><%= get_plate_badge(@plate.state) %></small>
+                  <small><%= get_plate_badge(Plate.statuses.key(@plate.state)) %></small>
                 </span>
               </div>
+              <% if @plate.test.present? %>
+              <div class="mt-1 mb-1">
+                <span >
+                  <%= fa_icon "archive", class: 'fa-fw' %>
+                </span>
+                <span>
+                  <small><%= @plate.test.batch %></small>
+                </span>
+              </div>
+              <% end %>
             </div>
           </div>
           <div class="card-footer">
