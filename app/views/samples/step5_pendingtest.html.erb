@@ -21,7 +21,7 @@
           <td class="text-center" style="font-size: 2em; padding-top: 5px"><%= check_box_tag  'plates[][id]', plate.id %></td>
           <td><%= link_to "Plate ##{plate.id}", plate %></td>
           <td><%= plate.uid %></td>
-          <td><%= get_plate_badge(plate.state) %></td>
+          <td><%= get_plate_badge(Plate.statuses.key(plate.state)) %></td>
           <td><%= plate.updated_at.strftime('%a %d %b %H:%M') %></td>
         </tr>
       <% end %>

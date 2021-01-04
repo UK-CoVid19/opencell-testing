@@ -23,6 +23,16 @@
                   <small><%= @plate.uid %></small>
                 </span>
               </div>
+              <% if @plate.user %>
+              <div class="mt-1 mb-1">
+                <span >
+                  <%= fa_icon "user", class: 'fa-fw' %>
+                </span>
+                <span>
+                  <small><%= link_to @plate.user.email, @plate.user %></small>
+                </span>
+              </div>
+              <% end %>
               <div class="mt-1 mb-1">
                 <span >
                   <%= fa_icon "clock-o", class: 'fa-fw' %>
@@ -36,7 +46,7 @@
                   <%= fa_icon "magic", class: 'fa-fw' %>
                 </span>
                 <span>
-                  <small><%= get_plate_badge(@plate.state) %></small>
+                  <small><%= get_plate_badge(Plate.statuses.key(@plate.state)) %></small>
                 </span>
               </div>
               <% if @plate.test.present? %>

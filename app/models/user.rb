@@ -10,6 +10,8 @@ class User < ApplicationRecord
 
   has_many :records, dependent: :destroy
   has_many :tests, dependent: :destroy
+  has_many :plates
+  
 
   belongs_to :security_question
 

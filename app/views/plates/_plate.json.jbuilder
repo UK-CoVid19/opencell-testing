@@ -1,7 +1,7 @@
 json.id plate.id
 json.created_at plate.created_at
 json.updated_at plate.updated_at
-json.state plate.state
+json.status plate.status
 json.wells plate.wells do |well|
   json.row well.row
   json.column well.column

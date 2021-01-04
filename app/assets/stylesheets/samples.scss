@@ -87,3 +87,11 @@
   border-color: $danger;
   background-color: hsla(354, 93%, 90%, 0.65);
 }
+
+
+.plate-cell {
+  border-color: inherit !important;
+  padding-right: inherit !important;
+  background-image: none !important;
+  background-repeat: none !important;  
+}

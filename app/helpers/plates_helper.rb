@@ -1,5 +1,6 @@
 module PlatesHelper
 
+  extend self
   def generate_well_cell(well)
     unless well.sample.nil?
       if(Sample.states[well.sample.state] == Sample.states[:retest])
@@ -23,28 +24,30 @@ module PlatesHelper
   end
 
   def get_plate_badge(status)
-    case Plate.states.to_hash[status]
-    when Plate.states[:preparing]
+    puts status
+    case Plate.statuses.to_hash[status]
+    when Plate.statuses[:preparing]
       return tag.span class: 'badge badge-pill badge-primary' do
         status
       end
-    when Plate.states[:prepared]
+    when Plate.statuses[:prepared]
       return tag.span class: 'badge badge-pill badge-secondary' do
         status
       end
-    when Plate.states[:testing]
+    when Plate.statuses[:testing]
       return tag.span class: 'badge badge-pill badge-info' do
         status
       end
-    when Plate.states[:complete]
+    when Plate.statuses[:complete]
       return tag.span class: 'badge badge-pill badge-success' do
         status
       end
-    when Plate.states[:analysed]
+    when Plate.statuses[:analysed]
       return tag.span class: 'badge badge-pill badge-success' do
         status
       end
     end
+    puts status
   end
 
   def generate_test_cell(well)

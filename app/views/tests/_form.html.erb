@@ -26,7 +26,7 @@
             <div class="input-group-prepend">
               <%= form.label :user, 'Tested By', class: 'input-group-text' %>
             </div>
-            <%= form.collection_select :user_id, User.staffmembers, :id, :email, {prompt: 'Select verifying BMS' },  class: 'custom-select' %>
+            <%= form.collection_select :user_id, User.staffmembers, :id, :email, {prompt: 'Select Operator' },  class: 'custom-select' %>
           </div>
           <div class="input-group mb-3">
             <div class="input-group-prepend">

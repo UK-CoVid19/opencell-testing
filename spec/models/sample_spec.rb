@@ -301,7 +301,8 @@ RSpec.describe Sample, type: :model do
 
       it "should not allow rejections if the sample is associated with a plate" do
         Sample.with_user(@user) do
-          @plate =  Plate.build_plate
+          @plate = Plate.build_plate
+          @plate.user = create(:user)
           @sample = create(:sample, state: :received, client: @client)
           @plate.wells.first.sample = @sample
           @plate.save!
@@ -312,7 +313,8 @@ RSpec.describe Sample, type: :model do
 
       it "should throw reject if sample isn't rejectable" do
         Sample.with_user(@user) do
-          @plate =  Plate.build_plate
+          @plate = Plate.build_plate
+          @plate.user = create(:user)
           @sample = create(:sample, state: :received, client: @client)
           @plate.wells.first.sample = @sample
           @plate.save!

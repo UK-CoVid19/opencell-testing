@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_21_140429) do
+ActiveRecord::Schema.define(version: 2020_12_31_145031) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,8 +89,10 @@ ActiveRecord::Schema.define(version: 2020_12_21_140429) do
     t.datetime "updated_at", null: false
     t.integer "state", default: 0
     t.string "uid"
+    t.bigint "user_id"
     t.index ["state"], name: "index_plates_on_state"
     t.index ["uid"], name: "index_plates_on_uid", unique: true
+    t.index ["user_id"], name: "index_plates_on_user_id"
   end
 
   create_table "records", force: :cascade do |t|
