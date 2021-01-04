@@ -26,17 +26,17 @@ class SamplesController < ApplicationController
   end
 
   def step4_pendingreadytest
-    @plates = Plate.all.where(state: Plate.statuses[:p_preparing]).order(:updated_at)
+    @plates = Plate.all.where(state: Plate.statuses[:preparing]).order(:updated_at)
     authorize Sample
   end
 
   def step5_pendingtest
-    @plates = Plate.all.where(state: Plate.statuses[:p_prepared]).order(:updated_at)
+    @plates = Plate.all.where(state: Plate.statuses[:prepared]).order(:updated_at)
     authorize Sample
   end
 
   def step6_pendinganalyze
-    @plates = Plate.all.where(state: Plate.statuses[:p_testing]).order(:updated_at)
+    @plates = Plate.all.where(state: Plate.statuses[:testing]).order(:updated_at)
     authorize Sample
   end
   # GET /samples/1
@@ -188,7 +188,7 @@ class SamplesController < ApplicationController
   def update_plate(plates)
     Plate.transaction do
       plates.each do |plate|
-        plate.p_prepared!
+        plate.prepared!
         plate.wells.each do |well|
           unless well.sample.nil?
             well.sample.tap do |s|
@@ -205,7 +205,7 @@ class SamplesController < ApplicationController
   def run_plates_test(plates)
     Plate.transaction do
       plates.each do |plate|
-        plate.p_testing!
+        plate.testing!
         plate.wells.each do | well|
           unless well.sample.nil?
             well.sample.tap do |s|

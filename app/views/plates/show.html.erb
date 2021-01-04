@@ -23,6 +23,7 @@
                   <small><%= @plate.uid %></small>
                 </span>
               </div>
+              <% if @plate.user %>
               <div class="mt-1 mb-1">
                 <span >
                   <%= fa_icon "user", class: 'fa-fw' %>
@@ -31,6 +32,7 @@
                   <small><%= link_to @plate.user.email, @plate.user %></small>
                 </span>
               </div>
+              <% end %>
               <div class="mt-1 mb-1">
                 <span >
                   <%= fa_icon "clock-o", class: 'fa-fw' %>

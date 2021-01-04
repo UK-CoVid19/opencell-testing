@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(version: 2020_12_11_145031) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "notify"
     t.string "url"
-    t.jsonb "headers"
     t.index ["api_key_hash"], name: "index_clients_on_api_key_hash"
     t.index ["name"], name: "index_clients_on_name", unique: true
   end
@@ -89,7 +88,7 @@ ActiveRecord::Schema.define(version: 2020_12_11_145031) do
     t.datetime "updated_at", null: false
     t.integer "state", default: 0
     t.string "uid"
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.index ["state"], name: "index_plates_on_state"
     t.index ["uid"], name: "index_plates_on_uid", unique: true
     t.index ["user_id"], name: "index_plates_on_user_id"
@@ -125,7 +124,7 @@ ActiveRecord::Schema.define(version: 2020_12_11_145031) do
     t.string "uid"
     t.bigint "client_id"
     t.boolean "control", default: false
-    t.boolean "is_retest", default: false
+    t.boolean "is_retest", default: false, null: false
     t.index ["client_id"], name: "index_samples_on_client_id"
     t.index ["plate_id"], name: "index_samples_on_plate_id"
     t.index ["state"], name: "index_samples_on_state"
@@ -199,7 +198,6 @@ ActiveRecord::Schema.define(version: 2020_12_11_145031) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "headers", "clients"
-  add_foreign_key "plates", "users"
   add_foreign_key "records", "samples"
   add_foreign_key "records", "users"
   add_foreign_key "reruns", "samples"

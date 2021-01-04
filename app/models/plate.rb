@@ -31,19 +31,19 @@ class Plate < ApplicationRecord
   has_one :test, dependent: :destroy
   belongs_to :user
   accepts_nested_attributes_for :wells
-  enum status: %i[p_preparing p_prepared p_testing p_complete p_analysed], _suffix: true
-  validates :wells, length: {maximum: 96, minimum: 96}
+  enum status: { preparing: 0, prepared: 1, testing: 2, complete: 3, analysed: 4 }
+  validates :wells, length: { maximum: 96, minimum: 96 }
   barcode_for :uid
   attr_accessor :assign_error, :assign_control_error
   validates_with UniqueWellPlateValidator, on: :create
   validates_with HasOtherErrorsValidator
 
   after_create :set_uid
-  scope :is_preparing, -> { where(state: Plate.statuses[:p_preparing]) }
-  scope :is_prepared, -> { where(state: Plate.statuses[:p_prepared]) }
-  scope :is_testing, -> { where(state: Plate.statuses[:p_testing]) }
-  scope :is_complete, -> { where(state: Plate.statuses[:p_complete]) }
-  scope :is_done, -> { where(state: Plate.statuses[:p_analysed]) }
+  scope :is_preparing, -> { where(state: Plate.statuses[:preparing]) }
+  scope :is_prepared, -> { where(state: Plate.statuses[:prepared]) }
+  scope :is_testing, -> { where(state: Plate.statuses[:testing]) }
+  scope :is_complete, -> { where(state: Plate.statuses[:complete]) }
+  scope :is_done, -> { where(state: Plate.statuses[:analysed]) }
 
   def self.build_plate
     plate = Plate.new

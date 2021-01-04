@@ -37,6 +37,7 @@ module SamplesHelper
         status.capitalize
       end
     else
+      puts "plate status is #{status}"
       raise
     end
   end

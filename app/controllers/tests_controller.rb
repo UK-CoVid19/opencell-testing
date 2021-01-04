@@ -10,12 +10,12 @@ class TestsController < ApplicationController
 
   def complete
     authorize Test
-    @tests = Test.all.joins(:plate).where(plates: { state: Plate.states[:p_complete] })
+    @tests = Test.all.joins(:plate).where(plates: { state: Plate.states[:complete] })
   end
 
   def done
     authorize Test
-    @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:p_analysed] })
+    @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
   end
 
   # GET /tests/1
@@ -31,7 +31,7 @@ class TestsController < ApplicationController
   end
 
   def analyse
-    if @plate.p_analysed?
+    if @plate.analysed?
       flash[:alert] = "Invalid plate state to analyse"
       redirect_to(request.referrer || staff_dashboard_path) and return 
     end
@@ -88,7 +88,7 @@ class TestsController < ApplicationController
   end
 
   def confirm
-    if @plate.p_analysed?
+    if @plate.analysed?
       flash[:alert] = "Invalid plate state to confirm"
       redirect_to(request.referrer || plates_tests_path(@plate, @test)) and return
     end
@@ -97,7 +97,7 @@ class TestsController < ApplicationController
     begin
       @test.transaction do
         @test.update(tp)
-        @test.plate.p_analysed!
+        @test.plate.analysed!
         # update all the samples to confirmed status
         @test.plate.samples.update(state: Sample.states[:communicated])
         @test.save!
