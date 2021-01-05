@@ -24,24 +24,24 @@ module PlatesHelper
   end
 
   def get_plate_badge(status)
-    case Plate.statuses.to_hash[status]
-    when Plate.statuses[:preparing]
+    case Plate.states.to_hash[status]
+    when Plate.states[:preparing]
       return tag.span class: 'badge badge-pill badge-primary' do
         status
       end
-    when Plate.statuses[:prepared]
+    when Plate.states[:prepared]
       return tag.span class: 'badge badge-pill badge-secondary' do
         status
       end
-    when Plate.statuses[:testing]
+    when Plate.states[:testing]
       return tag.span class: 'badge badge-pill badge-info' do
         status
       end
-    when Plate.statuses[:complete]
+    when Plate.states[:complete]
       return tag.span class: 'badge badge-pill badge-success' do
         status
       end
-    when Plate.statuses[:analysed]
+    when Plate.states[:analysed]
       return tag.span class: 'badge badge-pill badge-success' do
         status
       end

@@ -46,7 +46,7 @@
                   <%= fa_icon "magic", class: 'fa-fw' %>
                 </span>
                 <span>
-                  <small><%= get_plate_badge(Plate.statuses.key(@plate.state)) %></small>
+                  <small><%= get_plate_badge(Plate.states.key(@plate.state)) %></small>
                 </span>
               </div>
               <% if @plate.test.present? %>
