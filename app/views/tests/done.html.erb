@@ -1,37 +1,49 @@
 <div class="container table-responsive">
   <h1>Tests</h1>
 
-  <table id="datatable" class="table table-striped">
+  <table id="tests-datatable" class="table table-striped" data-source="<%= tests_done_path(format: :json) %>">
     <thead class="thead-dark">
       <tr>
         <th>ID</th>
         <th>Created at</th>
         <th>Tested By</th>
-        <th>Result Files</th>
-        <th>Actions</th>
+        <th>Result File</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
-      <% @tests.each do |test| %>
-        <tr>
-          <td><%= tag.b test.id %></td>
-          <td><%= test.created_at.strftime('%A %-d %b %H:%M') %></td>
-          <td><%= link_to test.user.email, user_path(test.user) %></td>
-          <td>
-            <% test.result_file.tap do |file| %>
-              <%= link_to "Download #{file.filename}", rails_blob_path(file, disposition: "attachment") %>
-              <br/>
-            <% end  %>
-          </td>
-          <td>
-            <%= link_to plate_path(test.plate) do  %>
-              <button class="btn btn-primary">Show</button>
-            <% end  %>            
-          </td>
-        </tr>
-      <% end %>
     </tbody>
   </table>
 </div>
 
+
+<script>
+    $('#tests-datatable').dataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": $('#tests-datatable').data('source')
+        },
+        "pagingType": "full_numbers",
+        "columns": [{
+                "data": "id"
+            },
+            {
+                "data": "created_at"
+            },
+            {
+                "data": "tested_by"
+            },
+            {
+                "data": "result_file"
+            },
+            {
+                "data": "link"
+            }
+        ]
+        // pagingType is optional, if you want full pagination controls.
+        // Check dataTables documentation to learn more about
+        // available options.
+    });
+</script>
 

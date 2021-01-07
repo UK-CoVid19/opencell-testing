@@ -16,6 +16,11 @@ class TestsController < ApplicationController
   def done
     authorize Test
     @tests = Test.all.includes(:result_file_attachment, :user, :plate).where(plates: { state: Plate.states[:analysed] })
+
+    respond_to do |format|
+      format.html
+      format.json { render json: TestDatatable.new(params, view_context: view_context) }
+    end
   end
 
   # GET /tests/1
