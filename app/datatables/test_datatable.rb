@@ -4,7 +4,7 @@ class TestDatatable < AjaxDatatablesRails::ActiveRecord
 
   extend Forwardable
 
-  def_delegators :@view, :get_badge, :button_tag, :policy_scope, :link_to, :rails_blob_path, :plate_path
+  def_delegators :@view, :get_badge, :button_tag, :policy_scope, :link_to, :rails_blob_path
 
   def initialize(params, opts = {})
     @view = opts[:view_context]
@@ -16,6 +16,7 @@ class TestDatatable < AjaxDatatablesRails::ActiveRecord
     # or in aliased_join_table.column_name format
     @view_columns ||= {
       id: { source: "Test.id", cond: :eq },
+      plate: { source: "Test.plate"},
       created_at: { source: "Test.created_at" },
       tested_by: { source: "User.email" }
     }
@@ -26,7 +27,7 @@ class TestDatatable < AjaxDatatablesRails::ActiveRecord
       {
         # example:
         id: record.id,
-        plate: link_to( record.plate&.id, plate_path(record.plate&.id)),
+        plate: record.plate&.id,
         created_at: record.created_at.strftime('%a %d %b %H:%M'),
         tested_by: record.user.email,
         result_file: link_to(rails_blob_path(record.result_file, disposition: "attachment")) { button_tag("Results", class: 'btn btn-info') },
