@@ -16,7 +16,7 @@ class TestDatatable < AjaxDatatablesRails::ActiveRecord
     # or in aliased_join_table.column_name format
     @view_columns ||= {
       id: { source: "Test.id", cond: :eq },
-      plate: { source: "Test.plate"},
+      plate_id: { source: "Test.plate_id"},
       created_at: { source: "Test.created_at" },
       tested_by: { source: "User.email" }
     }
@@ -27,7 +27,7 @@ class TestDatatable < AjaxDatatablesRails::ActiveRecord
       {
         # example:
         id: record.id,
-        plate: record.plate&.id,
+        plate_id: record.plate&.id,
         created_at: record.created_at.strftime('%a %d %b %H:%M'),
         tested_by: record.user.email,
         result_file: link_to(rails_blob_path(record.result_file, disposition: "attachment")) { button_tag("Results", class: 'btn btn-info') },
