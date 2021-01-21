@@ -126,7 +126,6 @@ RSpec.describe UsersController, type: :controller do
       post :create_staff, params: {user: @to_create_user.attributes.merge({role: 'staff'})}
       expect(response).to have_http_status(:redirect)
       expect(User.last.email).to eq(@to_create_user.email)
-      expect(User.last.api_key).to be_nil
       expect(response).to redirect_to(user_path(User.last))
     end
 
