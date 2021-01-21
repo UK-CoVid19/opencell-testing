@@ -27,8 +27,7 @@ class UsersController < ApplicationController
   def create_staff
     authorize User
     generated_password = Devise.friendly_token.first(12)
-    @api_key = User.roles[user_params[:role]] == User.roles[:staff] ? nil : SecureRandom.base64(16)
-    @user = User.new(user_params.merge!({password: generated_password, password_confirmation: generated_password, api_key: @api_key}))
+    @user = User.new(user_params.merge!({password: generated_password, password_confirmation: generated_password}))
     respond_to do |format|
       if @user.save
         if @user.patient?
