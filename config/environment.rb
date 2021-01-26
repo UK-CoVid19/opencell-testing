@@ -6,7 +6,7 @@ Rails.application.initialize!
 
 
 ActionMailer::Base.smtp_settings = {
-    :user_name => 'opencell.bio',
+    :user_name => 'apikey',
     :password =>  Rails.application.credentials.dig(:sendgrid_password),
     :domain => 'lims-dev.sudo.bio',
     :address => 'smtp.sendgrid.net',
