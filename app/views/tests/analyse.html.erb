@@ -24,7 +24,15 @@
                     <%= fa_icon "archive", class: 'fa-fw' %>
                 </span>
                 <span>
-                    <small><%= @test.batch %></small>
+                    <small><%= @test.batch && @test.batch.size > 0 ? @test.batch :  "No batch" %></small>
+                </span>
+            </div>
+            <div class="mt-1 mb-1">
+                <span>
+                    <%= fa_icon "flask", class: 'fa-fw' %>
+                </span>
+                <span>
+                    <small><%= westgard_link(@test.plate) %></small>
                 </span>
             </div>
         </div>

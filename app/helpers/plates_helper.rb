@@ -77,8 +77,6 @@ module PlatesHelper
   end
 
 
-  
-
   def test_result_exists?(well)
     !well.test_result.nil? && !well.sample.nil?
   end
@@ -96,4 +94,18 @@ module PlatesHelper
       fa_icon "question-circle", class: 'fa-fw'
     end
   end
+
+  def westgard_link(plate)
+    return nil unless plate
+    filename = "tests-#{plate.uid}.json"
+    url = ENV.fetch("WESTGARD_STORAGE") { 'https://opencellstorage.blob.core.windows.net/results/' }
+    uri = URI.join(url, filename)
+    result = Net::HTTP.get_response(uri)
+    if result.code == 200
+      link_to "Westgard Results", uri.to_s
+    else
+      p "No Results"
+    end
+  end
+
 end
