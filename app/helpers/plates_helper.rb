@@ -101,10 +101,10 @@ module PlatesHelper
     url = ENV.fetch("WESTGARD_STORAGE") { 'https://opencellstorage.blob.core.windows.net/results/' }
     uri = URI.join(url, filename)
     result = Net::HTTP.get_response(uri)
-    if result.code == 200
-      link_to "Westgard Results", uri.to_s
+    if result.code == "200"
+      return link_to "Westgard Results", uri.to_s
     else
-      p "No Results"
+      return p "No Results"
     end
   end
 
