@@ -1,3 +1,4 @@
+require 'json'
 module PlatesHelper
 
   extend self
@@ -102,7 +103,25 @@ module PlatesHelper
     uri = URI.join(url, filename)
     result = Net::HTTP.get_response(uri)
     if result.code == "200"
-      return link_to "Westgard Results", uri.to_s
+      b = JSON.parse(result.body)
+      list_elements = b.map do |tst|
+        content_tag(:span, title: tst['name']) do
+          if tst['success']
+            fa_icon "check", class: 'fa-fw'
+          else
+            fa_icon "cross", class: 'fa-fw'
+          end
+        end
+      end
+      c = content_tag(:span) do
+        list_elements.each do |test|
+          concat test
+        end
+      end
+      puts c
+      return link_to uri.to_s do 
+            c
+        end 
     else
       return p "No Results"
     end
